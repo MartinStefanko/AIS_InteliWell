@@ -57,3 +57,7 @@ AC-ModulRezervaciiAKlientov, FR1, QR-001
 ## Doplnenie 2026-11-25 (rozhodol Martin Štefanko, Software architect)
 - DR-I01: A – minimálna sada balíkov podľa tabuľky v tomto ADR. Nový balík vyžaduje nové rozhodnutie.
 - Prostredie prototypu: lokálne spustenie cez `dotnet run`; kontajner ani CI nie sú v rozsahu (rieši I-04).
+
+## Doplnenie 2026-11-25 (DR-1001, rozhodol Martin Štefanko, Software architect)
+JS logika UI sa smie testovať cez Node.js (`node --test`, bez npm balíkov a bez buildu). Node.js je iba vývojový nástroj,
+nie je súčasťou ART-SoftverIntelliWell. Testy JS sa spúšťajú samostatným príkazom mimo `dotnet test`.

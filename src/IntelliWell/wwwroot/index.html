@@ -1,0 +1,53 @@
+<!doctype html>
+<!--
+  FR1-UI – jednoduché rozhranie na vytvorenie rezervácie (ADR-010, US-002). Súčasť ART-SoftverIntelliWell.
+  Konzument API-Reservations 0.2.1 (bez zmeny). Bez externých zdrojov a bez frontend buildu.
+-->
+<html lang="sk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>IntelliWell – vytvorenie rezervácie</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 40rem; margin: 2rem auto; padding: 0 1rem; color: #1a1a1a; }
+    h1 { font-size: 1.5rem; }
+    label { display: block; margin-top: 1rem; font-weight: 600; }
+    .hint { font-weight: 400; color: #555; font-size: 0.875rem; }
+    input, textarea { width: 100%; box-sizing: border-box; padding: 0.5rem; font: inherit; margin-top: 0.25rem; }
+    textarea#token { font-family: ui-monospace, monospace; font-size: 0.8rem; }
+    button { margin-top: 1.5rem; padding: 0.6rem 1.2rem; font: inherit; cursor: pointer; }
+    button:disabled { cursor: wait; opacity: 0.6; }
+    .result { margin-top: 1.5rem; padding: 0.75rem 1rem; border-radius: 4px; white-space: pre-wrap; }
+    .result:empty { display: none; }
+    .success { background: #e6f4ea; border: 1px solid #34a853; }
+    .error { background: #fdecea; border: 1px solid #d93025; }
+    .pending { background: #f1f3f4; border: 1px solid #9aa0a6; }
+  </style>
+</head>
+<body>
+  <h1>Vytvorenie rezervácie</h1>
+  <p>Rozhranie pre správcu návštev. Začiatok zadajte v miestnom čase (Europe/Bratislava); termín trvá 60 minút.</p>
+
+  <form id="reservation-form" autocomplete="off" novalidate>
+    <label for="token">Prihlasovací token
+      <span class="hint">(z <code>dotnet user-jwts</code>; je iba v pamäti stránky, po obnovení stránky ho vložte znova)</span>
+    </label>
+    <textarea id="token" rows="3" autocomplete="off" spellcheck="false"></textarea>
+
+    <label for="client-id">Identifikátor klienta <span class="hint">(UUID z evidencie klientov)</span></label>
+    <input id="client-id" type="text" value="7c9e6679-7425-40de-944b-e07fc1f90ae7" autocomplete="off" spellcheck="false">
+
+    <label for="start-time">Začiatok termínu <span class="hint">(miestny čas Europe/Bratislava)</span></label>
+    <input id="start-time" type="datetime-local" step="60">
+
+    <label for="note">Poznámka <span class="hint">(voliteľná, najviac 500 znakov)</span></label>
+    <textarea id="note" rows="3"></textarea>
+
+    <button id="submit" type="submit">Uložiť rezerváciu</button>
+  </form>
+
+  <div id="result" class="result" role="status" aria-live="polite"></div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

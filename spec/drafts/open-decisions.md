@@ -14,6 +14,19 @@
 - DR-0901 – DR-0915 (úloha 0009) rozhodol človek. **Žiadna DR nie je otvorená.** Zápisy z 0009 majú stav draft –
   schválenie súborov zapisuje človek.
 
+## Rozhodnuté v úlohe 0010 (IMPLEMENT_CHANGE FR1-UI, fáza 1)
+
+Rozhodol Martin Štefanko (Software architect), 2026-11-25 – odpoveď na plán 0010. Znenie otázok:
+`spec/prompts/log/0010-2026-11-25-IMPLEMENT_CHANGE.md`, `reports/implementation-plan-0010.md`. DR-1002 zapísala AI v 0010.
+
+| ID | Rozhodnutie (skrátene) | Zapísané v |
+|---|---|---|
+| DR-1001 | A – JS logika UI sa testuje cez Node.js `node --test` (bez npm balíkov, bez buildu, mimo `dotnet test`); Node.js je iba vývojový nástroj | ADR-008 (doplnenie, zapísal človek) |
+| DR-1002 | A – odpoveď servera bez problem details (napr. 500, telo nie je JSON) → UI zobrazí schválený text zo SC-002-10; nový text nevzniká | tento súbor; `src/IntelliWell/wwwroot/js/messages.js` |
+| (potvrdenie 201) | znenie potvrdenia „Rezervácia je uložená na termín 1. 12. 2026 14:00–15:00.“ schválené | log 0010 (Ľudské rozhodnutie vyplní človek) |
+
+Nálezy F-01 a F-03 z plánu 0010 sú odložené (rozhodnutie človeka); F-02 opravil človek v manifeste.
+
 ## Rozhodnuté v úlohe 0009 (zmena DR-17, FR1-UI, odložené nálezy z 0008)
 
 Rozhodol Martin Štefanko (Software architect), 2026-11-25 – prompt 0009 a doplňujúci prompt 0009.

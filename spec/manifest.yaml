@@ -116,7 +116,7 @@ supporting:
       role: "metodika SDD"
 
 working:
-  proposed_contracts: "spec/contracts/approved/"
+  proposed_contracts: "spec/contracts/proposed/"
   specification_drafts: "spec/drafts/"
   prompts: "spec/prompts/"
   reports: "reports/"

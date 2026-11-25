@@ -14,6 +14,10 @@ var app = builder.Build();
 await ClientSeeder.InitializeStorageAsync(app.Services);
 
 app.UseMiddleware<CorrelationIdMiddleware>();
+// UI FR1-UI (ADR-010): statická stránka z wwwroot, dostupná bez prihlásenia (DR-0913). Obsluhuje iba existujúce
+// súbory vo wwwroot, preto /api/v1/reservations prejde ďalej bez zmeny (poradie 401/403 BR-012 ostáva).
+app.UseDefaultFiles();
+app.UseStaticFiles();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapReservationEndpoints();
