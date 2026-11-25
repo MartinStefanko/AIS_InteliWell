@@ -1,20 +1,20 @@
-# Contract mapping – PROPOSED (návrh AI, DESIGN_CONTRACT, úloha 0005; predchádzajúca verzia 0.1.0 z úlohy 0003).
+# Contract mapping – PROPOSED (návrh AI, DESIGN_CONTRACT, úloha 0006; predchádzajúce verzie 0.2.0 z úlohy 0005, 0.1.0 z úlohy 0003).
 # Formát podľa SDD_PROJECT_TEMPLATE_v4, kap. 16; rozšírený o mapping odpovedí, typov chýb a poradia BR-012.
-# Všetky IDs sú prevzaté z approved specification 0.3.0 (žiadne nové ID elementu modelu).
-# Nové ID je iba DR-C12 – otázka k tomuto contractu (reports/contract-review-0.2.0.md, časť 7).
+# Všetky IDs sú prevzaté z approved specification 0.3.1 (žiadne nové ID elementu modelu).
+# 0.2.1: zapracovaná DR-C12 (ADR-007 doplnenie) – reports/contract-review-0.2.1.md.
 
 contract:
   id: "API-Reservations"
   file: "spec/contracts/proposed/openapi-reservations.yaml"
-  version: "0.2.0"
-  previous_version: "0.1.0"
+  version: "0.2.1"
+  previous_version: "0.2.0"
   status: "proposed"
-  specification_version: "0.3.0"
+  specification_version: "0.3.1"
   architecture_baseline: "B-01"
   contract_design_profile: "spec/policies/contract-design-profile.yaml"
   approved_by: null
-  resolved_decisions: ["DR-C01", "DR-C02", "DR-C03", "DR-C04", "DR-C05", "DR-C06", "DR-C07", "DR-C08", "DR-C09", "DR-C10", "DR-C11"]
-  open_decisions: ["DR-C12"] # token bez claimu sub – reports/contract-review-0.2.0.md
+  resolved_decisions: ["DR-C01", "DR-C02", "DR-C03", "DR-C04", "DR-C05", "DR-C06", "DR-C07", "DR-C08", "DR-C09", "DR-C10", "DR-C11", "DR-C12"]
+  open_decisions: []
 
 operations:
   - operation_id: "createReservation"
@@ -61,7 +61,7 @@ operations:
       authentication: "JWT bearer (ADR-004)"
       authorization: "claim role = SpravcaNavstev ↔ ROLE-SpravcaNavstev (BR-011, ADR-007 / DR-C01); iná hodnota alebo chýbajúci claim → 403"
       audit: "QR-001 – iba úspešné vytvorenie (DR-26): id rezervácie, createdBy = claim sub (ADR-007 / DR-C02), createdAt"
-      open: "správanie pri platnom tokene bez claimu sub nie je určené – DR-C12"
+      missing_sub: "platný token bez neprázdneho claimu sub = neprihlásená osoba → 401 unauthenticated (ADR-007 doplnenie / DR-C12; BR-011; BR-012 pozícia 1)"
       personal_data: ["note (DR-27, CON-003)"]
     correlation_id:
       header: "X-Correlation-ID"
@@ -118,11 +118,12 @@ operations:
       - status: 401
         problem_type: "urn:intelliwell:problem:unauthenticated"
         title: "osoba nie je prihlásená" # BR-012 pozícia 1
-        rules: ["BR-011", "BR-012"]
+        outcome: "chýbajúci alebo neplatný token, aj platný token bez neprázdneho claimu sub (DR-C12); rezervácia nevznikne"
+        rules: ["BR-011", "BR-012"] # znenie DR-C12 je v approved specification zapísané v BR-010.statement – reports/contract-review-0.2.1.md N-09
         requirements: ["NFR4"]
-        scenarios: ["SC-001-13"]
-        examples: ["SC-001-13"]
-        decisions: ["ADR-004"]
+        scenarios: ["SC-001-13"] # token bez sub nemá scenár v US-001 – N-10
+        examples: ["SC-001-13", "unauthenticated-missing-sub"]
+        decisions: ["ADR-004", "ADR-007", "DR-C12"]
       - status: 403
         problem_type: "urn:intelliwell:problem:forbidden"
         title: "nedostatočné oprávnenie" # BR-012 pozícia 2

@@ -149,7 +149,7 @@ business_rules:
     type: "rule"
     statement: >
       Ak termín nie je dostupný alebo vstup nespĺňa pravidlá, systém rezerváciu neuloží a uvedie
-      pomenovaný dôvod odmietnutia. Iný termín systém neponúka. Token bez neprázdneho claimu sub sa posudzuje ako neprihlásená osoba (401 unauthenticated, DR-C12).
+      pomenovaný dôvod odmietnutia. Iný termín systém neponúka. 
     source: "DR-11."
     reasons_proposed: # znenie navrhla AI; iba „termín obsadený“ je doslovne z rozhodnutia (DR-02)
       - {
@@ -198,7 +198,7 @@ business_rules:
     type: "rule"
     statement: >
       Rezerváciu smie vytvoriť iba prihlásená osoba personálu v role ROLE-SpravcaNavstev.
-      Neprihlásenú osobu ani osobu v inej role systém odmietne a rezerváciu neuloží.
+      Neprihlásenú osobu ani osobu v inej role systém odmietne a rezerváciu neuloží.Token bez neprázdneho claimu sub sa posudzuje ako neprihlásená osoba (401 unauthenticated, DR-C12).
     source: "DR-07; NFR4, CON-002."
     owner: "ACT-Manazer" # DR-21
     requirements: ["FR1", "NFR4"]

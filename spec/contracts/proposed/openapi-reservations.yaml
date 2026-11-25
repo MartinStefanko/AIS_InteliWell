@@ -1,14 +1,14 @@
-# PROPOSED contract – návrh AI v režime DESIGN_CONTRACT (úloha 0005, log spec/prompts/log/0005-2026-11-25-DESIGN_CONTRACT.md).
+# PROPOSED contract – návrh AI v režime DESIGN_CONTRACT (úloha 0006, log spec/prompts/log/0006-2026-11-25-DESIGN_CONTRACT.md).
 # Nie je schválený. Schválenie zaznamenáva iba človek (AGENTS.md kap. 9).
-# Specification baseline 0.3.0 (approved) / architecture baseline B-01; profil spec/policies/contract-design-profile.yaml.
+# Specification baseline 0.3.1 (approved) / architecture baseline B-01; profil spec/policies/contract-design-profile.yaml.
 # Mapping na Requirement, Application Service, Component, scenáre, rules a Data Objects: contract-mapping.yaml.
-# Review a approval checklist: reports/contract-review-0.2.0.md. Predchádzajúca verzia 0.1.0: reports/contract-review-0.1.0.md.
+# Review a approval checklist: reports/contract-review-0.2.1.md. Predchádzajúce verzie: reports/contract-review-0.2.0.md, 0.1.0.md.
 
 openapi: 3.1.0
 
 info:
   title: IntelliWell – Rezervácie (FR1 Vytvorenie rezervácie)
-  version: 0.2.0
+  version: 0.2.1
   summary: HTTP API Služby správy rezervácií a klientov pre vytvorenie rezervácie.
   description: |
     Rozhranie Application Service AS-SpravaRezervaciiAKlientov, ktorú poskytuje
@@ -30,10 +30,10 @@ info:
     - idempotencia: žiadna; vytvorenie rezervácie nie je idempotentné (DR-28).
   x-sdd:
     contract_id: API-Reservations
-    contract_version: 0.2.0
-    previous_version: 0.1.0
+    contract_version: 0.2.1
+    previous_version: 0.2.0
     status: proposed
-    specification_version: 0.3.0
+    specification_version: 0.3.1
     architecture_baseline: B-01
     application_service: AS-SpravaRezervaciiAKlientov
     provided_by_component: AC-ModulRezervaciiAKlientov
@@ -82,7 +82,7 @@ paths:
 
         Poradie dôvodov pri viacerých porušeniach (BR-012, DR-C04, DR-C10). Systém vráti jeden problem
         details pre prvý porušený dôvod v tomto poradí:
-        1. 401 `unauthenticated` – osoba nie je prihlásená (BR-011),
+        1. 401 `unauthenticated` – osoba nie je prihlásená, vrátane tokenu bez neprázdneho claimu `sub` (BR-011, ADR-007 / DR-C12),
         2. 403 `forbidden` – nedostatočné oprávnenie (BR-011),
         3. 400 `invalid-request` – neplatná požiadavka (tvar vstupu vrátane času mimo UTC; NFR1, DR-C03),
         4. 503 `service-unavailable` – služba je dočasne nedostupná (QR-002),
@@ -178,6 +178,9 @@ paths:
               invalid-request-time-offset:
                 summary: Čas s posunom namiesto prípony Z (DR-C03) – bez scenára v US-001
                 value: { clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7, startTime: '2026-12-01T14:00:00+01:00' }
+              unauthenticated-missing-sub:
+                summary: Platný token s rolou SpravcaNavstev, ale bez neprázdneho claimu sub (DR-C12) – bez scenára v US-001
+                value: { clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7, startTime: '2026-12-01T19:00:00Z' }
       responses:
         '201':
           description: |
@@ -268,6 +271,8 @@ paths:
         '401':
           description: |
             Osoba nie je prihlásená: chýba bearer token alebo je neplatný (BR-011, NFR4, ADR-004; BR-012 pozícia 1).
+            Platný bearer token, ktorý nemá neprázdny claim `sub`, sa posudzuje ako požiadavka neprihlásenej osoby
+            a vráti 401 bez ohľadu na claim `role` (ADR-007 doplnenie, DR-C12).
             Rezervácia nevznikne a termín zostane voľný. Scenár SC-001-13. Typ `unauthenticated`.
           headers:
             X-Correlation-ID:
@@ -284,6 +289,13 @@ paths:
               examples:
                 SC-001-13:
                   summary: Požiadavka bez bearer tokenu
+                  value:
+                    type: urn:intelliwell:problem:unauthenticated
+                    title: osoba nie je prihlásená
+                    status: 401
+                    instance: /api/v1/reservations
+                unauthenticated-missing-sub:
+                  summary: Token bez neprázdneho claimu sub (DR-C12) – bez scenára v US-001
                   value:
                     type: urn:intelliwell:problem:unauthenticated
                     title: osoba nie je prihlásená
@@ -436,6 +448,8 @@ components:
         prihlasovací endpoint nie je súčasťou contractu.
         Rola je v claime `role`; hodnota pre ROLE-SpravcaNavstev je `SpravcaNavstev` (ADR-007, DR-C01).
         Identita autora rezervácie pre `createdBy` (QR-001) je claim `sub` (ADR-007, DR-C02).
+        Token bez neprázdneho claimu `sub` sa posudzuje ako neprihlásená osoba → 401 `unauthenticated`
+        (ADR-007 doplnenie, DR-C12; BR-011).
 
   parameters:
     CorrelationId:

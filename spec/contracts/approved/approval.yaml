@@ -1,0 +1,12 @@
+approval:
+  contract_id: "API-Reservations"
+  version: "0.2.1"
+  status: "approved"
+  specification_version: "0.3.1"
+  approved_by: "Martin Štefanko"
+  approved_by_role: "Software architect"
+  approved_on: "2026-11-25"
+  review_report: "reports/contract-review-0.2.1.md"
+  breaking_change: false
+  unresolved_decisions: []
+  known_minor_findings: ["N-01", "N-02", "N-02a", "N-02b", "N-10"]
