@@ -1,0 +1,35 @@
+<!--
+  Contract a acceptance tests pre FR1 / API-Reservations 0.2.1 (úloha 0007, IMPLEMENT_CHANGE).
+  Balíky podľa ADR-008 (Accepted, DR-I01).
+-->
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>IntelliWell.Tests</RootNamespace>
+    <!-- dotnet test cez VSTest (Microsoft.NET.Test.Sdk + xunit.runner.visualstudio, ADR-008); bez Microsoft.Testing.Platform. -->
+    <UseMicrosoftTestingPlatformRunner>false</UseMicrosoftTestingPlatformRunner>
+    <IsTestingPlatformApplication>false</IsTestingPlatformApplication>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.15" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.12.0" />
+    <PackageReference Include="xunit.v3" Version="4.0.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="4.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\IntelliWell\IntelliWell.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+</Project>

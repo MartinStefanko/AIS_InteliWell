@@ -35,7 +35,7 @@ authoritative:
   stories: "spec/stories/" # US-001 (draft, 0002); umiestnenie pozri DR-29
   scenarios: "spec/stories/features/" # US-001.feature (draft, 0002; SC-001-15, SC-001-16 doplnené v 0004)
   decisions: "spec/architecture/decisions/" # ADR-001 – ADR-007 Accepted; šablóna ADR-000
-  approved_contracts: null # spec/contracts/approved/ existuje, zatiaľ prázdny
+  approved_contracts: "spec/contracts/approved/" # spec/contracts/approved/ existuje, zatiaľ prázdny
   traceability: "spec/traceability/traceability.yaml"
   reuse_catalog: "spec/architecture/continuum/reuse-catalog.yaml"
   implementation_context: "spec/architecture/migration/implementation-context.yaml"
@@ -119,6 +119,6 @@ working:
   reports: "reports/"
 
 realization:
-  code: null # src/ zatiaľ neexistuje
+  code: "src/" # src/ zatiaľ neexistuje
   configuration: "config/"
   tests: "tests/"

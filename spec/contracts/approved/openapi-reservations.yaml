@@ -1,5 +1,4 @@
-# PROPOSED contract – návrh AI v režime DESIGN_CONTRACT (úloha 0006, log spec/prompts/log/0006-2026-11-25-DESIGN_CONTRACT.md).
-# Nie je schválený. Schválenie zaznamenáva iba človek (AGENTS.md kap. 9).
+# APPROVED 0.2.1 – pozri approval.yaml
 # Specification baseline 0.3.1 (approved) / architecture baseline B-01; profil spec/policies/contract-design-profile.yaml.
 # Mapping na Requirement, Application Service, Component, scenáre, rules a Data Objects: contract-mapping.yaml.
 # Review a approval checklist: reports/contract-review-0.2.1.md. Predchádzajúce verzie: reports/contract-review-0.2.0.md, 0.1.0.md.

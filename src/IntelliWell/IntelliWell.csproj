@@ -1,0 +1,28 @@
+<!--
+  ART-SoftverIntelliWell – aplikácia ASP.NET Core na .NET 10 (ADR-002, deployment.yaml).
+  V prototype obsahuje iba AC-ModulRezervaciiAKlientov v rozsahu FR1 (API-Reservations 0.2.1, approved).
+  Balíky podľa ADR-008 (Accepted, DR-I01). Candidate code – úloha 0007 (IMPLEMENT_CHANGE).
+-->
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <RootNamespace>IntelliWell</RootNamespace>
+    <!-- Kľúč pre dotnet user-jwts (DR-23, ADR-004); podpisový kľúč je iba v user secrets vývojára. -->
+    <UserSecretsId>intelliwell-fr1-prototyp</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.15" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.15" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Seed dáta klientov (DR-03, DR-I05): iba UUID, bez osobných údajov. -->
+    <None Include="..\..\config\seed-clients.json" Link="seed-clients.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,6 @@
+{
+  "description": "Seed dáta DO-EvidenciaKlientov pre prototyp FR1 (DR-03, DR-30, DR-I05 / ADR-009). Iba systémové UUID klientov, žiadne osobné údaje.",
+  "clients": [
+    "7c9e6679-7425-40de-944b-e07fc1f90ae7"
+  ]
+}

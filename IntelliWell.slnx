@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/IntelliWell/IntelliWell.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/IntelliWell.Tests/IntelliWell.Tests.csproj" />
+  </Folder>
+</Solution>
