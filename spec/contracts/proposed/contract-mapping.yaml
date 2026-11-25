@@ -1,0 +1,129 @@
+# Contract mapping – PROPOSED (návrh AI, DESIGN_CONTRACT, úloha 0003).
+# Formát podľa SDD_PROJECT_TEMPLATE_v4, kap. 16; rozšírený o mapping odpovedí a typov chýb.
+# Všetky IDs sú prevzaté z existujúcich podkladov baseline 0.2.0 (žiadne nové ID elementu modelu).
+# DR-C01 až DR-C08 sú otvorené rozhodnutia k tomuto contractu (reports/contract-review-0.1.0.md).
+
+contract:
+  id: "API-Reservations"
+  file: "spec/contracts/proposed/openapi-reservations.yaml"
+  version: "0.1.0"
+  status: "proposed"
+  specification_version: "0.2.0"
+  architecture_baseline: "B-01"
+  contract_design_profile: "spec/policies/contract-design-profile.yaml"
+  approved_by: null
+  open_decisions: ["DR-C01", "DR-C02", "DR-C03", "DR-C04", "DR-C05", "DR-C06", "DR-C07", "DR-C08"]
+
+operations:
+  - operation_id: "createReservation"
+    method: "POST"
+    path: "/api/v1/reservations"
+    business_reason: >
+      FR1: správca návštev vytvorí rezerváciu pre existujúceho klienta; systém overí dostupnosť termínu,
+      uloží rezerváciu a zablokuje termín (BP-SpravaNavstev-04). Jediná operácia contractu: vyhľadanie
+      klienta (DR-24), sumarizácia (DR-17) ani čítanie rezervácií nemajú v FR1 slice business dôvod.
+    application_service: "AS-SpravaRezervaciiAKlientov"
+    provided_by_component: "AC-ModulRezervaciiAKlientov"
+    business_service: "BS-RezervaciaTerminu"
+    business_process: "BP-SpravaNavstev"
+    business_process_steps: ["BP-SpravaNavstev-01", "BP-SpravaNavstev-02", "BP-SpravaNavstev-04"]
+    actor_role: "ROLE-SpravcaNavstev" # vykonáva ACT-Recepcna
+    use_case: "UC01"
+    user_story: "US-001"
+    requirements: ["FR1", "NFR1", "NFR4", "QR-001"]
+    constraints: ["CON-003"]
+    scenarios: ["SC-001-01", "SC-001-02", "SC-001-03", "SC-001-04", "SC-001-05", "SC-001-06", "SC-001-07",
+                "SC-001-08", "SC-001-09", "SC-001-10", "SC-001-11", "SC-001-12", "SC-001-13", "SC-001-14"]
+    rules: ["BR-001", "BR-002", "BR-003", "BR-004", "BR-005", "BR-006", "BR-007", "BR-008", "BR-009", "BR-010", "BR-011"]
+    invariants: ["BR-003"]
+    data_objects: ["DO-Rezervacie", "DO-EvidenciaKlientov"]
+    data_access:
+      - { data_object: "DO-EvidenciaKlientov", access: "read", reason: "overenie existencie klienta (BR-007)" }
+      - { data_object: "DO-Rezervacie", access: "read", reason: "overenie prekrytia termínu (BR-003)" }
+      - { data_object: "DO-Rezervacie", access: "create", reason: "uloženie rezervácie (BR-002)" }
+    lifecycle_transitions:
+      - { data_object: "DO-Rezervacie", from: null, to: "vytvorena", source: "spec/application/lifecycles.yaml" }
+    decisions: ["ADR-001", "ADR-004", "ADR-005", "ADR-006"]
+    security:
+      authentication: "JWT bearer (ADR-004)"
+      authorization: "claim role = SpravcaNavstev (návrh – DR-C01) ↔ ROLE-SpravcaNavstev (BR-011)"
+      audit: "QR-001 – iba úspešné vytvorenie (DR-26): id rezervácie, createdBy (claim sub – návrh DR-C02), createdAt"
+      personal_data: ["note (DR-27, CON-003)"]
+    idempotent: false # DR-28
+
+    request:
+      schema: "CreateReservationRequest"
+      fields:
+        - { field: "clientId", glossary: "Klient / Evidencia klientov", data_object: "DO-EvidenciaKlientov", rules: ["BR-007"], decisions: ["DR-24", "DR-30"] }
+        - { field: "startTime", glossary: "Termín (začiatok)", data_object: "DO-Rezervacie", rules: ["BR-004", "BR-005", "BR-006"], decisions: ["DR-08", "DR-18"] }
+        - { field: "note", glossary: "Poznámka", data_object: "DO-Rezervacie", rules: ["BR-008"], constraints: ["CON-003"], decisions: ["DR-22", "DR-27"] }
+
+    responses:
+      - status: 201
+        outcome: "rezervácia uložená v stave vytvorena, termín zablokovaný"
+        schema: "Reservation"
+        rules: ["BR-001", "BR-002", "BR-004", "BR-008"]
+        requirements: ["FR1", "QR-001"]
+        scenarios: ["SC-001-01", "SC-001-02", "SC-001-03", "SC-001-14", "SC-001-06 (prvá požiadavka)"]
+      - status: 400
+        problem_type: "urn:intelliwell:problem:invalid-request"
+        title: "neplatná požiadavka"
+        outcome: "požiadavka nemá platný tvar; rezervácia nevznikne"
+        rules: []
+        requirements: ["NFR1"]
+        scenarios: [] # žiadny scenár US-001 netestuje syntakticky neplatný vstup
+        decisions: ["DR-C03"]
+      - status: 401
+        problem_type: "urn:intelliwell:problem:unauthenticated"
+        title: "osoba nie je prihlásená"
+        rules: ["BR-011"]
+        requirements: ["NFR4"]
+        scenarios: ["SC-001-13"]
+      - status: 403
+        problem_type: "urn:intelliwell:problem:forbidden"
+        title: "nedostatočné oprávnenie"
+        rules: ["BR-011"]
+        requirements: ["NFR4"]
+        scenarios: ["SC-001-12"]
+        decisions: ["DR-C01"]
+      - status: 409
+        problem_type: "urn:intelliwell:problem:slot-occupied"
+        title: "termín obsadený" # doslovne DR-02
+        rules: ["BR-003", "BR-009", "BR-010"]
+        requirements: ["FR1"]
+        scenarios: ["SC-001-04", "SC-001-05", "SC-001-06 (druhá požiadavka)"]
+        decisions: ["ADR-001", "DR-28"]
+      - status: 422
+        problem_type: "urn:intelliwell:problem:outside-opening-hours"
+        title: "termín mimo otváracích hodín" # návrh AI (BR-010)
+        rules: ["BR-005", "BR-010"]
+        requirements: ["FR1", "NFR1"]
+        scenarios: ["SC-001-08", "SC-001-09"]
+      - status: 422
+        problem_type: "urn:intelliwell:problem:start-not-in-future"
+        title: "začiatok termínu nie je v budúcnosti" # návrh AI (BR-010)
+        rules: ["BR-006", "BR-010"]
+        requirements: ["FR1", "NFR1"]
+        scenarios: ["SC-001-10"]
+      - status: 422
+        problem_type: "urn:intelliwell:problem:client-not-found"
+        title: "klient neexistuje v evidencii klientov" # návrh AI (BR-010)
+        rules: ["BR-007", "BR-010"]
+        requirements: ["FR1", "NFR1"]
+        scenarios: ["SC-001-07"]
+      - status: 422
+        problem_type: "urn:intelliwell:problem:note-too-long"
+        title: "poznámka je dlhšia ako 500 znakov" # návrh AI (BR-010)
+        rules: ["BR-008", "BR-010"]
+        requirements: ["FR1", "NFR1"]
+        scenarios: ["SC-001-11"]
+        decisions: ["DR-C08"]
+
+    out_of_scope_not_in_contract:
+      - { item: "vyhľadanie klienta", decision: "DR-24" }
+      - { item: "zobrazenie sumarizácie (UI)", decision: "DR-17" }
+      - { item: "priradenie saunového majstra", decision: "DR-10" }
+      - { item: "zrušenie a zmena rezervácie", decision: "DR-04" }
+      - { item: "INT-001 odovzdanie parametrov rezervácie", decision: "DR-25" }
+      - { item: "prihlasovací endpoint / vydávanie tokenov", decision: "DR-23" }
+      - { item: "čítanie rezervácií (GET)", decision: "bez business dôvodu v FR1 slice; preto ani hlavička Location" }

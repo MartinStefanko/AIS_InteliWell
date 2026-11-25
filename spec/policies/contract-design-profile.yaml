@@ -4,7 +4,7 @@
 
 contract_design_profile:
   status: "approved"
-  approved_by: Martin Štefanko (Software architect)"
+  approved_by: "Martin Štefanko (Software architect)"
   reviewed_by: null
   specification_version: "0.2.0"
   interface_style: "HTTP API" # DR-08, ADR-005
