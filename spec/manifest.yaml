@@ -2,11 +2,14 @@
 # Podľa SDD_PROJECT_TEMPLATE_v4, kap. 4.3. Cesty sa počítajú od koreňa repozitára.
 # Manifest je zoznam podkladov, nie schválenie. Stav každého súboru je uvedený v súbore samotnom.
 # Zmeny pre 0.2.0 navrhla AI v úlohe 0002 (baseline 0.2.0 schválil človek).
-# Zmeny pre 0.3.0 navrhla AI v úlohe 0004 (DR-C01 až DR-C11); sú necommitnuté a čakajú na kontrolu človekom.
+# Zmeny pre 0.3.0 navrhla AI v úlohe 0004 (DR-C01 až DR-C11); 0.3.0 a 0.3.1 (DR-C12) schválil človek.
+# 0.4.0 (úloha 0009, PREPARE_SPEC): FR1-UI (zmena DR-17, ADR-010 Proposed), US-002, I-04, odložené nálezy z 0008.
+#   Zmenené súbory sú v stave draft; schválenie zapisuje človek. specification_version v súbore = verzia poslednej
+#   obsahovej zmeny súboru (DR-0903); verzia balíka je iba tu.
 
 specification:
-  version: "0.3.1" # návrh AI v 0004 (PREPARE_SPEC); predchádzajúci baseline 0.2.0
-  status: "approved" # návrh AI v 0004; predchádzajúci baseline 0.2.0 approved
+  version: "0.4.0" # úloha 0009; predchádzajúci baseline 0.3.1 (approved)
+  status: "approved" # 0009; schváli človek
   architecture_baseline: "B-01"
   ai_rules_version: "4.0"
   selected_functionality:
@@ -32,10 +35,10 @@ authoritative:
   technology_context: "spec/technology/technology-context.yaml"
   deployment: "spec/technology/deployment.yaml" # vznikol v 0002 (DR-09)
   contract_design_profile: "spec/policies/contract-design-profile.yaml" # approved v 0.2.0; doplnené DR-C03, C05, C07, C09, C11 v 0004
-  stories: "spec/stories/" # US-001 (draft, 0002); umiestnenie pozri DR-29
-  scenarios: "spec/stories/features/" # US-001.feature (draft, 0002; SC-001-15, SC-001-16 doplnené v 0004)
-  decisions: "spec/architecture/decisions/" # ADR-001 – ADR-007 Accepted; šablóna ADR-000
-  approved_contracts: "spec/contracts/approved/" # spec/contracts/approved/ existuje, zatiaľ prázdny
+  stories: "spec/stories/" # US-001 (0002), US-002 (0009, draft); umiestnenie pozri DR-29
+  scenarios: "spec/stories/features/" # US-001.feature (SC-001-15, SC-001-16 v 0004; SC-001-17 v 0009), US-002.feature (0009, draft)
+  decisions: "spec/architecture/decisions/" # ADR-001 – ADR-009 Accepted; ADR-010 Proposed (0009); šablóna ADR-000
+  approved_contracts: "spec/contracts/approved/" # API-Reservations 0.2.1 (approval.yaml); UI (FR1-UI) je jeho konzument, contract sa v 0.4.0 nemení
   traceability: "spec/traceability/traceability.yaml"
   reuse_catalog: "spec/architecture/continuum/reuse-catalog.yaml"
   implementation_context: "spec/architecture/migration/implementation-context.yaml"
@@ -48,53 +51,53 @@ supporting:
     - path: "spec/architecture/views/B-01-requirements-realization-tobe.png"
       viewpoint: "Requirements Realization"
       model_baseline: "B-01"
-      status: "draft"
-      reviewed_by: null
+      status: "approved"
+      reviewed_by: "Martin Štefanko (Software architect)"
       extracted_from: "docs/sources/AIS_IntelliWell.docx#word/media/image6.png"
       note: "Titulok diagramu nemá označenie TO-BE."
     - path: "spec/architecture/views/B-01-business-process-cooperation-tobe.png"
       viewpoint: "Business Process Cooperation"
       model_baseline: "B-01"
-      status: "draft"
-      reviewed_by: null
+      status: "approved"
+      reviewed_by: "Martin Štefanko (Software architect)"
       extracted_from: "docs/sources/AIS_IntelliWell.docx#word/media/image10.png"
     - path: "spec/architecture/views/B-01-application-cooperation-tobe.png"
       viewpoint: "Application Cooperation"
       model_baseline: "B-01"
-      status: "draft"
-      reviewed_by: null
+      status: "approved"
+      reviewed_by: "Martin Štefanko (Software architect)"
       extracted_from: "docs/sources/AIS_IntelliWell.docx#word/media/image12.png"
     - path: "spec/architecture/views/B-01-application-usage-tobe.png"
       viewpoint: "Application Usage"
       model_baseline: "B-01"
-      status: "draft"
-      reviewed_by: null
+      status: "approved"
+      reviewed_by: "Martin Štefanko (Software architect)"
       extracted_from: "docs/sources/AIS_IntelliWell.docx#word/media/image14.png"
     - path: "spec/architecture/views/B-01-layered-tobe.png"
       viewpoint: "Layered"
       model_baseline: "B-01"
-      status: "draft"
-      reviewed_by: null
+      status: "approved"
+      reviewed_by: "Martin Štefanko (Software architect)"
       extracted_from: "docs/sources/AIS_IntelliWell.docx#word/media/image20.png"
     - path: "spec/architecture/views/B-01-motivation-tobe.png"
       viewpoint: "Motivation"
       model_baseline: "B-01"
-      status: "draft"
-      reviewed_by: null
+      status: "approved"
+      reviewed_by: "Martin Štefanko (Software architect)"
       extracted_from: "docs/sources/AIS_IntelliWell.docx#word/media/image3.png"
       note: "Titulok diagramu nemá označenie TO-BE; view nemá AS-IS variant."
     - path: "spec/architecture/views/B-01-implementation-migration-tobe.png"
       viewpoint: "Implementation and Migration"
       model_baseline: "B-01"
-      status: "draft"
-      reviewed_by: null
+      status: "approved"
+      reviewed_by: "Martin Štefanko (Software architect)"
       extracted_from: "docs/sources/AIS_IntelliWell.docx#word/media/image21.png"
       note: "Titulok diagramu nemá označenie TO-BE; view zobrazuje prechod baseline → cieľ."
     - path: "spec/architecture/views/B-01-organization-tobe.png"
       viewpoint: "Organization"
       model_baseline: "B-01"
-      status: "draft"
-      reviewed_by: null
+      status: "approved"
+      reviewed_by: "Martin Štefanko (Software architect)"
       extracted_from: "docs/sources/AIS_IntelliWell.docx#word/media/image2.png"
       note: "Doplnené nad rámec zadania: jediný view s priradením Recepčná → Správca návštev."
   architecture_context: null # voliteľný ručný súhrn, nie export
@@ -102,8 +105,8 @@ supporting:
   source_documents:
     - path: "docs/sources/AIS_IntelliWell.docx"
       role: "architektonický projekt – jediný obsahový zdroj o IntelliWell"
-      status: "draft"
-      reviewed_by: null
+      status: "approved"
+      reviewed_by: "Martin Štefanko (Software architect)"
       confirmed_as_source_for: "B-01 (DR-16, človek v 0001 – Ľudské rozhodnutie)"
     - path: "docs/sources/SDD_PROJECT_TEMPLATE_v4.pdf"
       role: "šablóna štruktúry a formátov"
@@ -113,12 +116,12 @@ supporting:
       role: "metodika SDD"
 
 working:
-  proposed_contracts: "spec/contracts/proposed/"
+  proposed_contracts: "spec/contracts/approved/"
   specification_drafts: "spec/drafts/"
   prompts: "spec/prompts/"
   reports: "reports/"
 
 realization:
-  code: "src/" # src/ zatiaľ neexistuje
+  code: "src/" # src/IntelliWell (0007); UI v src/IntelliWell/wwwroot (po ADR-010)
   configuration: "config/"
-  tests: "tests/"
+  tests: "tests/" # tests/IntelliWell.Tests (0007)

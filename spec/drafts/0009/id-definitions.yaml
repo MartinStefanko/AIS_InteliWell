@@ -1,0 +1,49 @@
+# NÁVRH AI (PREPARE_SPEC, úloha 0009) – definície IDs, ktoré approved súbory používajú, ale definuje ich iba draft
+# spec/drafts/id-mapping.yaml (V-05, K-10).
+# Nie je schválený. Názvy a typy sú prevzaté z id-mapping.yaml (prečítané z obrázkov B-01, status draft) – AI ich nemení.
+# Človek MUSÍ pred schválením porovnať názov a typ s modelom v Sparx EA (AI má iba obrázky; AGENTS.md kap. 3).
+# Kam zapísať rozhoduje DR-0907. Nižšie je zápis pre odporúčanú možnosť A.
+
+# --- Možnosť A, časť 1: nová sekcia v spec/requirements/requirements.yaml (za meta) ---
+motivation:
+  goals:
+    - id: "G-001"
+      name: "Centralizovať plánovanie služieb"
+      type: "Goal"
+      source: "B-01-motivation-tobe.png, B-01-requirements-realization-tobe.png; docx kap. 4, 8.1"
+      refined_by: ["FR1"]
+      model_confirmed: null # človek: true po porovnaní so Sparx EA
+    - id: "G-002"
+      name: "Zefektívniť prácu recepcie"
+      type: "Goal"
+      source: "B-01-motivation-tobe.png, B-01-requirements-realization-tobe.png; docx kap. 4, 8.1"
+      refined_by: ["NFR1"]
+      model_confirmed: null
+    - id: "G-005"
+      name: "Zabezpečiť dohľad nad kvalitou služieb"
+      type: "Goal"
+      source: "B-01-motivation-tobe.png, B-01-requirements-realization-tobe.png; docx kap. 4, 8.1"
+      refined_by: ["NFR4"]
+      model_confirmed: null
+  outcomes:
+    - id: "OUT-001"
+      name: "Rezervácia uložená so zablokovaným termínom"
+      type: "Outcome"
+      source: "B-01-motivation-tobe.png; docx kap. 4, 7"
+      realizes_goal: "G-001" # traceability.yaml OUT-001 → G-001
+      model_confirmed: null
+
+# --- Možnosť A, časť 2: nová sekcia v spec/application/service-realization.yaml (za meta) ---
+application_services:
+  - id: "AS-SpravaRezervaciiAKlientov"
+    name: "Služba správy rezervácií a klientov"
+    type: "Application Service"
+    source: "B-01-requirements-realization-tobe.png, B-01-application-usage-tobe.png, B-01-layered-tobe.png; docx kap. 8.1, 9.2.2, 11.2"
+    provided_by: "AC-ModulRezervaciiAKlientov"
+    realizes_requirements: ["FR1", "NFR1"] # podľa view aj FR2 (mimo rozsahu)
+    exposed_as: "API-Reservations 0.2.1 (ADR-005)"
+    model_confirmed: null
+
+# --- Následne v spec/drafts/id-mapping.yaml (working, môže upraviť AI po schválení) ---
+# pri týchto 5 položkách doplniť: defined_in: "<súbor podľa DR-0907>", status ostáva "proposed", kým človek
+# nepotvrdí zhodu s modelom.

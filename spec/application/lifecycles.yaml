@@ -3,11 +3,11 @@
 # Docx (docs/sources/AIS_IntelliWell.docx) stavy rezervácie nedefinuje.
 
 meta:
-  status: "approved"
+  status: "approved" # 0009; predtým approved
   approved_by: "Martin Štefanko (Software architect)"
   reviewed_by: "Martin Štefanko (Software architect)"
   architecture_baseline: "B-01"
-  specification_version: "0.2.0"
+  specification_version: "0.3.0" # N-02, DR-0903: api_value created (DR-C11) pribudlo v 0.3.0
 
 lifecycles:
   - data_object: "DO-Rezervacie"

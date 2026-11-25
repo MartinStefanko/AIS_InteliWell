@@ -4,14 +4,14 @@
 # význam potvrdzuje owner ACT-Manazer (DR-21). Doplnené DR-18 až DR-22 a DR-28 (doplňujúci prompt 0002).
 # Časové údaje (10:00, 22:00) sú v časovom pásme Europe/Bratislava (DR-18).
 # 0004 (návrh 0.3.0): BR-008 spresnené podľa DR-C08, nové BR-012 podľa DR-C04 a DR-C10 (contract review 0.1.0).
-# Zmeny čakajú na kontrolu človekom; stav súboru ani položiek AI nemenila (F-03).
+# 0009 (návrh 0.4.0): BR-011 – scenár SC-001-17 (N-10) a oprava medzery (N-11); položka a súbor sú v stave draft.
 
 meta:
-  status: "approved"
+  status: "approved" # 0009; predtým approved
   approved_by: "Martin Štefanko (Software architect)"
   reviewed_by: "Martin Štefanko (Software architect)"
   architecture_baseline: "B-01"
-  specification_version: "0.3.0" # návrh 0004
+  specification_version: "0.4.0" # DR-0903: verzia poslednej zmeny súboru
 
 business_rules:
   - id: "BR-001"
@@ -149,7 +149,7 @@ business_rules:
     type: "rule"
     statement: >
       Ak termín nie je dostupný alebo vstup nespĺňa pravidlá, systém rezerváciu neuloží a uvedie
-      pomenovaný dôvod odmietnutia. Iný termín systém neponúka. 
+      pomenovaný dôvod odmietnutia. Iný termín systém neponúka.
     source: "DR-11."
     reasons_proposed: # znenie navrhla AI; iba „termín obsadený“ je doslovne z rozhodnutia (DR-02)
       - {
@@ -198,13 +198,13 @@ business_rules:
     type: "rule"
     statement: >
       Rezerváciu smie vytvoriť iba prihlásená osoba personálu v role ROLE-SpravcaNavstev.
-      Neprihlásenú osobu ani osobu v inej role systém odmietne a rezerváciu neuloží.Token bez neprázdneho claimu sub sa posudzuje ako neprihlásená osoba (401 unauthenticated, DR-C12).
+      Neprihlásenú osobu ani osobu v inej role systém odmietne a rezerváciu neuloží. Token bez neprázdneho claimu sub sa posudzuje ako neprihlásená osoba (401 unauthenticated, DR-C12).
     source: "DR-07; NFR4, CON-002."
     owner: "ACT-Manazer" # DR-21
     requirements: ["FR1", "NFR4"]
     decisions: ["ADR-004"]
-    scenarios: ["SC-001-12", "SC-001-13"]
-    status: "approved"
+    scenarios: ["SC-001-12", "SC-001-13", "SC-001-17"] # SC-001-17 doplnené v 0009 (N-10)
+    status: "approved" # 0009; predtým approved
 
   - id: "BR-012"
     title: "Pri viacerých porušeniach systém uvedie jeden dôvod podľa pevného poradia"

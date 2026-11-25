@@ -1,13 +1,14 @@
 # Application Structure pre FR1 (draft).
 # Zdroj: docx kap. 9.1.2, 9.2.2, 11.2; views Application Cooperation / Usage / Layered TO-BE.
-# Vlastníctvo dát podľa DR-12 (ADR-006, Accepted). Allowed dependencies nie sú rozhodnuté.
+# Vlastníctvo dát podľa DR-12 (ADR-006, Accepted). Allowed dependencies v rozsahu FR1 podľa DR-0906 (0009).
+# 0009 (návrh 0.4.0): zmenené AC-IntelliWell (hostiteľská časť) a AC-ModulRezervaciiAKlientov; súbor je v stave draft.
 
 meta:
-  status: "approved"
+  status: "approved" # 0009; predtým approved
   approved_by: "Martin Štefanko (Software architect)"
   reviewed_by: "Martin Štefanko (Software architect)"
   architecture_baseline: "B-01"
-  specification_version: "0.2.0"
+  specification_version: "0.4.0" # DR-0903
 
 application_components:
   - id: "AC-IntelliWell"
@@ -24,6 +25,12 @@ application_components:
     access_note: "Vlastníkom DO-Rezervacie a DO-EvidenciaKlientov je modul AC-ModulRezervaciiAKlientov (DR-12, ADR-006)."
     requirements: ["NFR4"]
     decisions: ["ADR-004"]
+    shared_hosting_part: # DR-0906 (0009)
+      responsibility: >
+        Spoločná hostiteľská časť systému: autentifikácia a autorizácia (NFR4, ADR-004, ADR-007), X-Correlation-ID
+        (contract-design-profile.yaml), problem details (ADR-005) a servírovanie statického UI (FR1-UI, ADR-010).
+      code: "src/IntelliWell/Hosting/" # UI: src/IntelliWell/wwwroot/ (IMPLEMENT_CHANGE po ADR-010)
+    status: "approved" # 0009
 
   - id: "AC-ModulRezervaciiAKlientov"
     name: "Modul rezervácií a klientov"
@@ -39,12 +46,20 @@ application_components:
     part_of: "AC-IntelliWell"
     provides_services:
       - "AS-SpravaRezervaciiAKlientov"
-    uses_services: null # nerozhodnuté
+    uses_services: [] # DR-0906: v rozsahu FR1 nepoužíva službu iného Application Componentu
     owns_data_objects: ["DO-Rezervacie", "DO-EvidenciaKlientov"] # DR-12, ADR-006 (Accepted)
-    allowed_dependencies: null # nerozhodnuté – rozhodne človek
+    allowed_dependencies: # DR-0906 (0009) – iba v rozsahu FR1
+      application_components: [] # žiadny iný modul; INT-001, INT-002 sa rozhodnú s požiadavkou, ktorá ich zahŕňa
+      shared_part_of_parent: ["AC-IntelliWell"] # hostiteľská časť (src/IntelliWell/Hosting/)
+      technology_services: ["TS-DatabazovaSluzba", "TS-HostovanieSystemu"]
+    forbidden_in_fr1:
+      - "volanie AC-ModulRiadeniaAMonitorovaniaZariadeni alebo AC-ModulKoordinacieSaunovychMajstrov"
+      - "priamy prístup k údajom iného modulu (Evidencia zásahov)"
     observed_interactions: ["INT-001", "INT-002", "INT-003"] # Application Cooperation View TO-BE; pre FR1 pozri interactions.yaml
-    requirements: ["FR1", "NFR1", "QR-001"] # podľa služby aj FR2 (mimo rozsahu FR1)
-    decisions: ["ADR-001", "ADR-006"]
+    requirements: ["FR1", "FR1-UI", "NFR1", "QR-001"] # podľa služby aj FR2 (mimo rozsahu FR1); FR1-UI – DR-0914
+    decisions: ["ADR-001", "ADR-006", "ADR-010"]
+    application_interfaces: [] # DR-0914: Application Interface pre recepčnú v modeli B-01 chýba (známa medzera)
+    status: "approved" # 0009
 
   - id: "AC-ModulRiadeniaAMonitorovaniaZariadeni"
     name: "Modul riadenia a monitorovania zariadení"

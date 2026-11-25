@@ -51,7 +51,7 @@ ADR-004, NFR4, BR-011, QR-001, ROLE-SpravcaNavstev, AC-ModulRezervaciiAKlientov,
 SC-001-12, DR-C01, DR-C02, API-Reservations 0.1.0 (proposed)
 
 ## Specification baseline
-0.3.0 (draft) / architecture baseline B-01
+0.3.0 / architecture baseline B-01; doplnenie DR-C12 v 0.3.1 (redakčná oprava 0009, N-02b)
 
 ## Doplnenie 2026-11-25 (DR-C12)
 Ak platný bearer token nemá neprázdny claim `sub`, systém posudzuje požiadavku ako od neprihlásenej osoby

@@ -1,6 +1,7 @@
-# status: "approved" | approved_by: "Martin Štefanko (Software architect)" | reviewed_by: "Martin Štefanko (Software architect)"
-# architecture_baseline: B-01 | specification_version: 0.3.0 (návrh) | pripravila AI v PREPARE_SPEC (log 0002, 0004)
+# status: "approved" (0009; predtým approved) | approved_by: "Martin Štefanko (Software architect)" | reviewed_by: "Martin Štefanko (Software architect)"
+# architecture_baseline: B-01 | specification_version: 0.4.0 (DR-0903) | pripravila AI v PREPARE_SPEC (log 0002, 0004, 0009)
 # 0004: doplnené SC-001-15 (QR-002, DR-C06) a SC-001-16 (BR-012, DR-C04).
+# 0009: doplnený SC-001-17 (BR-011, DR-C12, N-10). Contract 0.2.1 a trait testu sa upravia v ďalšej verzii contractu (DR-0908).
 # Časy sú v časovom pásme Europe/Bratislava (DR-18); API ich prenáša v UTC.
 # Znenie dôvodov odmietnutia okrem „termín obsadený“ (DR-02) je návrh AI (BR-010, QR-002).
 
@@ -110,6 +111,13 @@ Feature: Vytvorenie rezervácie
   Scenario: Neprihlásená osoba nemôže vytvoriť rezerváciu
     Given osoba nie je prihlásená do IntelliWell
     When osoba odošle rezerváciu pre klientku „Eva Nováková“ so začiatkom 1. 12. 2026 20:00
+    Then systém rezerváciu neuloží, lebo osoba nie je prihlásená
+    And termín 1. 12. 2026 20:00–21:00 zostane voľný
+
+  @SC-001-17 @FR1 @NFR4 @BR-011 @ADR-007
+  Scenario: Prihlásenie, ktoré neurčuje konkrétnu osobu, sa posudzuje ako neprihlásenie
+    Given osoba má prihlásenie s rolou správcu návštev, ktoré neurčuje, kto je prihlásený
+    When osoba uloží rezerváciu pre klientku „Eva Nováková“ so začiatkom 1. 12. 2026 20:00
     Then systém rezerváciu neuloží, lebo osoba nie je prihlásená
     And termín 1. 12. 2026 20:00–21:00 zostane voľný
 

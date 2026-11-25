@@ -1,19 +1,33 @@
-# Contract mapping – PROPOSED (návrh AI, DESIGN_CONTRACT, úloha 0006; predchádzajúce verzie 0.2.0 z úlohy 0005, 0.1.0 z úlohy 0003).
+# APPROVED 0.2.1 – pozri approval.yaml
 # Formát podľa SDD_PROJECT_TEMPLATE_v4, kap. 16; rozšírený o mapping odpovedí, typov chýb a poradia BR-012.
 # Všetky IDs sú prevzaté z approved specification 0.3.1 (žiadne nové ID elementu modelu).
 # 0.2.1: zapracovaná DR-C12 (ADR-007 doplnenie) – reports/contract-review-0.2.1.md.
 
 contract:
   id: "API-Reservations"
-  file: "spec/contracts/proposed/openapi-reservations.yaml"
+  file: "spec/contracts/approved/openapi-reservations.yaml"
   version: "0.2.1"
   previous_version: "0.2.0"
   status: "approved"
   specification_version: "0.3.1"
   architecture_baseline: "B-01"
   contract_design_profile: "spec/policies/contract-design-profile.yaml"
-  approved_by: null
-  resolved_decisions: ["DR-C01", "DR-C02", "DR-C03", "DR-C04", "DR-C05", "DR-C06", "DR-C07", "DR-C08", "DR-C09", "DR-C10", "DR-C11", "DR-C12"]
+  approved_by: "Martin Štefanko (Software architect)"
+  resolved_decisions:
+    [
+      "DR-C01",
+      "DR-C02",
+      "DR-C03",
+      "DR-C04",
+      "DR-C05",
+      "DR-C06",
+      "DR-C07",
+      "DR-C08",
+      "DR-C09",
+      "DR-C10",
+      "DR-C11",
+      "DR-C12",
+    ]
   open_decisions: []
 
 operations:
@@ -28,23 +42,74 @@ operations:
     provided_by_component: "AC-ModulRezervaciiAKlientov"
     business_service: "BS-RezervaciaTerminu"
     business_process: "BP-SpravaNavstev"
-    business_process_steps: ["BP-SpravaNavstev-01", "BP-SpravaNavstev-02", "BP-SpravaNavstev-04"]
+    business_process_steps:
+      ["BP-SpravaNavstev-01", "BP-SpravaNavstev-02", "BP-SpravaNavstev-04"]
     actor_role: "ROLE-SpravcaNavstev" # vykonáva ACT-Recepcna
     use_case: "UC01"
     user_story: "US-001"
     requirements: ["FR1", "NFR1", "NFR4", "QR-001", "QR-002"]
     constraints: ["CON-003"]
-    scenarios: ["SC-001-01", "SC-001-02", "SC-001-03", "SC-001-04", "SC-001-05", "SC-001-06", "SC-001-07", "SC-001-08",
-                "SC-001-09", "SC-001-10", "SC-001-11", "SC-001-12", "SC-001-13", "SC-001-14", "SC-001-15", "SC-001-16"]
-    rules: ["BR-001", "BR-002", "BR-003", "BR-004", "BR-005", "BR-006", "BR-007", "BR-008", "BR-009", "BR-010", "BR-011", "BR-012"]
+    scenarios:
+      [
+        "SC-001-01",
+        "SC-001-02",
+        "SC-001-03",
+        "SC-001-04",
+        "SC-001-05",
+        "SC-001-06",
+        "SC-001-07",
+        "SC-001-08",
+        "SC-001-09",
+        "SC-001-10",
+        "SC-001-11",
+        "SC-001-12",
+        "SC-001-13",
+        "SC-001-14",
+        "SC-001-15",
+        "SC-001-16",
+      ]
+    rules:
+      [
+        "BR-001",
+        "BR-002",
+        "BR-003",
+        "BR-004",
+        "BR-005",
+        "BR-006",
+        "BR-007",
+        "BR-008",
+        "BR-009",
+        "BR-010",
+        "BR-011",
+        "BR-012",
+      ]
     invariants: ["BR-003"]
     data_objects: ["DO-Rezervacie", "DO-EvidenciaKlientov"]
     data_access:
-      - { data_object: "DO-EvidenciaKlientov", access: "read", reason: "overenie existencie klienta (BR-007)" }
-      - { data_object: "DO-Rezervacie", access: "read", reason: "overenie prekrytia termínu (BR-003)" }
-      - { data_object: "DO-Rezervacie", access: "create", reason: "uloženie rezervácie (BR-002)" }
+      - {
+          data_object: "DO-EvidenciaKlientov",
+          access: "read",
+          reason: "overenie existencie klienta (BR-007)",
+        }
+      - {
+          data_object: "DO-Rezervacie",
+          access: "read",
+          reason: "overenie prekrytia termínu (BR-003)",
+        }
+      - {
+          data_object: "DO-Rezervacie",
+          access: "create",
+          reason: "uloženie rezervácie (BR-002)",
+        }
     lifecycle_transitions:
-      - { data_object: "DO-Rezervacie", from: null, to: "vytvorena", api_value: "created", source: "spec/application/lifecycles.yaml", decisions: ["DR-C11"] }
+      - {
+          data_object: "DO-Rezervacie",
+          from: null,
+          to: "vytvorena",
+          api_value: "created",
+          source: "spec/application/lifecycles.yaml",
+          decisions: ["DR-C11"],
+        }
     decisions: ["ADR-001", "ADR-004", "ADR-005", "ADR-006", "ADR-007"]
     policy_rules_used: # contract-design-profile.yaml (approved)
       - "http.specification (OpenAPI 3.1)"
@@ -73,30 +138,124 @@ operations:
     request:
       schema: "CreateReservationRequest"
       fields:
-        - { field: "clientId", glossary: "Klient / Evidencia klientov", data_object: "DO-EvidenciaKlientov", rules: ["BR-007"], decisions: ["DR-24", "DR-30", "DR-C07"] }
-        - { field: "startTime", glossary: "Termín (začiatok)", data_object: "DO-Rezervacie", rules: ["BR-004", "BR-005", "BR-006"], decisions: ["DR-08", "DR-18", "DR-C03", "DR-C07"] }
-        - { field: "note", glossary: "Poznámka", data_object: "DO-Rezervacie", rules: ["BR-008"], constraints: ["CON-003"], decisions: ["DR-22", "DR-27", "DR-C07", "DR-C08"] }
+        - {
+            field: "clientId",
+            glossary: "Klient / Evidencia klientov",
+            data_object: "DO-EvidenciaKlientov",
+            rules: ["BR-007"],
+            decisions: ["DR-24", "DR-30", "DR-C07"],
+          }
+        - {
+            field: "startTime",
+            glossary: "Termín (začiatok)",
+            data_object: "DO-Rezervacie",
+            rules: ["BR-004", "BR-005", "BR-006"],
+            decisions: ["DR-08", "DR-18", "DR-C03", "DR-C07"],
+          }
+        - {
+            field: "note",
+            glossary: "Poznámka",
+            data_object: "DO-Rezervacie",
+            rules: ["BR-008"],
+            constraints: ["CON-003"],
+            decisions: ["DR-22", "DR-27", "DR-C07", "DR-C08"],
+          }
 
     response_fields: # Reservation (201)
       - { field: "id", glossary: "Rezervácia", data_object: "DO-Rezervacie" }
-      - { field: "clientId", glossary: "Klient", data_object: "DO-Rezervacie", decisions: ["DR-30"] }
-      - { field: "startTime", glossary: "Termín (začiatok)", data_object: "DO-Rezervacie", rules: ["BR-004"] }
-      - { field: "endTime", glossary: "Termín (koniec = začiatok + 60 min)", data_object: "DO-Rezervacie", rules: ["BR-004"], decisions: ["DR-19"] }
-      - { field: "note", glossary: "Poznámka", data_object: "DO-Rezervacie", rules: ["BR-008"], constraints: ["CON-003"] }
-      - { field: "status", glossary: "Rezervácia – stav „vytvorená“", data_object: "DO-Rezervacie", enum: { created: "vytvorena" }, decisions: ["DR-04", "DR-C11"] }
-      - { field: "createdBy", glossary: "Záznam o vytvorení rezervácie (kto)", data_object: "DO-Rezervacie", requirements: ["QR-001"], decisions: ["ADR-007", "DR-C02"] }
-      - { field: "createdAt", glossary: "Záznam o vytvorení rezervácie (kedy)", data_object: "DO-Rezervacie", requirements: ["QR-001"] }
+      - {
+          field: "clientId",
+          glossary: "Klient",
+          data_object: "DO-Rezervacie",
+          decisions: ["DR-30"],
+        }
+      - {
+          field: "startTime",
+          glossary: "Termín (začiatok)",
+          data_object: "DO-Rezervacie",
+          rules: ["BR-004"],
+        }
+      - {
+          field: "endTime",
+          glossary: "Termín (koniec = začiatok + 60 min)",
+          data_object: "DO-Rezervacie",
+          rules: ["BR-004"],
+          decisions: ["DR-19"],
+        }
+      - {
+          field: "note",
+          glossary: "Poznámka",
+          data_object: "DO-Rezervacie",
+          rules: ["BR-008"],
+          constraints: ["CON-003"],
+        }
+      - {
+          field: "status",
+          glossary: "Rezervácia – stav „vytvorená“",
+          data_object: "DO-Rezervacie",
+          enum: { created: "vytvorena" },
+          decisions: ["DR-04", "DR-C11"],
+        }
+      - {
+          field: "createdBy",
+          glossary: "Záznam o vytvorení rezervácie (kto)",
+          data_object: "DO-Rezervacie",
+          requirements: ["QR-001"],
+          decisions: ["ADR-007", "DR-C02"],
+        }
+      - {
+          field: "createdAt",
+          glossary: "Záznam o vytvorení rezervácie (kedy)",
+          data_object: "DO-Rezervacie",
+          requirements: ["QR-001"],
+        }
 
     error_order: # BR-012.order (DR-C04, DR-C10); jedna odpoveď = prvý porušený dôvod
-      - { position: 1, http: 401, problem_type: "urn:intelliwell:problem:unauthenticated" }
-      - { position: 2, http: 403, problem_type: "urn:intelliwell:problem:forbidden" }
-      - { position: 3, http: 400, problem_type: "urn:intelliwell:problem:invalid-request" }
-      - { position: 4, http: 503, problem_type: "urn:intelliwell:problem:service-unavailable" }
-      - { position: 5, http: 422, problem_type: "urn:intelliwell:problem:client-not-found" }
-      - { position: 6, http: 422, problem_type: "urn:intelliwell:problem:start-not-in-future" }
-      - { position: 7, http: 422, problem_type: "urn:intelliwell:problem:outside-opening-hours" }
-      - { position: 8, http: 422, problem_type: "urn:intelliwell:problem:note-too-long" }
-      - { position: 9, http: 409, problem_type: "urn:intelliwell:problem:slot-occupied" }
+      - {
+          position: 1,
+          http: 401,
+          problem_type: "urn:intelliwell:problem:unauthenticated",
+        }
+      - {
+          position: 2,
+          http: 403,
+          problem_type: "urn:intelliwell:problem:forbidden",
+        }
+      - {
+          position: 3,
+          http: 400,
+          problem_type: "urn:intelliwell:problem:invalid-request",
+        }
+      - {
+          position: 4,
+          http: 503,
+          problem_type: "urn:intelliwell:problem:service-unavailable",
+        }
+      - {
+          position: 5,
+          http: 422,
+          problem_type: "urn:intelliwell:problem:client-not-found",
+        }
+      - {
+          position: 6,
+          http: 422,
+          problem_type: "urn:intelliwell:problem:start-not-in-future",
+        }
+      - {
+          position: 7,
+          http: 422,
+          problem_type: "urn:intelliwell:problem:outside-opening-hours",
+        }
+      - {
+          position: 8,
+          http: 422,
+          problem_type: "urn:intelliwell:problem:note-too-long",
+        }
+      - {
+          position: 9,
+          http: 409,
+          problem_type: "urn:intelliwell:problem:slot-occupied",
+        }
 
     responses:
       - status: 201
@@ -104,8 +263,16 @@ operations:
         schema: "Reservation"
         rules: ["BR-001", "BR-002", "BR-004", "BR-008"]
         requirements: ["FR1", "QR-001"]
-        scenarios: ["SC-001-01", "SC-001-02", "SC-001-03", "SC-001-14", "SC-001-06 (prvá požiadavka)"]
-        examples: ["SC-001-01", "SC-001-02", "SC-001-03", "SC-001-06", "SC-001-14"]
+        scenarios:
+          [
+            "SC-001-01",
+            "SC-001-02",
+            "SC-001-03",
+            "SC-001-14",
+            "SC-001-06 (prvá požiadavka)",
+          ]
+        examples:
+          ["SC-001-01", "SC-001-02", "SC-001-03", "SC-001-06", "SC-001-14"]
       - status: 400
         problem_type: "urn:intelliwell:problem:invalid-request"
         title: "neplatná požiadavka" # BR-012 pozícia 3
@@ -186,5 +353,11 @@ operations:
       - { item: "zrušenie a zmena rezervácie", decision: "DR-04" }
       - { item: "INT-001 odovzdanie parametrov rezervácie", decision: "DR-25" }
       - { item: "prihlasovací endpoint / vydávanie tokenov", decision: "DR-23" }
-      - { item: "čítanie rezervácií (GET)", decision: "bez business dôvodu v FR1 slice; preto ani hlavička Location" }
-      - { item: "hlavička Retry-After pri 503", decision: "QR-002 ju neurčuje (measure: null); contract ju nezavádza" }
+      - {
+          item: "čítanie rezervácií (GET)",
+          decision: "bez business dôvodu v FR1 slice; preto ani hlavička Location",
+        }
+      - {
+          item: "hlavička Retry-After pri 503",
+          decision: "QR-002 ju neurčuje (measure: null); contract ju nezavádza",
+        }

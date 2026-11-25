@@ -1,10 +1,10 @@
 # Glossary – IntelliWell (FR1 Vytvorenie rezervácie)
 
-- status: "approved"
+- status: "approved" (0009; predtým approved)
 - approved_by: "Martin Štefanko (Software architect)"
 - reviewed_by: "Martin Štefanko (Software architect)"
 - architecture_baseline: "B-01"
-- specification_version: "0.3.0" (návrh 0004)
+- specification_version: "0.4.0" (DR-0903; zmena DR-17 a nový pojem v 0009)
 - zdroj: `docs/sources/AIS_IntelliWell.docx` (ďalej „docx“) a ľudské rozhodnutia DR-01 až DR-17 (`spec/drafts/open-decisions.md`, log 0002); IDs sú navrhnuté v `spec/drafts/id-mapping.yaml` (status proposed)
 
 Definície sú prevzaté alebo zhrnuté z textu docx alebo z ľudských rozhodnutí (uvedené ako DR-xx). Kde pojem nie je určený, je to uvedené ako otvorená otázka.
@@ -172,7 +172,16 @@ nedostupná“ (znenie návrh AI) a uloženie automaticky neopakuje (DR-C06).
 
 Prehľad, ktorý IntelliWell zobrazí pri vytváraní rezervácie pred overením dostupnosti (docx kap. 5, kap. 15.2 ako „Sumarizácia rezervácie (UC01)“).
 
-- Sumarizácia je súčasť UI, nie contractu. UI nie je v rozsahu prototypu (DR-17).
+- Sumarizácia je súčasť UI, nie contractu, a nie je v rozsahu prototypu (DR-17). Jednoduché UI na vytvorenie rezervácie je v rozsahu (FR1-UI, ADR-010; zmena DR-17 v 0009).
+
+## Rozhranie na vytvorenie rezervácie
+
+Jednoduché používateľské rozhranie IntelliWell, v ktorom správca návštev vytvorí rezerváciu: vloží prihlasovací token, zadá identifikátor klienta, začiatok termínu v miestnom čase Europe/Bratislava a voliteľnú poznámku (prompt 0009, ADR-010).
+
+- IDs: FR1-UI, US-002, ADR-010
+- status: "approved" (0009).
+- Model B-01 nemá Application Interface pre recepčnú – známa medzera modelu (DR-0914). Rozhranie sa zatiaľ viaže na AC-ModulRezervaciiAKlientov a AS-SpravaRezervaciiAKlientov.
+- Miestny čas = čas v Europe/Bratislava; rozhranie ho prepočíta na UTC (DR-18, DR-0911).
 
 ## Evidencia klientov
 

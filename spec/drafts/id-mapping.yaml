@@ -32,12 +32,14 @@ id_mapping:
       views: ["B-01-motivation-tobe.png", "B-01-requirements-realization-tobe.png"]
       source_text: "kap. 4, 8.1"
       status: "proposed"
+      defined_in: "spec/requirements/requirements.yaml#motivation" # DR-0907 (0009); zhoda s modelom neoverená
     - id: "G-002"
       name: "Zefektívniť prácu recepcie"
       type: "Goal"
       views: ["B-01-motivation-tobe.png", "B-01-requirements-realization-tobe.png"]
       source_text: "kap. 4, 8.1"
       status: "proposed"
+      defined_in: "spec/requirements/requirements.yaml#motivation" # DR-0907 (0009); zhoda s modelom neoverená
       note: "Relevantný pre NFR1 (NFR1 realizuje tento cieľ)."
     - id: "G-005"
       name: "Zabezpečiť dohľad nad kvalitou služieb"
@@ -45,6 +47,7 @@ id_mapping:
       views: ["B-01-motivation-tobe.png", "B-01-requirements-realization-tobe.png"]
       source_text: "kap. 4, 8.1"
       status: "proposed"
+      defined_in: "spec/requirements/requirements.yaml#motivation" # DR-0907 (0009); zhoda s modelom neoverená
       note: "Relevantný pre NFR4. Čísla G-003, G-004, G-006, G-007 sú rezervované pre ostatné ciele (mimo FR1)."
     - id: "OUT-001"
       name: "Rezervácia uložená so zablokovaným termínom"
@@ -52,6 +55,7 @@ id_mapping:
       views: ["B-01-motivation-tobe.png"]
       source_text: "kap. 4, 7"
       status: "proposed"
+      defined_in: "spec/requirements/requirements.yaml#motivation" # DR-0907 (0009); zhoda s modelom neoverená
     - id: "DRV-001"
       name: "Požiadavky klientov z viacerých kanálov"
       type: "Driver"
@@ -177,6 +181,7 @@ id_mapping:
       views: ["B-01-requirements-realization-tobe.png", "B-01-application-usage-tobe.png", "B-01-layered-tobe.png"]
       source_text: "kap. 8.1, 9.2.2, 11.2"
       status: "proposed"
+      defined_in: "spec/application/service-realization.yaml#application_services" # DR-0907 (0009); zhoda s modelom neoverená
     - id: "AC-IntelliWell"
       name: "IntelliWell"
       type: "Application Component"
@@ -332,3 +337,11 @@ id_mapping:
     - { id: "QR-002", name: "Správanie pri nedostupnom úložisku rezervácií", type: "Quality requirement", views: [], source_text: "DR-C06", status: "proposed" }
     - { id: "SC-001-15..SC-001-16", name: "Scenáre US-001: nedostupná evidencia rezervácií; viac porušení naraz", type: "Scenario", views: [], source_text: "QR-002, BR-012", status: "proposed" }
     - { id: "ADR-007", name: "Hodnota claimu roly a identita autora rezervácie v JWT", type: "ADR (Accepted)", views: [], source_text: "DR-C01, DR-C02, log 0004", status: "proposed" }
+
+    # --- Doplnené v 0009 (PREPARE_SPEC, návrh 0.4.0) – FR1-UI (zmena DR-17), N-10 ---
+    # Nie sú to prvky modelu v Sparx EA. Application Interface pre recepčnú v B-01 chýba – ID sa nenavrhuje (DR-0914).
+    - { id: "FR1-UI", name: "Vytvorenie rezervácie cez používateľské rozhranie", type: "Requirement (functional)", views: [], source_text: "prompt 0009", status: "proposed", note: "Rad FR1–FR6 patrí docx, preto nie FR7." }
+    - { id: "US-002", name: "Vytvorenie rezervácie cez používateľské rozhranie", type: "User story", views: [], source_text: "FR1-UI", status: "proposed" }
+    - { id: "SC-002-01..SC-002-10", name: "Scenáre US-002 (spec/stories/features/US-002.feature)", type: "Scenario", views: [], source_text: "FR1-UI, DR-0910 – DR-0913", status: "proposed" }
+    - { id: "SC-001-17", name: "Prihlásenie, ktoré neurčuje konkrétnu osobu, sa posudzuje ako neprihlásenie", type: "Scenario", views: [], source_text: "BR-011, DR-C12 (N-10)", status: "proposed" }
+    - { id: "ADR-008..ADR-010", name: "Knižnice prototypu; BR-003 nad SQLite; jednoduché UI prototypu", type: "ADR (008, 009 Accepted; 010 Proposed)", views: [], source_text: "log 0007, 0009", status: "proposed" }

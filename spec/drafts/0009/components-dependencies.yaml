@@ -1,0 +1,48 @@
+# NÁVRH AI (PREPARE_SPEC, úloha 0009) – doplnenie allowed_dependencies a uses_services v spec/application/components.yaml.
+# Nie je schválený. Allowed dependencies sú architektonické rozhodnutie človeka (AGENTS.md kap. 5) – preto DR-0906.
+# Tento súbor ukazuje obe možnosti, aby bolo vidieť presný zápis. AI nič nepredpokladá ako rozhodnuté.
+#
+# Podklady:
+# - B-01-application-cooperation-tobe.png (status draft): INT-001 (Rezervácie → Riadenie zariadení),
+#   INT-002 (Rezervácie → Koordinácia), INT-003 (Koordinácia → Rezervácie). Typ väzby nie je určený (id-mapping: type null).
+# - interactions.yaml: INT-001 – INT-003 relevance_for_fr1: false (DR-25, DR-10).
+# - verification-0008 K-20, K-21, K-23: kód FR1 nevolá iný Application Component; používa iba SQLite (TS-DatabazovaSluzba)
+#   a runtime (TS-HostovanieSystemu); hostiteľská časť je v src/IntelliWell/Hosting/.
+# - traceability.yaml: NFR4 → AC-IntelliWell (autentifikáciu realizuje celý systém).
+
+option_A_fr1_scope_only: # odporúčanie AI
+  AC-ModulRezervaciiAKlientov:
+    uses_services: [] # v rozsahu FR1 nepoužíva službu iného Application Componentu
+    allowed_dependencies:
+      application_components: [] # v rozsahu FR1 žiadna; INT-001, INT-002 sa rozhodnú pri požiadavke, ktorá ich zahŕňa
+      shared_part_of_parent:
+        - component: "AC-IntelliWell"
+          scope: "spoločná hostiteľská časť: autentifikácia a autorizácia (NFR4, ADR-004, ADR-007), X-Correlation-ID, problem details"
+          code: "src/IntelliWell/Hosting/"
+      technology_services: ["TS-DatabazovaSluzba", "TS-HostovanieSystemu"]
+      data_objects_owned: ["DO-Rezervacie", "DO-EvidenciaKlientov"] # ADR-006 – bez zmeny
+    forbidden_for_fr1:
+      - "priamy prístup k údajom iného modulu (Evidencia zásahov)"
+      - "volanie AC-ModulRiadeniaAMonitorovaniaZariadeni alebo AC-ModulKoordinacieSaunovychMajstrov"
+    decision: "DR-0906"
+  AC-ModulRiadeniaAMonitorovaniaZariadeni: { allowed_dependencies: null } # mimo FR1, nerozhoduje sa
+  AC-ModulKoordinacieSaunovychMajstrov: { allowed_dependencies: null }    # mimo FR1, nerozhoduje sa
+
+option_B_target_architecture:
+  AC-ModulRezervaciiAKlientov:
+    uses_services: null # služby ostatných modulov nemajú ID v podkladoch
+    allowed_dependencies:
+      application_components:
+        - { component: "AC-ModulRiadeniaAMonitorovaniaZariadeni", via: "INT-001", direction: "outgoing", style: null } # štýl nerozhodnutý
+        - { component: "AC-ModulKoordinacieSaunovychMajstrov", via: "INT-002", direction: "outgoing", style: null }
+      shared_part_of_parent:
+        - component: "AC-IntelliWell"
+          scope: "spoločná hostiteľská časť (ako v možnosti A)"
+      technology_services: ["TS-DatabazovaSluzba", "TS-HostovanieSystemu"]
+    note: "INT-003 je závislosť AC-ModulKoordinacieSaunovychMajstrov na tomto module (incoming)."
+    used_in_fr1: [] # FR1 žiadnu z väzieb INT-* nepoužíva
+    decision: "DR-0906"
+
+header_comment_change:
+  - old: "# Vlastníctvo dát podľa DR-12 (ADR-006, Accepted). Allowed dependencies nie sú rozhodnuté."
+    new: "# Vlastníctvo dát podľa DR-12 (ADR-006, Accepted). Allowed dependencies podľa DR-0906 (0009)."

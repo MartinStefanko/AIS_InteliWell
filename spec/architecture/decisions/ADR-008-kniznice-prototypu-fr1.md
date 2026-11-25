@@ -1,7 +1,7 @@
 # ADR-008 Knižnice (NuGet balíky) prototypu FR1
 
-> Draft pripravený AI v režime IMPLEMENT_CHANGE (úloha 0007, fáza 1 – plán). Toto nie je rozhodnutie.
-> Stav mení iba človek.
+> Draft pripravila AI v režime IMPLEMENT_CHANGE (úloha 0007, fáza 1 – plán). Rozhodnutie zapísal človek
+> v sekcii „Doplnenie 2026-11-25“ (Martin Štefanko, Software architect). Redakčná úprava hlavičky: 0009 (V-04).
 
 ## Status
 Accepted

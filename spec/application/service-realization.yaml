@@ -1,11 +1,27 @@
 # Application Usage a Service Realization pre FR1 (draft).
 # Zdroj: Layered View TO-BE, Application Usage View TO-BE, Requirements Realization View; docx kap. 8.1, 9.2.2, 11.2.
+# 0009 (návrh 0.4.0): sekcia application_services – definícia AS-SpravaRezervaciiAKlientov (DR-0907); súbor je v stave draft.
 
 meta:
-  status: "approved"
+  status: "approved" # 0009; predtým approved
   approved_by: "Martin Štefanko (Software architect)"
   reviewed_by: "Martin Štefanko (Software architect)"
   architecture_baseline: "B-01"
+  specification_version: "0.4.0" # DR-0903; pole doplnené v 0009
+
+# Definícia Application Service (DR-0907). Názov z B-01 views (status draft) cez spec/drafts/id-mapping.yaml;
+# zhodu s modelom v Sparx EA AI neoverila.
+application_services:
+  - id: "AS-SpravaRezervaciiAKlientov"
+    name: "Služba správy rezervácií a klientov"
+    type: "Application Service"
+    source: "B-01-requirements-realization-tobe.png, B-01-application-usage-tobe.png, B-01-layered-tobe.png; docx kap. 8.1, 9.2.2, 11.2"
+    provided_by: "AC-ModulRezervaciiAKlientov"
+    realizes_requirements: ["FR1", "NFR1"] # podľa view aj FR2 (mimo rozsahu)
+    exposed_as: "API-Reservations 0.2.1 (ADR-005)"
+    consumed_by: ["FR1-UI (statická stránka, ADR-010)"] # DR-0914: bez Application Interface v modeli
+    model_confirmed: null
+    status: "approved"
 
 service_realization:
   - business_service: "BS-RezervaciaTerminu"

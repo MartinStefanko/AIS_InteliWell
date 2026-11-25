@@ -1,14 +1,16 @@
 # Traceability pre FR1 (draft).
 # Stopy vychádzajú z views B-01 (draft, extrahované z docx), textu docx a ľudských rozhodnutí DR-01 až DR-17 (log 0002).
-# IDs okrem FR1/NFR1/NFR4 sú navrhnuté (spec/drafts/id-mapping.yaml). Typy väzieb neboli overené v Sparx EA.
+# IDs okrem FR1/NFR1/NFR4 sú navrhnuté (spec/drafts/id-mapping.yaml); definície G-001, G-002, G-005, OUT-001 sú
+# v requirements.yaml a AS-SpravaRezervaciiAKlientov v service-realization.yaml (DR-0907). Typy väzieb neboli overené v Sparx EA.
 # 0004 (návrh 0.3.0): doplnené stopy pre DR-C01 až DR-C11 (ADR-007, BR-012, QR-002, SC-001-15, SC-001-16, profil).
+# 0009 (návrh 0.4.0): stopy FR1 → approved contract 0.2.1 → kód → testy (K-17), FR1-UI, SC-001-17; súbor je v stave draft.
 
 meta:
-  status: "approved"
+  status: "approved" # 0009; predtým approved
   approved_by: "Martin Štefanko (Software architect)"
   reviewed_by: "Martin Štefanko (Software architect)"
   architecture_baseline: "B-01"
-  specification_version: "0.3.0" # návrh 0004
+  specification_version: "0.4.0" # DR-0903
 
 traces:
   # --- Motivation → Requirement ---
@@ -465,8 +467,239 @@ traces:
       evidence: "doplňujúci prompt 0004",
     }
 
-missing_links:
-  - "FR1 → approved contract (proposed API-Reservations 0.1.0 ešte nezohľadňuje DR-C03 – DR-C08 v plnom rozsahu; úprava v 0005)"
-  - "FR1 → tests (IMPLEMENT_CHANGE)"
+  # --- 0009: realizácia FR1 (K-17) a FR1-UI ---
+  # --- Application → Contract (approved) ---
+  - from: "AS-SpravaRezervaciiAKlientov"
+    to: "API-Reservations 0.2.1 createReservation"
+    meaning: "Aplikačná služba je sprístupnená operáciou POST /api/v1/reservations (ADR-005)."
+    evidence: "spec/contracts/approved/approval.yaml; spec/contracts/approved/contract-mapping.yaml"
+  - from: "FR1"
+    to: "API-Reservations 0.2.1 createReservation"
+    meaning: "FR1 realizuje approved contract (spolu s NFR1, NFR4, QR-001, QR-002)."
+    evidence: "spec/contracts/approved/contract-mapping.yaml (requirements)"
+
+  # --- Contract → Code ---
+  - from: "API-Reservations 0.2.1 createReservation"
+    to: "src/IntelliWell/ModulRezervaciiAKlientov/ReservationEndpoints.cs"
+    meaning: "Endpoint operácie createReservation; createdBy = claim sub (ADR-007)."
+    evidence: "reports/verification-0008.md K-15, K-24, K-30"
+  - from: "API-Reservations 0.2.1 createReservation"
+    to: "src/IntelliWell/ModulRezervaciiAKlientov/CreateReservationService.cs"
+    meaning: "Overenie pravidiel v poradí BR-012 (pozície 4–9) a uloženie rezervácie."
+    evidence: "reports/verification-0008.md K-15, K-29"
+  - from: "NFR1"
+    to: "src/IntelliWell/ModulRezervaciiAKlientov/CreateReservationRequestParser.cs"
+    meaning: "Kontrola tvaru vstupu → 400 invalid-request (BR-012 pozícia 3, DR-C03); obmedzenie presnosti času DR-V02 = C."
+    evidence: "reports/verification-0008.md K-25, K-26"
+  - from: "BR-004"
+    to: "src/IntelliWell/ModulRezervaciiAKlientov/ReservationRules.cs"
+    meaning: "Pravidlá termínu BR-004, BR-005, BR-006, BR-008 a prepočet Europe/Bratislava (DR-18)."
+    evidence: "reports/verification-0008.md K-29, K-36"
+  - from: "BR-003"
+    to: "src/IntelliWell/ModulRezervaciiAKlientov/ReservationStore.cs"
+    meaning: "Invariant neprekrývania a súbeh (BR-009) v transakcii BEGIN IMMEDIATE; audit QR-001; 503 pri SqliteException (QR-002)."
+    evidence: "ADR-009; reports/verification-0008.md K-33, K-34, K-39, K-50"
+  - from: "BR-007"
+    to: "src/IntelliWell/ModulRezervaciiAKlientov/ClientSeeder.cs"
+    meaning: "Seed evidencie klientov prototypu (DR-03, DR-I05)."
+    evidence: "config/seed-clients.json; reports/verification-0008.md K-22, K-50"
+  - from: "NFR4"
+    to: "src/IntelliWell/Hosting/Authentication.cs"
+    meaning: "JWT bearer, claim role SpravcaNavstev, token bez neprázdneho sub → 401 (BR-011, ADR-004, ADR-007, DR-C12)."
+    evidence: "reports/verification-0008.md K-19, K-30"
+  - from: "ADR-005"
+    to: "src/IntelliWell/Hosting/CorrelationId.cs"
+    meaning: "X-Correlation-ID podľa contract-design-profile.yaml (DR-C05, DR-C09)."
+    evidence: "reports/verification-0008.md K-31"
+  - from: "BR-010"
+    to: "src/IntelliWell/Hosting/Problems.cs"
+    meaning: "Pomenované dôvody odmietnutia ako problem details (RFC 9457, DR-C07)."
+    evidence: "reports/verification-0008.md K-28"
+  - from: "CON-003"
+    to: "src/IntelliWell/ModulRezervaciiAKlientov/CreateReservationService.cs"
+    meaning: "Log obsahuje iba ID rezervácie a typ výnimky, nie poznámku."
+    evidence: "reports/verification-0008.md K-41"
+
+  # --- Scenario → Test (acceptance, trait Scenario) ---
+  # Súbor: tests/IntelliWell.Tests/Acceptance/CreateReservationScenarios.cs
+  - {
+      from: "SC-001-01",
+      to: "CreateReservationScenarios.SC_001_01_SpravcaNavstevVytvoriRezervaciuNaVolnyTermin",
+      meaning: "Acceptance test scenára.",
+      evidence: "verification-0008 časť 5 – PASS",
+    }
+  - {
+      from: "SC-001-02",
+      to: "CreateReservationScenarios.SC_001_02_RezervaciaBezPoznamkySaUlozi",
+      meaning: "Acceptance test scenára.",
+      evidence: "verification-0008 časť 5 – PASS",
+    }
+  - {
+      from: "SC-001-03",
+      to: "CreateReservationScenarios.SC_001_03_TerminKonciaciPresnePriZatvoreniSaUlozi",
+      meaning: "Acceptance test scenára.",
+      evidence: "verification-0008 časť 5 – PASS",
+    }
+  - {
+      from: "SC-001-04",
+      to: "CreateReservationScenarios.SC_001_04_RezervaciaNaObsadenyTerminJeOdmietnuta",
+      meaning: "Acceptance test scenára.",
+      evidence: "verification-0008 časť 5 – PASS",
+    }
+  - {
+      from: "SC-001-05",
+      to: "CreateReservationScenarios.SC_001_05_RezervaciaNaCiastocnePrekryvajuciSaTerminJeOdmietnuta",
+      meaning: "Acceptance test scenára.",
+      evidence: "verification-0008 časť 5 – PASS",
+    }
+  - {
+      from: "SC-001-06",
+      to: "CreateReservationScenarios.SC_001_06_PriSubehuSaUloziIbaPrvaRezervacia",
+      meaning: "Acceptance test scenára.",
+      evidence: "verification-0008 časť 5 – PASS",
+    }
+  - {
+      from: "SC-001-07",
+      to: "CreateReservationScenarios.SC_001_07_RezervaciaPreKlientaMimoEvidencieJeOdmietnuta",
+      meaning: "Acceptance test scenára.",
+      evidence: "verification-0008 časť 5 – PASS",
+    }
+  - {
+      from: "SC-001-08",
+      to: "CreateReservationScenarios.SC_001_08_TerminPresahujuciZatvaraciuHodinuJeOdmietnuty",
+      meaning: "Acceptance test scenára.",
+      evidence: "verification-0008 časť 5 – PASS",
+    }
+  - {
+      from: "SC-001-09",
+      to: "CreateReservationScenarios.SC_001_09_TerminZacinajuciPredOtvorenimJeOdmietnuty",
+      meaning: "Acceptance test scenára.",
+      evidence: "verification-0008 časť 5 – PASS",
+    }
+  - {
+      from: "SC-001-10",
+      to: "CreateReservationScenarios.SC_001_10_TerminSoZaciatkomVMinulostiJeOdmietnuty",
+      meaning: "Acceptance test scenára.",
+      evidence: "verification-0008 časť 5 – PASS",
+    }
+  - {
+      from: "SC-001-11",
+      to: "CreateReservationScenarios.SC_001_11_PrilisDlhaPoznamkaJeOdmietnuta",
+      meaning: "Acceptance test scenára.",
+      evidence: "verification-0008 časť 5 – PASS",
+    }
+  - {
+      from: "SC-001-12",
+      to: "CreateReservationScenarios.SC_001_12_OsobaBezRolySpravcuNavstevNemozeVytvoritRezervaciu",
+      meaning: "Acceptance test scenára.",
+      evidence: "verification-0008 časť 5 – PASS",
+    }
+  - {
+      from: "SC-001-13",
+      to: "CreateReservationScenarios.SC_001_13_NeprihlasenaOsobaNemozeVytvoritRezervaciu",
+      meaning: "Acceptance test scenára.",
+      evidence: "verification-0008 časť 5 – PASS",
+    }
+  - {
+      from: "SC-001-14",
+      to: "CreateReservationScenarios.SC_001_14_RezervaciaNadvazujucaNaKoniecPredchadzajucejSaUlozi",
+      meaning: "Acceptance test scenára.",
+      evidence: "verification-0008 časť 5 – PASS",
+    }
+  - {
+      from: "SC-001-15",
+      to: "CreateReservationScenarios.SC_001_15_PriNedostupnejEvidenciiRezervaciiSaRezervaciaNeulozi",
+      meaning: "Acceptance test scenára.",
+      evidence: "verification-0008 časť 5 – PASS",
+    }
+  - {
+      from: "SC-001-16",
+      to: "CreateReservationScenarios.SC_001_16_PriViacerychPoruseniachSystemUvedieIbaPrvyDovod",
+      meaning: "Acceptance test scenára.",
+      evidence: "verification-0008 časť 5 – PASS",
+    }
+
+  # --- Contract → Test (contract tests, trait Contract = "API-Reservations 0.2.1") ---
+  # Súbor: tests/IntelliWell.Tests/Contract/CreateReservationContractTests.cs
+  - from: "API-Reservations 0.2.1 createReservation"
+    to: "tests/IntelliWell.Tests/Contract/CreateReservationContractTests.cs"
+    meaning: "36 contract testov: tvar vstupu a výstupu, poradie BR-012, 401/403/503, DR-28, DR-C08, X-Correlation-ID, CON-003."
+    evidence: "reports/implementation-0007.md časť 4; verification-0008 Q-03"
+  - from: "DR-C03"
+    to: "CreateReservationContractTests.InvalidRequestTimeOffset_CasSPosunomNamiestoZ_Vrati400"
+    meaning: "Pomenovaný príklad contractu invalid-request-time-offset (bez scenára – formát vstupu, nie business pravidlo)."
+    evidence: "verification-0008 K-37 – PASS"
+
+  # --- N-10: SC-001-17 (0009); trait Scenario v teste sa doplní s ďalšou verziou contractu (DR-0908) ---
+  - from: "NFR4"
+    to: "SC-001-17"
+    meaning: "Negatívny scenár: prihlásenie bez určenej totožnosti → osoba sa posudzuje ako neprihlásená (BR-011, DR-C12)."
+    evidence: "US-001.feature; ADR-007 doplnenie"
+  - from: "SC-001-17"
+    to: "CreateReservationContractTests.UnauthenticatedMissingSub_PlatnyTokenSRolouBezNeprazdnehoSub_Vrati401"
+    meaning: "Scenár overuje existujúci contract test pomenovaného príkladu unauthenticated-missing-sub (2 varianty)."
+    evidence: "verification-0008 K-37 – PASS; test zatiaľ nemá trait Scenario (DR-0908: v ďalšej verzii contractu)"
+
+  # --- FR1-UI (draft 0009, change experiment bod E) ---
+  - {
+      from: "FR1",
+      to: "FR1-UI",
+      meaning: "UI je spôsob, akým recepčná vykoná FR1 v prototype.",
+      evidence: "prompt 0009; ADR-010 (Proposed)",
+    }
+  - {
+      from: "ROLE-SpravcaNavstev",
+      to: "FR1-UI",
+      meaning: "UI používa iba správca návštev (BR-011).",
+      evidence: "prompt 0009",
+    }
+  - {
+      from: "FR1-UI",
+      to: "AS-SpravaRezervaciiAKlientov",
+      meaning: "UI je konzument služby cez API-Reservations 0.2.1.",
+      evidence: "prompt 0009; contract bez zmeny",
+    }
+  - {
+      from: "FR1-UI",
+      to: "ART-SoftverIntelliWell",
+      meaning: "UI je súčasť artifactu (wwwroot).",
+      evidence: "prompt 0009; spec/technology/deployment.yaml",
+    }
+  - {
+      from: "FR1-UI",
+      to: "ADR-010",
+      meaning: "Technológia UI a zmena DR-17.",
+      evidence: "ADR-010 (Proposed)",
+    }
+  - {
+      from: "FR1-UI",
+      to: "US-002",
+      meaning: "User story UI.",
+      evidence: "spec/stories/US-002.md",
+    }
+  - {
+      from: "FR1-UI",
+      to: "SC-002-01..SC-002-10",
+      meaning: "Scenáre UI (úspech, prepočet času, hlášky, QR-002, CON-003, neexistujúci/dvojznačný čas, server neodpovedá).",
+      evidence: "spec/stories/features/US-002.feature",
+    }
+  # FR1-UI → Application Interface: známa medzera modelu B-01 (DR-0914). FR1-UI → code/tests: vznikne v IMPLEMENT_CHANGE.
+  - {
+      from: "FR1-UI",
+      to: "AC-ModulRezervaciiAKlientov",
+      meaning: "Dočasná väzba namiesto chýbajúceho Application Interface.",
+      evidence: "DR-0914",
+    }
+  - {
+      from: "AC-IntelliWell",
+      to: "src/IntelliWell/Hosting/",
+      meaning: "Hostiteľská časť patrí AC-IntelliWell.",
+      evidence: "DR-0906",
+    }
+
+missing_links: # 0009: odstránené „FR1 → approved contract“ (V-06) a „FR1 → tests“ (K-17)
   - "QR-001 → Goal (nerozhodnuté)"
   - "QR-002 → Goal (nerozhodnuté)"
+  - "FR1-UI → Application Interface (známa medzera modelu B-01, DR-0914)"
+  - "FR1-UI → code, tests (IMPLEMENT_CHANGE po ADR-010)"
+  - "SC-001-17 → trait Scenario v teste (ďalšia verzia contractu, DR-0908)"

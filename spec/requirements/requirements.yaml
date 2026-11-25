@@ -4,13 +4,50 @@
 # (spec/drafts/open-decisions.md, log spec/prompts/log/0002-2026-11-25-PREPARE_SPEC.md).
 # IDs FR1, NFR1, NFR4, UC01 sú z docx. Ostatné IDs sú navrhnuté v spec/drafts/id-mapping.yaml (status proposed).
 # 0004 (návrh 0.3.0): DR-C01 až DR-C08 → QR-002, BR-012, ADR-007 (Accepted), SC-001-15, SC-001-16. Stav AI nemenila (F-03).
+# 0009 (návrh 0.4.0, PREPARE_SPEC): sekcia motivation (DR-0907), nový FR1-UI a zmena rozsahu FR1 (DR-17 zmena, ADR-010
+# Proposed), SC-001-17 (N-10). Zmenené položky a súbor majú status "draft" – schválenie zapíše človek.
 
 meta:
-  status: "approved"
+  status: "approved" # 0009; predtým approved
   approved_by: "Martin Štefanko (Software architect)"
   reviewed_by: "Martin Štefanko (Software architect)"
   architecture_baseline: "B-01"
-  specification_version: "0.3.0" # návrh 0004
+  specification_version: "0.4.0" # DR-0903: verzia poslednej zmeny súboru
+
+# Definície Goals a Outcome (DR-0907, 0009). Názvy a typy prevzaté z B-01-motivation-tobe.png a
+# B-01-requirements-realization-tobe.png (status draft) cez spec/drafts/id-mapping.yaml; zhodu s modelom v Sparx EA
+# AI neoverila (model_confirmed: null).
+motivation:
+  goals:
+    - id: "G-001"
+      name: "Centralizovať plánovanie služieb"
+      type: "Goal"
+      source: "B-01-motivation-tobe.png, B-01-requirements-realization-tobe.png; docx kap. 4, 8.1"
+      refined_by: ["FR1"]
+      model_confirmed: null
+      status: "approved"
+    - id: "G-002"
+      name: "Zefektívniť prácu recepcie"
+      type: "Goal"
+      source: "B-01-motivation-tobe.png, B-01-requirements-realization-tobe.png; docx kap. 4, 8.1"
+      refined_by: ["NFR1"]
+      model_confirmed: null
+      status: "approved"
+    - id: "G-005"
+      name: "Zabezpečiť dohľad nad kvalitou služieb"
+      type: "Goal"
+      source: "B-01-motivation-tobe.png, B-01-requirements-realization-tobe.png; docx kap. 4, 8.1"
+      refined_by: ["NFR4"]
+      model_confirmed: null
+      status: "approved"
+  outcomes:
+    - id: "OUT-001"
+      name: "Rezervácia uložená so zablokovaným termínom"
+      type: "Outcome"
+      source: "B-01-motivation-tobe.png; docx kap. 4, 7"
+      realizes_goal: "G-001"
+      model_confirmed: null
+      status: "approved"
 
 requirements:
   - id: "FR1"
@@ -30,7 +67,7 @@ requirements:
     influenced_by_constraints: ["CON-001"]
     owner: "ACT-Manazer" # DR-15, DR-21: Business Actor Manažér (Organization View TO-BE) = „Manažér NikaWell“
     priority: null # nebolo rozhodnuté
-    status: "approved"
+    status: "approved" # 0009: rozsah (DR-17 zmena), SC-001-17, väzba na FR1-UI; predtým approved
     realized_by: ["AS-SpravaRezervaciiAKlientov"] # Requirements Realization View
     related_business_process: "BP-SpravaNavstev"
     related_business_service: "BS-RezervaciaTerminu"
@@ -46,7 +83,7 @@ requirements:
         - "registrácia nového klienta – FR2 / UC02; klienti sú pre prototyp seed dáta (DR-03)"
         - "priradenie saunového majstra – BP-SpravaNavstev-03, UC05 / FR5 (DR-10)"
         - "zrušenie a zmena rezervácie (DR-04)"
-        - "zobrazenie sumarizácie – UI, mimo contractu; UI nie je v rozsahu prototypu (DR-17)"
+        - "zobrazenie sumarizácie – mimo contractu a mimo prototypu (DR-17); jednoduché UI na vytvorenie rezervácie je v rozsahu – FR1-UI (DR-17 zmena 0009, ADR-010)"
         - "ponuka iného termínu pri nedostupnom termíne (DR-11)"
         - "vyhľadanie klienta – contract prijíma identifikátor existujúceho klienta (DR-24)"
         - "odovzdanie parametrov rezervácie modulu riadenia zariadení – INT-001 (DR-25)"
@@ -55,6 +92,7 @@ requirements:
     scope_note: >
       Potvrdené znenie FR1 obsahuje aj zobrazenie sumarizácie a vyhľadanie klienta. Podľa DR-17 a DR-24
       ich prototyp ani contract nerealizujú. FR1 je preto v tomto slice realizovaný čiastočne. Znenie FR1 sa nemení.
+      Od 0009 má prototyp jednoduché UI (FR1-UI) – bez sumarizácie a bez vyhľadania klienta.
     acceptance_scenarios:
       - "SC-001-01"
       - "SC-001-02"
@@ -72,7 +110,9 @@ requirements:
       - "SC-001-14"
       - "SC-001-15" # 0004, QR-002 (DR-C06)
       - "SC-001-16" # 0004, BR-012 (DR-C04)
+      - "SC-001-17" # 0009, BR-011 / DR-C12 (N-10)
     user_stories: ["US-001"]
+    refined_by_requirements: ["FR1-UI"] # 0009
     business_rules:
       [
         "BR-001",
@@ -89,8 +129,7 @@ requirements:
         "BR-012",
       ]
     quality_requirements: ["QR-001", "QR-002"]
-    decisions:
-      [
+    decisions: [
         "ADR-001",
         "ADR-002",
         "ADR-003",
@@ -98,6 +137,7 @@ requirements:
         "ADR-005",
         "ADR-006",
         "ADR-007",
+        "ADR-010", # 0009, Proposed
       ]
     resolved_questions:
       - {
@@ -121,6 +161,85 @@ requirements:
           answer: "Nie, je voliteľná, max. 500 znakov (DR-14, DR-17 → BR-008).",
         }
     open_questions: []
+
+  - id: "FR1-UI" # 0009 – nové navrhnuté ID (rad FR1–FR6 patrí docx, preto nie FR7)
+    type: "functional"
+    title: "Vytvorenie rezervácie cez používateľské rozhranie"
+    parent_requirement: "FR1"
+    use_case: "UC01 Vytvor rezerváciu"
+    statement: >
+      Systém musí poskytnúť recepčnej v role správcu návštev jednoduché používateľské rozhranie, v ktorom vytvorí
+      rezerváciu podľa FR1: zadá identifikátor existujúceho klienta, začiatok termínu v miestnom čase
+      a voliteľnú poznámku. Rozhranie potvrdí uloženú rezerváciu alebo zobrazí zrozumiteľný dôvod odmietnutia.
+    statement_source: "prompt 0009 (rozhodol Martin Štefanko, Software architect); znenie formulovala AI; obsahovo schválené v doplňujúcom prompte 0009"
+    statement_confirmed_by: "Martin Štefanko (Software architect)" # zapíše človek pri schválení
+    rationale: "Change experiment, bod E – prototyp bez UI vyžadoval na vytvorenie rezervácie nástroj na HTTP požiadavky."
+    source_goals: ["G-001"] # cez FR1
+    actors_roles: ["ACT-Recepcna", "ROLE-SpravcaNavstev"]
+    business_process: "BP-SpravaNavstev" # kroky -01 (iba zadanie UUID klienta), -02, -04
+    application_service: "AS-SpravaRezervaciiAKlientov" # UI je konzument API-Reservations 0.2.1
+    application_component: "AC-ModulRezervaciiAKlientov" # DR-0914: väzba namiesto chýbajúceho Application Interface
+    application_interface: null # DR-0914: známa medzera modelu B-01 – Application Interface pre recepčnú chýba; prvok ani ID sa nevymýšľa
+    deployable_artifact: "ART-SoftverIntelliWell"
+    contract: "API-Reservations 0.2.1 (bez zmeny)"
+    related_requirements: ["FR1", "NFR1", "NFR4", "QR-002"]
+    constraints: ["CON-003"]
+    decisions:
+      [
+        "ADR-010",
+        "DR-17 (zmena 0009)",
+        "DR-18",
+        "DR-23",
+        "DR-24",
+        "DR-C03",
+        "DR-0910",
+        "DR-0911",
+        "DR-0912",
+        "DR-0913",
+        "DR-0914",
+        "DR-0915",
+      ]
+    scope:
+      in_scope:
+        - "jedna statická stránka HTML + vanilla JavaScript v wwwroot, bez NuGet balíka a frontend buildu (ADR-010)"
+        - "vloženie JWT tokenu z dotnet user-jwts (DR-23); token iba v pamäti stránky (DR-0910)"
+        - "identifikátor klienta UUID, predvyplnený seed klientom (DR-24, DR-I05)"
+        - "zadanie začiatku v miestnom čase; prepočet vždy podľa Europe/Bratislava na UTC so Z (DR-18, DR-C03, DR-0911)"
+        - "voliteľná poznámka (BR-008)"
+        - "potvrdenie pri 201; slovenská hláška podľa typu problému, záloha title (DR-0912)"
+      out_of_scope:
+        - "sumarizácia pred uložením (DR-17)"
+        - "prihlasovací endpoint a prihlasovací formulár (DR-23)"
+        - "vyhľadanie klienta podľa mena (DR-24)"
+        - "zoznam, zmena a zrušenie rezervácií (DR-04)"
+    acceptance_criteria:
+      - "AK-1: Pri úspechu rozhranie zobrazí potvrdenie s termínom v miestnom čase (začiatok – koniec)."
+      - "AK-2: Pri odmietnutí rozhranie zobrazí slovenskú hlášku podľa typu problému (záloha title) a rezervácia sa neuloží (DR-0912)."
+      - "AK-3: Začiatok zadaný v miestnom čase sa odošle ako ten istý okamih v UTC, v zimnom aj letnom čase, vždy podľa Europe/Bratislava bez ohľadu na nastavenie počítača (DR-0911)."
+      - "AK-4: Čas, ktorý pri zmene času neexistuje alebo je dvojznačný, rozhranie odmietne s hláškou a požiadavku nepošle (DR-0911)."
+      - "AK-5: Business pravidlá vyhodnocuje iba server; rozhranie kontroluje iba vyplnenie povinných údajov a platnosť miestneho času."
+      - "AK-6: Rozhranie neopakuje odoslanie automaticky (QR-002, DR-28)."
+      - "AK-7: Obsah poznámky sa nezapisuje do konzoly prehliadača ani iného logu (CON-003)."
+      - "AK-8: Token je iba v pamäti stránky; po obnovení stránky sa vkladá znova (DR-0910)."
+      - "AK-9: Stránku smie otvoriť aj neprihlásená osoba; údaje chráni API (DR-0913)."
+    acceptance_scenarios:
+      [
+        "SC-002-01",
+        "SC-002-02",
+        "SC-002-03",
+        "SC-002-04",
+        "SC-002-05",
+        "SC-002-06",
+        "SC-002-07",
+        "SC-002-08",
+        "SC-002-09",
+        "SC-002-10",
+      ]
+    user_stories: ["US-002"]
+    verification: "ručný protokol v reports/ + automatické testy bez prehliadača (DR-0915)"
+    owner: "ACT-Manazer" # ako FR1 (DR-21)
+    priority: null
+    status: "approved"
 
   - id: "NFR1"
     type: "non-functional"

@@ -1,14 +1,47 @@
 # Rozhodnutia – FR1 (draft)
 
 - status: "draft"
-- architecture_baseline: "B-01", specification baseline: "0.3.1" (predchádzajúci baseline 0.3.0 approved)
+- architecture_baseline: "B-01", specification baseline: "0.4.0" (draft, úloha 0009); predchádzajúci baseline 0.3.1 approved
 - DR-01 až DR-17 sú ľudské rozhodnutia: rozhodol Martin Štefanko (Software architect), 2026-11-25, úloha 0002.
-  Plné znenie je v `spec/prompts/log/0002-2026-11-25-PREPARE_SPEC.md`.
+  Plné znenie je v `spec/prompts/log/0002-2026-11-25-PREPARE_SPEC.md`. DR-17 zmenil človek v 0009 (pozri nižšie).
 - DR-18 až DR-29 vznikli pri zapracovaní v 0002 a boli rozhodnuté doplňujúcim promptom 0002 (vrátane zmeny DR-05).
 - DR-30 a DR-31 boli rozhodnuté doplňujúcim promptom 2 v 0002.
 - ADR-001 až ADR-006 sú v stave **Accepted** (zapísal človek). ADR-007 (0004) je v stave **Accepted** (zapísal človek).
-- DR-C01 až DR-C08 (contract review 0.1.0) rozhodol človek; zapísané v 0004. DR-C09 až DR-C11 rozhodol človek doplňujúcim promptom 0004. DR-C12 (contract review 0.2.0) rozhodol človek a zapísal ručne. Žiadna DR nie je otvorená.
+  ADR-008 a ADR-009 (0007, DR-I01 – DR-I05 = A) sú v stave **Accepted** (zapísal človek). ADR-010 (0009) je **Proposed**
+  (`spec/architecture/decisions/ADR-010-jednoduche-ui-prototypu.md`, Decision vyplnená podľa rozhodnutí človeka).
+- DR-C01 až DR-C08 (contract review 0.1.0) rozhodol človek; zapísané v 0004. DR-C09 až DR-C11 rozhodol človek doplňujúcim promptom 0004. DR-C12 (contract review 0.2.0) rozhodol človek a zapísal ručne.
 - DR-V02 (verification 0008): presnosť startTime – rozhodnuté C, známe obmedzenie prototypu (rozhodol Martin Štefanko, 2026-11-25).
+- DR-0901 – DR-0915 (úloha 0009) rozhodol človek. **Žiadna DR nie je otvorená.** Zápisy z 0009 majú stav draft –
+  schválenie súborov zapisuje človek.
+
+## Rozhodnuté v úlohe 0009 (zmena DR-17, FR1-UI, odložené nálezy z 0008)
+
+Rozhodol Martin Štefanko (Software architect), 2026-11-25 – prompt 0009 a doplňujúci prompt 0009.
+Znenie otázok: `spec/drafts/0009/navrh-0009.md`, časť 4. Zapísala AI v 0009 (stav draft).
+
+| ID | Rozhodnutie (skrátene) | Zapísané v |
+|---|---|---|
+| DR-17 (zmena) | prototyp má jednoduché UI pre ROLE-SpravcaNavstev na vytvorenie rezervácie; sumarizácia pred uložením ostáva mimo rozsahu | ADR-010 (Proposed); requirements.yaml (FR1 scope, FR1-UI); glossary; US-001.md |
+| DR-0901 | UI = statická stránka HTML + vanilla JS v wwwroot, súčasť ART-SoftverIntelliWell, bez NuGet balíka a frontend buildu; contract 0.2.1 sa nemení | ADR-010; deployment.yaml; technology-context.yaml |
+| DR-0902 | ART-SoftverIntelliWell patrí do zadania IMPLEMENT_CHANGE | deployment.yaml (required_by_implementation_task: true) |
+| DR-0903 | specification_version v súbore = verzia poslednej obsahovej zmeny súboru; verzia balíka iba v manifeste | manifest (komentár); meta všetkých zmenených súborov |
+| DR-0904 | specification baseline 0.4.0 (draft) | manifest |
+| DR-0905 | názov stĺpca v DR-I03 nie je záväzný; poznámka o `created_at_utc_ticks` | ADR-009 (doplnenie) |
+| DR-0906 | allowed_dependencies iba v rozsahu FR1 (žiadny iný modul; TS-DatabazovaSluzba, TS-HostovanieSystemu); kód v Hosting/ patrí AC-IntelliWell | components.yaml; deployment.yaml; traceability.yaml |
+| DR-0907 | definície G-001, G-002, G-005, OUT-001 v requirements.yaml, AS-SpravaRezervaciiAKlientov v service-realization.yaml | requirements.yaml (motivation); service-realization.yaml (application_services); id-mapping.yaml (defined_in) |
+| DR-0908 | contract 0.2.1 a trait testu pre SC-001-17 sa upravia v ďalšej verzii contractu | US-001.feature (hlavička); traceability.yaml (missing_links) |
+| DR-0910 | token UI iba v pamäti stránky; po obnovení sa vkladá znova | ADR-010; requirements.yaml (FR1-UI AK-8); deployment.yaml |
+| DR-0911 | prepočet vždy podľa Europe/Bratislava (Intl); neexistujúci alebo dvojznačný čas UI odmietne s hláškou a nepošle | ADR-010; FR1-UI AK-3, AK-4; US-002.feature (SC-002-02, -03, -09) |
+| DR-0912 | texty hlášok SC-002-05 a text pre neodpovedajúci server schválené; vlastné texty podľa `type`, záloha `title` | ADR-010; US-002.feature (SC-002-04 – -07, -10) |
+| DR-0913 | stránku smie otvoriť aj neprihlásená osoba; údaje chráni API | ADR-010; deployment.yaml (anonymous_access_to_page) |
+| DR-0914 | Application Interface pre recepčnú v modeli B-01 chýba – známa medzera; FR1-UI sa viaže na AC-ModulRezervaciiAKlientov a AS-SpravaRezervaciiAKlientov; baseline ostáva B-01 | ADR-010; requirements.yaml (FR1-UI); components.yaml; glossary; traceability.yaml |
+| DR-0915 | US-002 sa overí ručným protokolom (reports/) + automatickými testami bez prehliadača | ADR-010; requirements.yaml (FR1-UI verification); US-002.md |
+| N-11 | oprava chýbajúcej medzery v BR-011 | business-rules.yaml |
+
+Platí ďalej: DR-18 (Europe/Bratislava, API v UTC), DR-23 (token z dotnet user-jwts, bez login endpointu), DR-24 (klient ako UUID), DR-C03.
+Kým človek nenastaví ADR-010 na Accepted, nie je zmena DR-17 schválená.
+Znenie hlášok v SC-002-09 (neexistujúci/dvojznačný čas) je návrh AI – DR-0911 určilo iba správanie.
+
 
 ## Rozhodnuté k contract review 0.2.0 (DR-C12)
 
@@ -141,7 +174,7 @@ Rozhodol Martin Štefanko (Software architect), 2026-11-25, úloha 0004. Znenie 
 | DR-14 | Validácia | začiatok v budúcnosti, v otváracích hodinách, klient existuje, poznámka voliteľná max. [500] | NFR1 (quality-requirements.yaml); BR-005 – BR-008 |
 | DR-15 | Owner a znenie FR1 | owner = Manažér NikaWell (= ACT-Manazer, DR-21); znenie FR1 potvrdené | requirements.yaml (FR1) |
 | DR-16 | Zdrojový dokument | AIS_IntelliWell.docx platí pre B-01 (potvrdené v 0001) | manifest.yaml (source_documents) |
-| DR-17 | Poznámka, sumarizácia | poznámka voliteľná; sumarizácia je UI, mimo contractu; UI mimo prototypu | BR-008; requirements.yaml (FR1 scope); glossary |
+| DR-17 | Poznámka, sumarizácia | poznámka voliteľná; sumarizácia je UI, mimo contractu; UI mimo prototypu – **zmenené v 0009**: jednoduché UI je v rozsahu (ADR-010), sumarizácia nie | BR-008; requirements.yaml (FR1 scope); glossary |
 
 ## Rozhodnuté doplňujúcim promptom 0002 (DR-05 zmena, DR-18 – DR-29)
 

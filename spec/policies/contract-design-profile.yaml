@@ -1,14 +1,14 @@
 # Contract design profile.
 # Hodnoty podľa ľudských rozhodnutí DR-07, DR-08, DR-18, DR-23, DR-27, DR-28, DR-30, DR-31 (log 0002, ADR-004, ADR-005 – Accepted)
 # a DR-C03, DR-C05, DR-C07, DR-C09, DR-C11 (contract review 0.1.0, zapísané v 0004).
-# Zmeny z 0004 (DR-C03, DR-C05, DR-C07) zapísala AI; čakajú na kontrolu človekom. Stav profilu AI nemenila (F-03).
+# Zmeny z 0004 (DR-C03, DR-C05, DR-C07, DR-C09, DR-C11) schválil človek v 0.3.0. 0009: iba oprava komentárov (N-01), obsah bez zmeny.
 # Položky s null neboli rozhodnuté. AI ich nesmie doplniť z ukážky šablóny.
 
 contract_design_profile:
-  status: "approved"
+  status: "approved" # 0009; predtým approved
   approved_by: "Martin Štefanko (Software architect)"
   reviewed_by: "Martin Štefanko (Software architect)"
-  specification_version: "0.3.0" # návrh 0004; profil bol schválený vo verzii 0.2.0
+  specification_version: "0.3.0" # DR-0903: posledná obsahová zmena v 0.3.0
   interface_style: "HTTP API" # DR-08, ADR-005
   http:
     specification: "OpenAPI 3.1" # DR-08

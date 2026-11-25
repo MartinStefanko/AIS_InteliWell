@@ -1,0 +1,108 @@
+# NÁVRH AI (PREPARE_SPEC, úloha 0009) – úplná navrhovaná verzia spec/technology/technology-context.yaml.
+# Nie je schválený. Schválený súbor AI nemenila.
+# Rieši: I-04 (prototype_environment), K-58 (open_questions).
+# Značka "# ZMENA 0009" označuje zmenený alebo nový riadok.
+
+# Technology context pre FR1.
+# Zdroj: docx kap. 10.1.2, 10.2.2, 11.2, 13.2, Layered View TO-BE a ľudské rozhodnutia DR-05 (zmena na .NET 10), DR-06, DR-09
+# (log 0002, ADR-002, ADR-003) a ADR-008 doplnenie (log 0007) – všetky Accepted.   # ZMENA 0009
+
+technology_context:
+  status: "applicable" # DR-09
+  reason: >
+    FR1 sa v prototype implementuje na rozhodnutej platforme (.NET 10 LTS, ASP.NET Core – ADR-002) s databázou
+    SQLite (ADR-003). Tieto voľby ovplyvňujú code, configuration aj deployable Artifact.
+  confirmed_by_role: "Software architect" # DR-09, Martin Štefanko
+  approved_by: null      # ZMENA 0009 – nastaví človek
+  reviewed_by: null      # ZMENA 0009
+  architecture_baseline: "B-01"
+  specification_version: "0.4.0" # ZMENA 0009 – draft baseline 0.4.0 (prompt 0009)
+  draft_status: "draft"  # ZMENA 0009
+
+nodes:
+  - id: "NODE-ServerIntelliWell"
+    name: "Server IntelliWell"
+    description_in_source: >
+      Jadro budúceho stavu. Je na ňom nasadený softvér IntelliWell (artifact) spolu
+      s databázovým systémom (docx kap. 10.1.2). Realizuje službu hostovania systému
+      IntelliWell (kap. 10.2.2, 11.2).
+    continuum_note: "Enterprise Continuum uvádza 'Serverová infraštruktúra (virtuálny server pre IntelliWell)' (docx kap. 13.2) – neschválené."
+    prototype_environment: "nepoužíva sa – prototyp beží lokálne cez `dotnet run` na počítači vývojára (ADR-008 doplnenie)" # ZMENA 0009 (I-04)
+
+prototype_environment:                                    # ZMENA 0009 – nová sekcia
+  runs_on: "lokálny počítač vývojára" # nie je prvok modelu B-01; nové NODE ID sa nenavrhuje
+  start: "dotnet run (src/IntelliWell, profil http)"
+  container: false # ADR-008 doplnenie
+  ci: false        # ADR-008 doplnenie
+  token_issuance: "dotnet user-jwts (DR-23)"
+  decision: "ADR-008 (doplnenie 2026-11-25)"
+  observed_sdk: "10.0.404 (verification-0008, Q-01) – pozorovanie, nie schválená minimálna verzia"
+  ui: "statická stránka zo src/IntelliWell/wwwroot, otvorená v prehliadači na tom istom počítači (ADR-010 Proposed)"
+
+system_software:
+  - id: "SSW-DatabazovySystem"
+    name: "Databázový systém"
+    host_node: "NODE-ServerIntelliWell"
+    provides_services: ["TS-DatabazovaSluzba"]
+    description_in_source: >
+      Uchováva rezervácie, evidenciu klientov a evidenciu zásahov (docx kap. 10.1.2).
+    product:
+      prototype: "SQLite (knižnica Microsoft.Data.Sqlite, ADR-008)" # DR-06, ADR-003; ZMENA 0009 – doplnený odkaz na ADR-008
+      production: null # DR-06: zostáva otvorené
+    version: null # nebolo rozhodnuté
+    note: >
+      SQLite beží v procese aplikácie, nie ako samostatný server. Layered View zobrazuje samostatný
+      System Software. Pre prototyp ide o zjednodušenie (ADR-003).
+    continuum_note: "Enterprise Continuum uvádza 'Centrálna relačná databáza' / 'Relačná databáza' (docx kap. 13)."
+
+  - id: "SSW-RuntimeDotNet"
+    name: "Runtime .NET 10 (ASP.NET Core)"
+    host_node: "NODE-ServerIntelliWell"
+    provides_services: ["TS-HostovanieSystemu"] # návrh AI – potvrdí človek (otvorené od 0002)
+    description: "Runtime pre ART-SoftverIntelliWell podľa DR-05 / ADR-002."
+    in_architecture_views: false # nový prvok; v B-01 views nie je zobrazený – navrhnuté ID
+    version: "10 (LTS)" # DR-05
+    status: "approved"
+
+technology_services:
+  - id: "TS-HostovanieSystemu"
+    name: "Hostovanie systému IntelliWell"
+    realized_by: "NODE-ServerIntelliWell"
+    used_by: ["AC-IntelliWell"]
+    source_view: "spec/architecture/views/B-01-layered-tobe.png"
+  - id: "TS-DatabazovaSluzba"
+    name: "Databázová služba"
+    realized_by: "SSW-DatabazovySystem"
+    used_by: ["AC-IntelliWell"] # "využíva pri každej práci s údajmi" (docx kap. 10.2.2)
+    source_view: "spec/architecture/views/B-01-layered-tobe.png"
+
+communication_networks:
+  - id: "NET-KomunikacnaSiet"
+    name: "Komunikačná sieť"
+    description_in_source: >
+      Prepája server IntelliWell so zariadeniami personálu (zariadenie recepcie,
+      saunového majstra a manažéra) a s inteligentnými zariadeniami v miestnosti
+      NikaWell (docx kap. 10.1.2). Poskytuje službu diaľkového prístupu k zariadeniam
+      (kap. 10.2.2) – tá sa FR1 netýka.
+    ui_note: >                                                   # ZMENA 0009
+      V cieľovom stave zariadenie recepcie pristupuje k UI, ktoré je súčasťou ART-SoftverIntelliWell na serveri
+      IntelliWell, cez webový prehliadač (statická stránka HTML + JavaScript – prompt 0009, ADR-010 Proposed).
+      V prototype beží prehliadač aj aplikácia na lokálnom počítači vývojára. Konkrétny prehliadač nie je určený.
+    continuum_note: "Enterprise Continuum uvádza 'Sieťová infraštruktúra (LAN / Wi-Fi)' (docx kap. 13.2) – neschválené."
+
+artifacts:
+  details: "spec/technology/deployment.yaml"
+
+implementation_platform:
+  value: ".NET 10 LTS (C#), ASP.NET Core" # DR-05 (zmena z .NET 8)
+  decision: "ADR-002" # Accepted
+  libraries: "ADR-008 (Accepted)" # ZMENA 0009
+  source_note: >
+    Docx uvádza ".NET (C#) ako predpokladaná implementačná platforma" (kap. 13.2, 15.2).
+
+open_questions: # ZMENA 0009 – otázka prostredia prototypu a containera uzavretá (ADR-008 doplnenie)
+  - "Produkčný DBMS (DR-06 – otvorené)."
+  - "Potvrdiť nový prvok SSW-RuntimeDotNet a jeho väzbu na TS-HostovanieSystemu."
+  - "Časové pásmo prevádzky: Europe/Bratislava (DR-18) – systém potrebuje údaje o časových pásmach na prepočet UTC."
+  - "ADR-010 (Proposed): UI ako statická stránka v wwwroot – čaká na Accepted."
+  - "Podporované prehliadače UI – nerozhodnuté (prehliadač musí poznať časové pásmo Europe/Bratislava cez Intl, DR-0911)."

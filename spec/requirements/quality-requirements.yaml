@@ -2,14 +2,14 @@
 # Zdroj: docs/sources/AIS_IntelliWell.docx a ľudské rozhodnutia DR-07, DR-13, DR-14, DR-21 až DR-23, DR-26 (log 0002).
 # Čísla, limity ani metriky, ktoré nikto nerozhodol, sa nedopĺňajú.
 # 0004 (návrh 0.3.0): nové QR-002 podľa DR-C06; QR-001 a NFR4 odkazujú na ADR-007 (Accepted, DR-C01, DR-C02).
-# Zmeny čakajú na kontrolu človekom; stav súboru ani položiek AI nemenila (F-03).
+# 0009: odstránený zastaraný komentár (N-01); obsah položiek sa nezmenil, verzia ostáva 0.3.0 (DR-0903).
 
 meta:
-  status: "approved"
+  status: "approved" # 0009; predtým approved
   approved_by: "Martin Štefanko (Software architect)"
   reviewed_by: "Martin Štefanko (Software architect)"
   architecture_baseline: "B-01"
-  specification_version: "0.3.0" # návrh 0004
+  specification_version: "0.3.0" # DR-0903: posledná obsahová zmena v 0.3.0
 
 quality_requirements:
   - id: "NFR1"

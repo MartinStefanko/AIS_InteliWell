@@ -39,8 +39,8 @@ info:
     requirements: [FR1, NFR1, NFR4, QR-001, QR-002]
     constraints: [CON-003]
     decisions: [ADR-001, ADR-004, ADR-005, ADR-006, ADR-007]
-    mapping: spec/contracts/proposed/contract-mapping.yaml
-    approved_by: null
+    mapping: spec/contracts/approved/contract-mapping.yaml
+    approved_by: "Martin Štefanko (Software architect)"
 
 servers:
   - url: /
@@ -106,9 +106,40 @@ paths:
         nezapisuje (CON-003).
       x-sdd:
         requirements: [FR1, NFR1, NFR4, QR-001, QR-002]
-        business_rules: [BR-001, BR-002, BR-003, BR-004, BR-005, BR-006, BR-007, BR-008, BR-009, BR-010, BR-011, BR-012]
-        scenarios: [SC-001-01, SC-001-02, SC-001-03, SC-001-04, SC-001-05, SC-001-06, SC-001-07, SC-001-08,
-                    SC-001-09, SC-001-10, SC-001-11, SC-001-12, SC-001-13, SC-001-14, SC-001-15, SC-001-16]
+        business_rules:
+          [
+            BR-001,
+            BR-002,
+            BR-003,
+            BR-004,
+            BR-005,
+            BR-006,
+            BR-007,
+            BR-008,
+            BR-009,
+            BR-010,
+            BR-011,
+            BR-012,
+          ]
+        scenarios:
+          [
+            SC-001-01,
+            SC-001-02,
+            SC-001-03,
+            SC-001-04,
+            SC-001-05,
+            SC-001-06,
+            SC-001-07,
+            SC-001-08,
+            SC-001-09,
+            SC-001-10,
+            SC-001-11,
+            SC-001-12,
+            SC-001-13,
+            SC-001-14,
+            SC-001-15,
+            SC-001-16,
+          ]
         data_objects: [DO-Rezervacie, DO-EvidenciaKlientov]
         lifecycle_transition: "DO-Rezervacie: (none) → vytvorena (api_value created)"
         idempotent: false
@@ -116,136 +147,211 @@ paths:
       security:
         - bearerAuth: [SpravcaNavstev]
       parameters:
-        - $ref: '#/components/parameters/CorrelationId'
+        - $ref: "#/components/parameters/CorrelationId"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateReservationRequest'
+              $ref: "#/components/schemas/CreateReservationRequest"
             examples:
               SC-001-01:
                 summary: Voľný termín 1. 12. 2026 14:00–15:00 (Europe/Bratislava), s poznámkou
-                value: { clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7, startTime: '2026-12-01T13:00:00Z', note: prvá návšteva }
+                value:
+                  {
+                    clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7,
+                    startTime: "2026-12-01T13:00:00Z",
+                    note: prvá návšteva,
+                  }
               SC-001-02:
                 summary: Bez poznámky, 2. 12. 2026 11:00
-                value: { clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7, startTime: '2026-12-02T10:00:00Z' }
+                value:
+                  {
+                    clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7,
+                    startTime: "2026-12-02T10:00:00Z",
+                  }
               SC-001-03:
                 summary: Termín končiaci presne pri zatvorení, 3. 12. 2026 21:00–22:00
-                value: { clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7, startTime: '2026-12-03T20:00:00Z' }
+                value:
+                  {
+                    clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7,
+                    startTime: "2026-12-03T20:00:00Z",
+                  }
               SC-001-04:
                 summary: Obsadený termín 1. 12. 2026 14:00 (existuje rezervácia 14:00–15:00)
-                value: { clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7, startTime: '2026-12-01T13:00:00Z' }
+                value:
+                  {
+                    clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7,
+                    startTime: "2026-12-01T13:00:00Z",
+                  }
               SC-001-05:
                 summary: Čiastočné prekrytie, začiatok 1. 12. 2026 14:30
-                value: { clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7, startTime: '2026-12-01T13:30:00Z' }
+                value:
+                  {
+                    clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7,
+                    startTime: "2026-12-01T13:30:00Z",
+                  }
               SC-001-06:
                 summary: Súbeh – Jana aj Mária odošlú túto požiadavku súčasne, začiatok 4. 12. 2026 16:00
-                value: { clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7, startTime: '2026-12-04T15:00:00Z' }
+                value:
+                  {
+                    clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7,
+                    startTime: "2026-12-04T15:00:00Z",
+                  }
               SC-001-07:
                 summary: Klient, ktorý nie je v evidencii klientov, 1. 12. 2026 16:00
-                value: { clientId: 0b6f2a5e-3c1d-4f8a-9e2b-5d4c3b2a1f00, startTime: '2026-12-01T15:00:00Z' }
+                value:
+                  {
+                    clientId: 0b6f2a5e-3c1d-4f8a-9e2b-5d4c3b2a1f00,
+                    startTime: "2026-12-01T15:00:00Z",
+                  }
               SC-001-08:
                 summary: Presah zatváracej hodiny, začiatok 1. 12. 2026 21:30
-                value: { clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7, startTime: '2026-12-01T20:30:00Z' }
+                value:
+                  {
+                    clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7,
+                    startTime: "2026-12-01T20:30:00Z",
+                  }
               SC-001-09:
                 summary: Začiatok pred otvorením, 1. 12. 2026 09:30
-                value: { clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7, startTime: '2026-12-01T08:30:00Z' }
+                value:
+                  {
+                    clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7,
+                    startTime: "2026-12-01T08:30:00Z",
+                  }
               SC-001-10:
                 summary: Začiatok v minulosti, 25. 11. 2026 11:00 (aktuálny čas 12:00)
-                value: { clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7, startTime: '2026-11-25T10:00:00Z' }
+                value:
+                  {
+                    clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7,
+                    startTime: "2026-11-25T10:00:00Z",
+                  }
               SC-001-11:
                 summary: Poznámka dlhá 501 znakov (Unicode code points), 1. 12. 2026 18:00
-                value: { clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7, startTime: '2026-12-01T17:00:00Z', note: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' }
+                value:
+                  {
+                    clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7,
+                    startTime: "2026-12-01T17:00:00Z",
+                    note: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                  }
               SC-001-12:
                 summary: Osoba bez roly SpravcaNavstev, 1. 12. 2026 19:00
-                value: { clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7, startTime: '2026-12-01T18:00:00Z' }
+                value:
+                  {
+                    clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7,
+                    startTime: "2026-12-01T18:00:00Z",
+                  }
               SC-001-13:
                 summary: Neprihlásená osoba (bez bearer tokenu), 1. 12. 2026 20:00
-                value: { clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7, startTime: '2026-12-01T19:00:00Z' }
+                value:
+                  {
+                    clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7,
+                    startTime: "2026-12-01T19:00:00Z",
+                  }
               SC-001-14:
                 summary: Nadväzujúci termín 1. 12. 2026 15:00–16:00 (existuje rezervácia 14:00–15:00)
-                value: { clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7, startTime: '2026-12-01T14:00:00Z' }
+                value:
+                  {
+                    clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7,
+                    startTime: "2026-12-01T14:00:00Z",
+                  }
               SC-001-15:
                 summary: Evidencia rezervácií je dočasne nedostupná, začiatok 5. 12. 2026 14:00
-                value: { clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7, startTime: '2026-12-05T13:00:00Z' }
+                value:
+                  {
+                    clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7,
+                    startTime: "2026-12-05T13:00:00Z",
+                  }
               SC-001-16:
                 summary: |
                   Viac porušení naraz – klient nie je v evidencii, začiatok 25. 11. 2026 09:00 (v minulosti a pred otvorením),
                   poznámka 501 znakov
-                value: { clientId: 0b6f2a5e-3c1d-4f8a-9e2b-5d4c3b2a1f00, startTime: '2026-11-25T08:00:00Z', note: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' }
+                value:
+                  {
+                    clientId: 0b6f2a5e-3c1d-4f8a-9e2b-5d4c3b2a1f00,
+                    startTime: "2026-11-25T08:00:00Z",
+                    note: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                  }
               invalid-request-time-offset:
                 summary: Čas s posunom namiesto prípony Z (DR-C03) – bez scenára v US-001
-                value: { clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7, startTime: '2026-12-01T14:00:00+01:00' }
+                value:
+                  {
+                    clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7,
+                    startTime: "2026-12-01T14:00:00+01:00",
+                  }
               unauthenticated-missing-sub:
                 summary: Platný token s rolou SpravcaNavstev, ale bez neprázdneho claimu sub (DR-C12) – bez scenára v US-001
-                value: { clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7, startTime: '2026-12-01T19:00:00Z' }
+                value:
+                  {
+                    clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7,
+                    startTime: "2026-12-01T19:00:00Z",
+                  }
       responses:
-        '201':
+        "201":
           description: |
             Rezervácia je uložená v stave `created` („vytvorená“) a jej termín je zablokovaný pre ďalších klientov
             (BR-001, BR-002, BR-004, QR-001). Scenáre SC-001-01, SC-001-02, SC-001-03, SC-001-14
             a prvá uložená požiadavka v SC-001-06.
           headers:
             X-Correlation-ID:
-              $ref: '#/components/headers/CorrelationId'
+              $ref: "#/components/headers/CorrelationId"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Reservation'
+                $ref: "#/components/schemas/Reservation"
               examples:
                 SC-001-01:
                   summary: Rezervácia 1. 12. 2026 14:00–15:00 s poznámkou, autor Jana
                   value:
                     id: 2f1d4c6e-8a3b-4e5f-9c7d-1a2b3c4d5e6f
                     clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7
-                    startTime: '2026-12-01T13:00:00Z'
-                    endTime: '2026-12-01T14:00:00Z'
+                    startTime: "2026-12-01T13:00:00Z"
+                    endTime: "2026-12-01T14:00:00Z"
                     note: prvá návšteva
                     status: created
                     createdBy: jana
-                    createdAt: '2026-11-25T11:00:00Z'
+                    createdAt: "2026-11-25T11:00:00Z"
                 SC-001-02:
                   summary: Rezervácia 2. 12. 2026 11:00–12:00 bez poznámky (pole note chýba)
                   value:
                     id: 3a2b1c0d-9e8f-4a7b-8c6d-5e4f3a2b1c0d
                     clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7
-                    startTime: '2026-12-02T10:00:00Z'
-                    endTime: '2026-12-02T11:00:00Z'
+                    startTime: "2026-12-02T10:00:00Z"
+                    endTime: "2026-12-02T11:00:00Z"
                     status: created
                     createdBy: jana
-                    createdAt: '2026-11-25T11:00:00Z'
+                    createdAt: "2026-11-25T11:00:00Z"
                 SC-001-03:
                   summary: Rezervácia 3. 12. 2026 21:00–22:00 (koniec = zatváracia hodina)
                   value:
                     id: 4b3c2d1e-0f9a-4b8c-9d7e-6f5a4b3c2d1e
                     clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7
-                    startTime: '2026-12-03T20:00:00Z'
-                    endTime: '2026-12-03T21:00:00Z'
+                    startTime: "2026-12-03T20:00:00Z"
+                    endTime: "2026-12-03T21:00:00Z"
                     status: created
                     createdBy: jana
-                    createdAt: '2026-11-25T11:00:00Z'
+                    createdAt: "2026-11-25T11:00:00Z"
                 SC-001-06:
                   summary: Prvá uložená z dvoch súbežných požiadaviek (druhá dostane 409)
                   value:
                     id: 5c4d3e2f-1a0b-4c9d-8e7f-7a6b5c4d3e2f
                     clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7
-                    startTime: '2026-12-04T15:00:00Z'
-                    endTime: '2026-12-04T16:00:00Z'
+                    startTime: "2026-12-04T15:00:00Z"
+                    endTime: "2026-12-04T16:00:00Z"
                     status: created
                     createdBy: jana
-                    createdAt: '2026-11-25T11:00:00Z'
+                    createdAt: "2026-11-25T11:00:00Z"
                 SC-001-14:
                   summary: Rezervácia 1. 12. 2026 15:00–16:00 nadväzuje na 14:00–15:00 (interval [začiatok, koniec))
                   value:
                     id: 6d5e4f3a-2b1c-4d0e-9f8a-8b7c6d5e4f3a
                     clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7
-                    startTime: '2026-12-01T14:00:00Z'
-                    endTime: '2026-12-01T15:00:00Z'
+                    startTime: "2026-12-01T14:00:00Z"
+                    endTime: "2026-12-01T15:00:00Z"
                     status: created
                     createdBy: jana
-                    createdAt: '2026-11-25T11:00:00Z'
-        '400':
+                    createdAt: "2026-11-25T11:00:00Z"
+        "400":
           description: |
             Neplatná požiadavka (BR-012 pozícia 3; NFR1): telo nie je JSON, chýba `clientId` alebo `startTime`,
             `clientId` nie je UUID, `startTime` nie je čas RFC 3339 alebo nemá príponu `Z` (napr. `+01:00`; DR-C03).
@@ -253,11 +359,11 @@ paths:
             business pravidlo BR-008 (422 `note-too-long`).
           headers:
             X-Correlation-ID:
-              $ref: '#/components/headers/CorrelationId'
+              $ref: "#/components/headers/CorrelationId"
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/ProblemDetails'
+                $ref: "#/components/schemas/ProblemDetails"
               examples:
                 invalid-request-time-offset:
                   summary: Čas s posunom +01:00 namiesto prípony Z (DR-C03) – bez scenára v US-001
@@ -267,7 +373,7 @@ paths:
                     status: 400
                     detail: Pole startTime musí byť čas RFC 3339 v UTC s príponou Z.
                     instance: /api/v1/reservations
-        '401':
+        "401":
           description: |
             Osoba nie je prihlásená: chýba bearer token alebo je neplatný (BR-011, NFR4, ADR-004; BR-012 pozícia 1).
             Platný bearer token, ktorý nemá neprázdny claim `sub`, sa posudzuje ako požiadavka neprihlásenej osoby
@@ -275,7 +381,7 @@ paths:
             Rezervácia nevznikne a termín zostane voľný. Scenár SC-001-13. Typ `unauthenticated`.
           headers:
             X-Correlation-ID:
-              $ref: '#/components/headers/CorrelationId'
+              $ref: "#/components/headers/CorrelationId"
             WWW-Authenticate:
               description: Výzva na autentifikáciu, schéma `Bearer` (RFC 6750).
               schema:
@@ -284,7 +390,7 @@ paths:
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/ProblemDetails'
+                $ref: "#/components/schemas/ProblemDetails"
               examples:
                 SC-001-13:
                   summary: Požiadavka bez bearer tokenu
@@ -300,18 +406,18 @@ paths:
                     title: osoba nie je prihlásená
                     status: 401
                     instance: /api/v1/reservations
-        '403':
+        "403":
           description: |
             Prihlásená osoba nemá v claime `role` hodnotu `SpravcaNavstev`, ktorá zodpovedá ROLE-SpravcaNavstev;
             iná hodnota alebo chýbajúci claim `role` znamená nedostatočné oprávnenie (BR-011, ADR-004, ADR-007;
             BR-012 pozícia 2). Rezervácia nevznikne a termín zostane voľný. Scenár SC-001-12. Typ `forbidden`.
           headers:
             X-Correlation-ID:
-              $ref: '#/components/headers/CorrelationId'
+              $ref: "#/components/headers/CorrelationId"
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/ProblemDetails'
+                $ref: "#/components/schemas/ProblemDetails"
               examples:
                 SC-001-12:
                   summary: Token saunového majstra bez roly SpravcaNavstev
@@ -320,7 +426,7 @@ paths:
                     title: nedostatočné oprávnenie
                     status: 403
                     instance: /api/v1/reservations
-        '409':
+        "409":
           description: |
             Termín obsadený: termín sa prekrýva s uloženou rezerváciou (BR-003), vrátane súbehu (BR-009,
             ADR-001) a opakovaného odoslania (DR-28); BR-012 pozícia 9. Rezervácia nevznikne, pôvodná rezervácia
@@ -328,11 +434,11 @@ paths:
             Typ `slot-occupied`.
           headers:
             X-Correlation-ID:
-              $ref: '#/components/headers/CorrelationId'
+              $ref: "#/components/headers/CorrelationId"
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/ProblemDetails'
+                $ref: "#/components/schemas/ProblemDetails"
               examples:
                 SC-001-04:
                   summary: Termín 1. 12. 2026 14:00–15:00 je už rezervovaný
@@ -355,7 +461,7 @@ paths:
                     title: termín obsadený
                     status: 409
                     instance: /api/v1/reservations
-        '422':
+        "422":
           description: |
             Vstup má platný tvar, ale nespĺňa business pravidlo (NFR1, BR-010). Rezervácia nevznikne.
             Typ určuje pomenovaný dôvod; pri viacerých porušeniach sa vráti prvý podľa BR-012 (pozície 5–8):
@@ -366,11 +472,11 @@ paths:
             Odpoveď nikdy neobsahuje text poznámky (CON-003).
           headers:
             X-Correlation-ID:
-              $ref: '#/components/headers/CorrelationId'
+              $ref: "#/components/headers/CorrelationId"
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/ProblemDetails'
+                $ref: "#/components/schemas/ProblemDetails"
               examples:
                 SC-001-07:
                   summary: Klient s týmto identifikátorom nie je v evidencii klientov
@@ -415,18 +521,18 @@ paths:
                     title: klient neexistuje v evidencii klientov
                     status: 422
                     instance: /api/v1/reservations
-        '503':
+        "503":
           description: |
             Úložisko rezervácií nie je dostupné (QR-002; BR-012 pozícia 4 – po 400, pred prvým 422). Rezervácia
             sa neuloží, žiadny termín sa nezablokuje a systém uloženie automaticky neopakuje. Po obnovení
             dostupnosti je termín voľný. Scenár SC-001-15. Typ `service-unavailable`.
           headers:
             X-Correlation-ID:
-              $ref: '#/components/headers/CorrelationId'
+              $ref: "#/components/headers/CorrelationId"
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/ProblemDetails'
+                $ref: "#/components/schemas/ProblemDetails"
               examples:
                 SC-001-15:
                   summary: Evidencia rezervácií je pri ukladaní dočasne nedostupná
@@ -480,7 +586,7 @@ components:
     UtcDateTime:
       type: string
       format: date-time
-      pattern: 'Z$'
+      pattern: "Z$"
       description: Čas RFC 3339 v UTC s príponou `Z` (DR-08, DR-C03).
 
     CreateReservationRequest:
@@ -499,7 +605,7 @@ components:
             vráti 422 `client-not-found`.
         startTime:
           allOf:
-            - $ref: '#/components/schemas/UtcDateTime'
+            - $ref: "#/components/schemas/UtcDateTime"
           description: |
             Začiatok termínu (Termín, glossary), RFC 3339 v UTC s príponou `Z` (DR-08, DR-C03); iný zápis → 400.
             Systém ho na overenie BR-005 prepočíta do Europe/Bratislava (DR-18).
@@ -529,11 +635,11 @@ components:
           description: Identifikátor klienta z evidencie klientov (DR-30).
         startTime:
           allOf:
-            - $ref: '#/components/schemas/UtcDateTime'
+            - $ref: "#/components/schemas/UtcDateTime"
           description: Začiatok termínu, RFC 3339 UTC.
         endTime:
           allOf:
-            - $ref: '#/components/schemas/UtcDateTime'
+            - $ref: "#/components/schemas/UtcDateTime"
           description: Koniec termínu = startTime + 60 minút (BR-004); interval [startTime, endTime) (DR-19).
         note:
           type: string
@@ -555,7 +661,7 @@ components:
             `sub` z bearer tokenu (ADR-007, DR-C02).
         createdAt:
           allOf:
-            - $ref: '#/components/schemas/UtcDateTime'
+            - $ref: "#/components/schemas/UtcDateTime"
           description: Čas vytvorenia rezervácie, RFC 3339 UTC (QR-001).
 
     ProblemDetails:

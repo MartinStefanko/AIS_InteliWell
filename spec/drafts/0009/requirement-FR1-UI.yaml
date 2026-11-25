@@ -1,0 +1,64 @@
+# NÁVRH AI (PREPARE_SPEC, úloha 0009) – nový requirement pre UI.
+# Cieľové umiestnenie po schválení: spec/requirements/requirements.yaml, sekcia requirements, za FR1.
+# Nie je schválený. Význam potvrdzuje owner FR1 (ACT-Manazer, DR-21).
+# ID "FR1-UI" je nové navrhnuté ID (podľa názvu zmeny v prompte 0009). Nie je to ID z docx ani z modelu;
+# rad FR1 – FR6 patrí docx, preto sa nepoužíva FR7.
+
+requirements:
+  - id: "FR1-UI"
+    type: "functional"
+    title: "Vytvorenie rezervácie cez používateľské rozhranie"
+    parent_requirement: "FR1"
+    use_case: "UC01 Vytvor rezerváciu"
+    statement: >
+      Systém musí poskytnúť recepčnej v role správcu návštev jednoduché používateľské rozhranie, v ktorom vytvorí
+      rezerváciu podľa FR1: zadá identifikátor existujúceho klienta, začiatok termínu v miestnom čase
+      a voliteľnú poznámku. Rozhranie potvrdí uloženú rezerváciu alebo zobrazí zrozumiteľný dôvod odmietnutia.
+    statement_source: "prompt 0009 (rozhodol Martin Štefanko, Software architect); znenie formulovala AI"
+    statement_confirmed_by: null # owner potvrdí
+    rationale: "Change experiment, bod E – prototyp bez UI vyžadoval na vytvorenie rezervácie nástroj na HTTP požiadavky."
+    source_goals: ["G-001"] # cez FR1; definícia G-001 – DR-0907
+    actors_roles: ["ACT-Recepcna", "ROLE-SpravcaNavstev"]
+    business_process: "BP-SpravaNavstev" # kroky -01 (výber klienta – iba zadanie UUID), -02 (zadanie dátumu a času), -04
+    application_service: "AS-SpravaRezervaciiAKlientov" # UI je konzument API-Reservations 0.2.1
+    application_component: "AC-ModulRezervaciiAKlientov" # poskytuje službu; komponent/ rozhranie UI – DR-0914
+    application_interface: null # v B-01 views nie je – DR-0914 (model doplní človek)
+    deployable_artifact: "ART-SoftverIntelliWell"
+    contract: "API-Reservations 0.2.1 (bez zmeny)"
+    related_requirements: ["FR1", "NFR1", "NFR4", "QR-002"]
+    constraints: ["CON-003"]
+    decisions: ["ADR-010 (Proposed)", "DR-17 (mení sa)", "DR-18", "DR-23", "DR-24", "DR-C03"]
+    scope:
+      in:
+        - "jedna statická stránka (ADR-010)"
+        - "vloženie JWT tokenu z dotnet user-jwts (DR-23)"
+        - "identifikátor klienta UUID, predvyplnený seed klientom (DR-24, DR-I05)"
+        - "zadanie začiatku v miestnom čase Europe/Bratislava a prepočet na UTC so Z (DR-18, DR-C03)"
+        - "voliteľná poznámka (BR-008)"
+        - "potvrdenie pri 201; slovenská hláška pre každý typ problému contractu (DR-0912)"
+      out:
+        - "sumarizácia pred uložením (DR-17 – v tejto časti platí)"
+        - "prihlasovací endpoint a prihlasovací formulár s menom a heslom (DR-23)"
+        - "vyhľadanie klienta podľa mena (DR-24)"
+        - "zoznam, zmena a zrušenie rezervácií (DR-04)"
+    acceptance_criteria_proposed: # návrh AI – potvrdí owner
+      - "AK-1: Pri úspechu rozhranie zobrazí potvrdenie s termínom v miestnom čase (začiatok – koniec)."
+      - "AK-2: Pri odmietnutí rozhranie zobrazí slovenskú hlášku podľa typu problému a rezervácia sa neuloží."
+      - "AK-3: Začiatok zadaný v miestnom čase Europe/Bratislava sa odošle ako ten istý okamih v UTC, v zimnom aj letnom čase."
+      - "AK-4: Business pravidlá vyhodnocuje iba server; rozhranie kontroluje iba, či sú vyplnené povinné údaje."
+      - "AK-5: Rozhranie neopakuje odoslanie automaticky (QR-002, DR-28)."
+      - "AK-6: Obsah poznámky sa nezapisuje do konzoly prehliadača ani iného logu (CON-003)."
+      - "AK-7: Token sa uchováva podľa DR-0910 a posiela sa iba na /api/v1/reservations tej istej aplikácie."
+    owner: "ACT-Manazer" # rovnako ako FR1 (DR-21) – potvrdí človek
+    status: "draft"
+
+# Súvisiace patche approved súborov (navrhované, aplikuje človek):
+# - requirements.yaml FR1 scope: „zobrazenie sumarizácie – UI, mimo contractu; UI nie je v rozsahu prototypu (DR-17)“
+#   → „zobrazenie sumarizácie – mimo contractu a mimo prototypu (DR-17); UI na vytvorenie rezervácie pozri FR1-UI (ADR-010)“
+# - glossary.md r. 175: „Sumarizácia je súčasť UI, nie contractu. UI nie je v rozsahu prototypu (DR-17).“
+#   → „Sumarizácia je súčasť UI, nie contractu, a nie je v rozsahu prototypu (DR-17). Jednoduché UI na vytvorenie
+#      rezervácie je v rozsahu (FR1-UI, ADR-010).“
+# - spec/stories/US-001.md „Mimo rozsahu“: „zobrazenie sumarizácie a UI (DR-17)“ → „zobrazenie sumarizácie (DR-17);
+#   UI pozri US-002“
+# - approved contract 0.2.1 (description „sumarizácia a UI (DR-17)“ mimo contractu) – bez zmeny, stále platí:
+#   UI nie je súčasťou API contractu.

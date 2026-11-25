@@ -1,35 +1,68 @@
-# Deployment context pre FR1 (draft) – podľa SDD_PROJECT_TEMPLATE_v4, kap. 14.
+# Deployment context pre FR1 – podľa SDD_PROJECT_TEMPLATE_v4, kap. 14.
 # Vznikol v 0002 po rozhodnutí DR-09 (technology context = applicable).
-# Zdroj: docx kap. 10.1.2, 10.2.2, 12; I&M View; ADR-002, ADR-003 (Accepted).
-# Container runtime, cloud ani CI/CD neboli rozhodnuté – nevypĺňajú sa.
+# Zdroj: docx kap. 10.1.2, 10.2.2, 12; I&M View; ADR-002, ADR-003, ADR-008, ADR-009 (Accepted), ADR-010 (Proposed).
+# 0009 (návrh 0.4.0): I-04, UI v artifacte (DR-17 zmena), seed_data (DR-I05), DR-0902, DR-0913. Riadky so značkou
+# "ZMENA 0009" sa zmenili v 0009; súbor je v stave draft, schválenie zapíše človek.
+# Container runtime, cloud ani CI/CD nie sú v rozsahu prototypu (ADR-008 doplnenie).              # ZMENA 0009
 
 meta:
-  status: "approved"
-  approved_by: "Martin Štefanko (Software architect)"
-  reviewed_by: "Martin Štefanko (Software architect)"
+  status: "approved" # ZMENA 0009 – po schválení nastaví človek "approved"
+  approved_by: "Martin Štefanko (Software architect)" # ZMENA 0009
+  reviewed_by: "Martin Štefanko (Software architect)" # ZMENA 0009
   architecture_baseline: "B-01"
-  specification_version: "0.2.0"
+  specification_version: "0.4.0" # ZMENA 0009 – draft baseline 0.4.0 (prompt 0009)
 
 artifacts:
   - id: "ART-SoftverIntelliWell"
     name: "Softvér IntelliWell"
     description_in_source: "Nasadený na serveri IntelliWell, realizuje systém IntelliWell (docx kap. 10.2.2)."
-    realizes: "AC-IntelliWell" # docx kap. 10.2.2; v prototype obsahuje iba AC-ModulRezervaciiAKlientov v rozsahu FR1
+    realizes: "AC-IntelliWell" # docx kap. 10.2.2
+    contains: # ZMENA 0009 – nové pole
+      application_components:
+        - id: "AC-ModulRezervaciiAKlientov"
+          in_prototype: true # FR1; kód src/IntelliWell/ModulRezervaciiAKlientov/
+        - id: "AC-ModulRiadeniaAMonitorovaniaZariadeni"
+          in_prototype: false
+        - id: "AC-ModulKoordinacieSaunovychMajstrov"
+          in_prototype: false
+      shared_hosting_part:
+        # Spoločná časť AC-IntelliWell: autentifikácia a autorizácia (NFR4, ADR-004, ADR-007), X-Correlation-ID,
+        # problem details. Kód src/IntelliWell/Hosting/ patrí AC-IntelliWell (DR-0906).
+        in_prototype: true
+      user_interface:
+        # Rozhodnutie človeka v prompte 0009 (zmena DR-17); technológia je predmetom ADR-010 (Proposed).
+        part_of_artifact: true # prompt 0009: „UI je súčasťou ART-SoftverIntelliWell“
+        separate_client_artifact: false # UI sa nenasadzuje samostatne; servíruje ho tá istá ASP.NET Core aplikácia
+        technology: "jedna statická stránka HTML + vanilla JavaScript v src/IntelliWell/wwwroot; bez nového NuGet balíka, bez frontend buildu" # prompt 0009, ADR-010
+        in_prototype: true # prompt 0009 – mení DR-17 (sumarizácia ostáva mimo rozsahu)
+        consumes_contract: "API-Reservations 0.2.1 (bez zmeny)"
+        realizes_requirement: "FR1-UI" # draft 0009
+        model_element: null # DR-0914: známa medzera modelu B-01 (Application Interface pre recepčnú chýba); väzba cez AC-ModulRezervaciiAKlientov
+        anonymous_access_to_page: true # DR-0913: stránku smie otvoriť aj neprihlásená osoba; údaje chráni API
+        token_storage: "iba v pamäti stránky" # DR-0910
+        decision: "ADR-010 (Proposed)"
     form: "aplikácia ASP.NET Core na .NET 10 (LTS)" # DR-05, ADR-002
-    packaging: null # spôsob zabalenia (napr. container image) nebol rozhodnutý
-    deployed_on: "NODE-ServerIntelliWell"
+    packaging: "bez balenia – prototyp sa spúšťa zo zdrojového kódu príkazom `dotnet run` (projekt src/IntelliWell, profil http v launchSettings.json)" # ZMENA 0009 – ADR-008 doplnenie (I-04)
+    packaging_out_of_scope: ["container image", "CI/CD"] # ZMENA 0009 – ADR-008 doplnenie
+    deployed_on: "NODE-ServerIntelliWell" # cieľová architektúra B-01
+    prototype_runs_on: "lokálny počítač vývojára (nie je prvok modelu B-01)" # ZMENA 0009 – ADR-008 doplnenie (I-04)
     uses_technology_services:
       - "TS-HostovanieSystemu"
       - "TS-DatabazovaSluzba"
     runtime: "SSW-RuntimeDotNet"
-    database: "SQLite (prototyp, ADR-003)"
-    seed_data: "evidencia klientov – seed dáta pre prototyp (DR-03); obsah a spôsob naplnenia nerozhodnuté"
+    database: "SQLite (prototyp, ADR-003) – súbor podľa ConnectionStrings:Reservations v appsettings.json" # ZMENA 0009 – doplnený odkaz na konfiguráciu
+    seed_data: "evidencia klientov – seed dáta prototypu (DR-03) zo súboru config/seed-clients.json; iba UUID klientov, vloženie pri štarte bez prepisu existujúcich (DR-I05, ADR-009)" # ZMENA 0009 – predtým „nerozhodnuté“
     dev_token_issuance: "dotnet user-jwts – iba vývojové prostredie (DR-23, ADR-004)"
     logging_constraint: "CON-003 – obsah poznámky sa nesmie zapisovať do aplikačného logu"
-    required_by_implementation_task: null # či je deployable Artifact súčasťou zadania IMPLEMENT_CHANGE, rozhodne človek
-    status: "approved"
+    configuration_files: # ZMENA 0009 – nové pole, iba existujúce súbory
+      - "src/IntelliWell/appsettings.json"
+      - "src/IntelliWell/appsettings.Development.json"
+      - "src/IntelliWell/Properties/launchSettings.json"
+      - "config/seed-clients.json"
+    static_content: "src/IntelliWell/wwwroot/ (UI, FR1-UI) – vznikne v IMPLEMENT_CHANGE po schválení ADR-010" # ZMENA 0009
+    required_by_implementation_task: true # ZMENA 0009 – DR-0902: spustiteľný projekt src/IntelliWell + konfigurácia + wwwroot, bez balenia
+    status: "approved" # ZMENA 0009
 
-open_questions:
-  - "Je deployable Artifact súčasťou zadania IMPLEMENT_CHANGE? (AGENTS.md kap. 4)"
-  - "Prostredie prototypu: lokálny počítač alebo NODE-ServerIntelliWell?"
-  - "Packaging (spustiteľná aplikácia / container image) – nerozhodnuté."
+open_questions: # ZMENA 0009 – uzavreté otázky prostredia a packagingu odstránené (ADR-008 doplnenie)
+  - "ADR-010 (Proposed): technológia UI – čaká na Accepted."
+  - "Application Interface pre recepčnú v modeli B-01 – známa medzera (DR-0914); doplnenie do Sparx EA mimo kroku 0009."

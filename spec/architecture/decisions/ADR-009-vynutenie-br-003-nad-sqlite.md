@@ -1,7 +1,7 @@
 # ADR-009 Vynútenie invariantu BR-003 a pravidla súbehu BR-009 nad SQLite
 
-> Draft pripravený AI v režime IMPLEMENT_CHANGE (úloha 0007, fáza 1 – plán). Toto nie je rozhodnutie.
-> Stav mení iba človek.
+> Draft pripravila AI v režime IMPLEMENT_CHANGE (úloha 0007, fáza 1 – plán). Rozhodnutie zapísal človek
+> v sekcii „Doplnenie 2026-11-25“ (Martin Štefanko, Software architect). Redakčná úprava hlavičky: 0009 (V-04).
 
 ## Status
 Accepted
@@ -49,5 +49,8 @@ ADR-001, ADR-003, BR-003, BR-009, BR-012, QR-002, DO-Rezervacie, AC-ModulRezerva
 ## Doplnenie 2026-11-25 (rozhodol Martin Štefanko, Software architect)
 - DR-I02: A – BR-003 a BR-009 sa vynucujú transakciou `BEGIN IMMEDIATE` nad SQLite.
 - DR-I03: A – audit QR-001 sa ukladá ako stĺpce `created_by` a `created_at` v riadku rezervácie.
+  - Poznámka 0009 (DR-0905, rozhodol Martin Štefanko; zapísala AI, čaká na potvrdenie človekom): názov stĺpca nie je
+    záväzný. Implementácia ukladá čas vytvorenia do stĺpca `created_at_utc_ticks` (UTC, .NET ticks). Význam QR-001
+    (kto a kedy, v riadku rezervácie) sa nemení (verification-0008 V-03, K-51).
 - DR-I04: A – každá `SqliteException` vrátane vypršania zámku = úložisko nedostupné → 503 bez opakovania (QR-002).
 - DR-I05: A – seed klienti v `config/seed-clients.json` iba s UUID (bez osobných údajov), `INSERT OR IGNORE` pri štarte.
