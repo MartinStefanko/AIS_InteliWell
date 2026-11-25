@@ -8,6 +8,7 @@
 - DR-30 a DR-31 boli rozhodnuté doplňujúcim promptom 2 v 0002.
 - ADR-001 až ADR-006 sú v stave **Accepted** (zapísal človek). ADR-007 (0004) je v stave **Accepted** (zapísal človek).
 - DR-C01 až DR-C08 (contract review 0.1.0) rozhodol človek; zapísané v 0004. DR-C09 až DR-C11 rozhodol človek doplňujúcim promptom 0004. DR-C12 (contract review 0.2.0) rozhodol človek a zapísal ručne. Žiadna DR nie je otvorená.
+- DR-V02 (verification 0008): presnosť startTime – rozhodnuté C, známe obmedzenie prototypu (rozhodol Martin Štefanko, 2026-11-25).
 
 ## Rozhodnuté k contract review 0.2.0 (DR-C12)
 
