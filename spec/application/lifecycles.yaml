@@ -1,0 +1,26 @@
+# Lifecycles pre FR1 (draft).
+# Docx (docs/sources/AIS_IntelliWell.docx) NEDEFINUJE stavy rezervácie ani prechody.
+# Nič sa nedopĺňa. Nižšie sú iba udalosti, ktoré docx spomína, ako podklad pre rozhodnutie.
+
+meta:
+  status: "draft"
+  approved_by: null
+  reviewed_by: null
+  architecture_baseline: "B-01"
+
+lifecycles:
+  - data_object: "DO-Rezervacie"
+    initial_state: null
+    states: null
+    transitions: []
+    events_mentioned_in_source:
+      - "rezervácia je uložená a termín zablokovaný (docx kap. 5, 8.3.2)"
+      - "k rezervácii je zaevidované priradenie saunového majstra po potvrdení (docx kap. 9.1.2)"
+      - "do rezervácie sa uložia parametre zariadení alebo profil (docx kap. 8.3.2, mimo FR1)"
+    not_mentioned_in_source:
+      - "zrušenie rezervácie"
+      - "zmena rezervácie"
+      - "ukončenie / realizácia návštevy ako stav rezervácie"
+    open_questions:
+      - "Má rezervácia stavy? Ak áno, ktoré a s akými prechodmi (vrátane zrušenia)?"
+    status: "draft"

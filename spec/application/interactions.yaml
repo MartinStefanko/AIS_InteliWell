@@ -1,0 +1,50 @@
+# Application Cooperation pre FR1 (draft).
+# Zdroj: Application Cooperation View TO-BE; docx kap. 9.1.2.
+# Komunikačný štýl (synchronous API / asynchronous event) nie je rozhodnutý.
+# Na obrázku sú väzby prerušované čiary so šípkou; typ väzby a role consumer/provider
+# nie sú v docx uvedené, preto sú null.
+
+meta:
+  status: "draft"
+  approved_by: null
+  reviewed_by: null
+  architecture_baseline: "B-01"
+
+interactions:
+  - id: "INT-001"
+    flow_from: "AC-ModulRezervaciiAKlientov"
+    flow_to: "AC-ModulRiadeniaAMonitorovaniaZariadeni"
+    consumer: null
+    provider: null
+    uses_application_service: null
+    information: "parametre rezervácie" # docx kap. 9.1.2; Data Object nie je pomenovaný
+    communication_style: "undecided"
+    requirements: [] # priama väzba na FR1 nie je v docx uvedená
+    relevance_for_fr1: null # potvrdí človek
+    decision: null
+
+  - id: "INT-002"
+    flow_from: "AC-ModulRezervaciiAKlientov"
+    flow_to: "AC-ModulKoordinacieSaunovychMajstrov"
+    consumer: null
+    provider: null
+    uses_application_service: null
+    information: "požiadavka (ak si klient želá saunového majstra)" # docx kap. 9.1.2
+    communication_style: "undecided"
+    requirements: [] # FR5; k FR1 iba ak sa rozhodne, že FR1 zahŕňa priradenie
+    relevance_for_fr1: null
+    decision: null
+
+  - id: "INT-003"
+    flow_from: "AC-ModulKoordinacieSaunovychMajstrov"
+    flow_to: "AC-ModulRezervaciiAKlientov"
+    consumer: null
+    provider: null
+    uses_application_service: null
+    information: "priradenie zaevidované späť k rezervácii (po potvrdení)" # docx kap. 9.1.2
+    communication_style: "undecided"
+    requirements: []
+    relevance_for_fr1: null
+    decision: null
+
+source_view: "spec/architecture/views/B-01-application-cooperation-tobe.png"

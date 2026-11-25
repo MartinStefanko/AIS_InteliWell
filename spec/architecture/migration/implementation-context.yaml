@@ -1,0 +1,67 @@
+# Implementation and Migration context (draft).
+# Prevzaté z docx kap. 12 a Implementation and Migration View. Harmonogram, effort a ceny sú mimo SDD.
+# Plateaus, Work Packages a Deliverables nie sú schválené – IDs sú navrhnuté (spec/drafts/id-mapping.yaml).
+
+meta:
+  status: "draft"
+  approved_by: null
+  reviewed_by: null
+  architecture_baseline: "B-01"
+  source_view: "spec/architecture/views/B-01-implementation-migration-tobe.png"
+
+plateaus:
+  - { id: "PL-Baseline", name: "Baseline architektúra", note: "súčasná manuálna prevádzka" }
+  - { id: "PL-Faza1", name: "Fáza 1: Základ systému a správa návštev" }
+  - { id: "PL-Faza2", name: "Fáza 2: Diaľkové riadenie prostredia" }
+  - { id: "PL-Faza3", name: "Fáza 3: Koordinácia a prehľady" }
+  - { id: "PL-Ciel", name: "Cieľová architektúra" }
+plateau_sequence: ["PL-Baseline", "PL-Faza1", "PL-Faza2", "PL-Faza3", "PL-Ciel"] # triggering (docx kap. 12)
+
+gaps:
+  - { id: "GAP-001", name: "Manuálna evidencia rezervácií a klientov", associated_plateaus: null }
+  - { id: "GAP-002", name: "Ručné nastavovanie zariadení bez záznamu zásahov", associated_plateaus: null }
+  - { id: "GAP-003", name: "Ručná koordinácia saunových majstrov a chýbajúce prehľady zásahov", associated_plateaus: null }
+  - { id: "GAP-004", name: "Nevyškolený personál a neoverená prevádzka", associated_plateaus: null }
+# associated_plateaus: docx uvádza asociáciu gap ↔ plateaus; konkrétne páry potvrdí človek z modelu.
+
+implementation:
+  current_plateau: "PL-Baseline"
+  target_plateau: "PL-Faza1" # FR1 (UC01) patrí do fázy 1 (docx kap. 12)
+  work_packages:
+    - id: "WP-001"
+      name: "Príprava servera IntelliWell a databázy"
+      realizes_plateau: "PL-Faza1"
+      delivers: ["D-001"]
+      realizes_requirements: [] # docx priamo neuvádza
+    - id: "WP-002"
+      name: "Implementácia modulu rezervácií a klientov"
+      realizes_plateau: "PL-Faza1"
+      delivers: ["D-002", "D-003"]
+      realizes_requirements: [] # docx kap. 12: "vrátane prihlasovania personálu"; väzbu na FR1 potvrdí človek
+    - id: "WP-003"
+      name: "Prenos údajov o klientoch z papierových formulárov"
+      realizes_plateau: "PL-Faza1"
+      delivers: ["D-004"]
+      realizes_requirements: []
+  deliverables:
+    - id: "D-001"
+      name: "Nainštalovaný server IntelliWell s databázou"
+      type: null
+      realizes_elements: ["NODE-ServerIntelliWell", "SSW-DatabazovySystem"]
+    - id: "D-002"
+      name: "Funkčný modul rezervácií a klientov"
+      type: null
+      realizes_elements: ["AC-ModulRezervaciiAKlientov", "DO-Rezervacie"]
+    - id: "D-003"
+      name: "Prihlasovanie personálu"
+      type: null
+      realizes_elements: []
+      realizes_requirements_in_text: ["NFR4"] # docx kap. 12; v I&M View nie je väzba zobrazená
+    - id: "D-004"
+      name: "Prenesené údaje o klientoch"
+      type: null
+      realizes_elements: ["DO-EvidenciaKlientov"]
+
+open_questions:
+  - "Sú plateaus, work packages a deliverables schválené?"
+  - "Väzba D-003 → NFR4 je iba v texte (kap. 12), nie vo view."

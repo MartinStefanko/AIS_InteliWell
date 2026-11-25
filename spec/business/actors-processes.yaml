@@ -1,0 +1,104 @@
+# Actors, roles a processes pre FR1 (draft).
+# Zdroj: docs/sources/AIS_IntelliWell.docx (docx) a views B-01 (draft, nie overené voči modelu).
+# IDs sú navrhnuté v spec/drafts/id-mapping.yaml (status proposed).
+
+meta:
+  status: "draft"
+  approved_by: null
+  reviewed_by: null
+  architecture_baseline: "B-01"
+
+actors:
+  - id: "ACT-Recepcna"
+    name: "Recepčná"
+    assigned_roles: ["ROLE-SpravcaNavstev"] # aj Diaľková obsluha zariadení a prostredia (mimo FR1)
+    source_view: "spec/architecture/views/B-01-organization-tobe.png"
+  - id: "ACT-Klient"
+    name: "Klient"
+    note: "Stojí mimo organizácie; so systémom priamo nepracuje (docx kap. 3.2, CON-002)."
+  - id: "ACT-SaunovyMajster"
+    name: "Saunový majster"
+    assigned_roles: ["ROLE-PoskytovatelDoplnkovejSluzby"]
+    note: "Relevantný iba ak FR1 zahŕňa priradenie saunového majstra."
+
+actors_roles:
+  - id: "ROLE-SpravcaNavstev"
+    name: "Správca návštev"
+    responsibility: >
+      V systéme vytvára rezervácie (UC01), registruje nových klientov (UC02)
+      a k rezervácii priraďuje saunového majstra s typom arómy a starostlivosti
+      o pokožku (UC05). (docx kap. 3.3)
+    performed_by_actor: "ACT-Recepcna"
+    permissions: null # práva docx neurčuje
+
+  - id: "ROLE-PoskytovatelDoplnkovejSluzby"
+    name: "Poskytovateľ doplnkovej služby"
+    responsibility: >
+      Potvrdí alebo odmietne priradenie k rezervácii vo svojom rozhraní (UC05)
+      a po potvrdení zrealizuje doplnkovú službu. (docx kap. 3.3)
+    performed_by_actor: "ACT-SaunovyMajster"
+    permissions: null
+
+processes:
+  - id: "BP-SpravaNavstev"
+    name: "Správa návštev"
+    state: "TO-BE"
+    owner: "ROLE-SpravcaNavstev" # rola vykonávajúca proces (BPC View); vlastníka procesu docx neurčuje
+    trigger: "BEV-PoziadavkaNaRezervaciu – Požiadavka klienta na rezerváciu (telefonicky, e-mailom, SMS alebo osobne)."
+    preconditions: [] # docx neuvádza
+    main_flow:
+      # Poradie podľa BPC View TO-BE a docx kap. 8.3.2
+      - step: "BP-SpravaNavstev-01"
+        text: "Recepčná vyberie klienta z evidencie klientov, prípadne ho zaregistruje."
+      - step: "BP-SpravaNavstev-02"
+        text: "Recepčná zadá dátum a čas."
+      - step: "BP-SpravaNavstev-03"
+        text: "Ak si to klient želá, recepčná priradí k rezervácii saunového majstra."
+      - step: "BP-SpravaNavstev-04"
+        text: "Systém overí dostupnosť termínu, uloží rezerváciu a zablokuje termín pre ďalších klientov."
+    flow_note: >
+      Biznis scenár v docx kap. 5 uvádza navyše zadanie poznámky a zobrazenie sumarizácie
+      pred overením dostupnosti; tieto kroky v BPC View nie sú samostatne zobrazené.
+    alternative_flows_in_source:
+      - "Klient nie je v evidencii klientov → recepčná ho zaregistruje (UC02/FR2) – docx kap. 8.3.2."
+      - "Klient si želá saunového majstra → priradenie saunového majstra; saunovému majstrovi príde požiadavka, ktorú vo svojom rozhraní potvrdí alebo odmietne (UC05) – docx kap. 8.3.2."
+    exceptions:
+      # Docx neuvádza žiadnu výnimku, ktorá mení výsledok vytvorenia rezervácie.
+      - id: null
+        text: "Termín nie je dostupný."
+        behavior: null # docx neurčuje – otvorená otázka
+        source: "Implicitne z kroku Overenie dostupnosti (docx kap. 5, 8.3.2); správanie neuvedené."
+      - id: null
+        text: "Saunový majster priradenie odmietne."
+        behavior: null # docx neurčuje dopad na rezerváciu
+        source: "docx kap. 3.2, 8.3.2"
+    outcome: "Rezervácia je uložená a termín je zablokovaný pre ďalších klientov (OUT-001)."
+    accesses_data_objects:
+      - data_object: "DO-EvidenciaKlientov"
+        by_step: "BP-SpravaNavstev-01"
+        access_type: null # na obrázku prerušovaná čiara so šípkami na oboch koncoch – potvrdiť
+      - data_object: "DO-Rezervacie"
+        by_step: "BP-SpravaNavstev-04"
+        access_type: null # potvrdiť z modelu
+    triggers_processes: ["BP-PotvrdeniePriradenia"] # z kroku BP-SpravaNavstev-03 (BPC View)
+    provides_business_services:
+      - "BS-RezervaciaTerminu"
+      - "BS-RegistraciaKlienta" # mimo FR1
+    source_views:
+      - "spec/architecture/views/B-01-business-process-cooperation-tobe.png"
+      - "spec/architecture/views/B-01-layered-tobe.png"
+      - "spec/architecture/views/B-01-application-usage-tobe.png"
+    status: "draft"
+
+business_events:
+  - id: "BEV-PoziadavkaNaRezervaciu"
+    name: "Požiadavka klienta na rezerváciu"
+    triggers: "BP-SpravaNavstev"
+    raised_by: "ACT-Klient" # BPC View: väzba Klient → udalosť; typ väzby potvrdiť
+
+business_services:
+  - id: "BS-RezervaciaTerminu"
+    name: "Rezervácia termínu"
+    serves_actors: ["ACT-Klient"]
+    realized_by: ["BP-SpravaNavstev"]
+    source_view: "spec/architecture/views/B-01-layered-tobe.png"

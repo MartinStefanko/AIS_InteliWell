@@ -1,0 +1,42 @@
+# Quality (nefunkčné) requirements relevantné pre FR1 (draft).
+# Zdroj: docs/sources/AIS_IntelliWell.docx. Čísla, limity ani metriky docx neuvádza – nič sa nedopĺňa.
+
+meta:
+  status: "draft"
+  approved_by: null
+  reviewed_by: null
+  architecture_baseline: "B-01"
+
+quality_requirements:
+  - id: "NFR1"
+    category: null # docx kategóriu neuvádza (napr. data quality / validácia) – potvrdí owner
+    title: "Validácia zadávaných údajov"
+    statement: >
+      Zadávané údaje sa overujú podľa validačných pravidiel.
+    source: >
+      docx kap. 8.1: NFR1 spolu s FR2 realizuje cieľ Zefektívniť prácu recepcie;
+      NFR1 realizuje Služba správy rezervácií a klientov aj Služba riadenia
+      a monitorovania zariadení. Kap. 5: pri registrácii "systém ich overí podľa
+      validačných pravidiel".
+    applies_to_fr1: null # docx výslovne neuvádza, či a ktoré údaje rezervácie sa validujú
+    measure: null
+    validation_rules: null # docx validačné pravidlá nedefinuje
+    owner: null
+    status: "draft"
+
+  - id: "NFR4"
+    category: null # docx kategóriu neuvádza; text spomína prístup a ochranu osobných údajov (kap. 8.1) – potvrdí owner
+    title: "Prístup len pre prihlásený personál"
+    statement: >
+      Do systému IntelliWell má prístup iba prihlásený personál.
+    source: >
+      docx kap. 8.1: NFR4 realizuje celý systém IntelliWell, "vďaka čomu je každý
+      zásah priradený konkrétnej prihlásenej osobe"; obmedzený prístup chráni osobné
+      údaje klientov vrátane kontraindikácií (citlivé údaje podľa GDPR). Ovplyvňuje
+      ju obmedzenie CON-002. Kap. 12: výstup "Prihlasovanie personálu" realizuje NFR4.
+    measure: null
+    authentication_method: null # docx neurčuje
+    authorization_per_role: null # docx neurčuje, ktoré roly smú vytvoriť rezerváciu
+    audit_of_reservation_creation: null # docx viaže priradenie osobe na "zásah" (nastavenia zariadení), pre rezerváciu neurčuje
+    owner: null
+    status: "draft"

@@ -1,0 +1,44 @@
+# Business rules pre FR1 (draft).
+# Obsahuje IBA pravidlá, ktoré docx (docs/sources/AIS_IntelliWell.docx) výslovne uvádza.
+# Typ (invariant / rule) ani správanie pri porušení docx neurčuje – otvorené otázky.
+
+meta:
+  status: "draft"
+  approved_by: null
+  reviewed_by: null
+  architecture_baseline: "B-01"
+
+business_rules:
+  - id: "BR-001"
+    title: "Rezervácia sa uloží po overení dostupnosti termínu"
+    type: null # rule vs. invariant – rozhodne owner
+    statement: >
+      Systém pred uložením rezervácie overí dostupnosť termínu.
+    source: >
+      docx kap. 5 (TO-BE: "IntelliWell zobrazí sumarizáciu, overí dostupnosť termínu,
+      uloží rezerváciu a termín zablokuje"), kap. 8.3.2, BPC View TO-BE
+      (vnorený proces "Overenie dostupnosti a uloženie rezervácie").
+    owner: null
+    requirements: ["FR1"]
+    scenarios: []
+    status: "draft"
+    open_questions:
+      - "Čo znamená, že termín je dostupný (pravidlo kolízie, dĺžka termínu)?"
+      - "Čo systém urobí, ak termín dostupný nie je?"
+
+  - id: "BR-002"
+    title: "Po uložení rezervácie je termín zablokovaný pre ďalších klientov"
+    type: null # rule vs. invariant – rozhodne owner
+    statement: >
+      Po uložení rezervácie systém zablokuje termín pre ďalších klientov.
+    source: >
+      docx kap. 4 a 7 (outcome "Rezervácia uložená so zablokovaným termínom"),
+      kap. 5, kap. 8.3.2, kap. 13.1 (blokovanie obsadených termínov).
+    owner: null
+    requirements: ["FR1"]
+    realizes_outcome: "OUT-001"
+    scenarios: []
+    status: "draft"
+    open_questions:
+      - "Ako sa správa súbeh dvoch rezervácií na ten istý termín?"
+      - "Uvoľní sa termín pri zrušení rezervácie? (zrušenie docx neuvádza)"

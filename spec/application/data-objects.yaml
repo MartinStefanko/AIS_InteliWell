@@ -1,0 +1,39 @@
+# Data Objects pre FR1 (draft) – bez databázového návrhu.
+# Zdroj: docx kap. 5, 6, 8.1, 8.3.2, 9.1.2, 9.2.2; views BPC, Application Usage, Layered TO-BE.
+# Typ "Data Object" je prečítaný z notácie obrázkov; text docx hovorí iba o "údajoch".
+
+meta:
+  status: "draft"
+  approved_by: null
+  reviewed_by: null
+  architecture_baseline: "B-01"
+
+data_objects:
+  - id: "DO-Rezervacie"
+    name: "Rezervácie"
+    meaning: "Rezervácie klientov evidované centrálne v IntelliWell (docx kap. 6, 9.2.2)."
+    content_mentioned_in_source:
+      - "klient (vyhľadaný v systéme) – docx kap. 5"
+      - "dátum a čas – docx kap. 5, 8.3.2"
+      - "poznámka – docx kap. 5"
+      - "priradenie saunového majstra (typ arómy a starostlivosti o pokožku) – docx kap. 3.3, 9.1.2"
+      - "parametre zariadení alebo profil (ukladajú sa pri príprave prostredia, mimo FR1) – docx kap. 8.3.2"
+    owner_component: null # docx neurčuje; views: prístup z AC-IntelliWell
+    accessed_by: ["AC-IntelliWell"] # číta aj zapisuje (docx kap. 9.2.2)
+    related_business_object: null # Business Object v docx nie je
+    sensitive_data: null # docx neurčuje
+    lifecycle: "spec/application/lifecycles.yaml#DO-Rezervacie"
+    status: "draft"
+
+  - id: "DO-EvidenciaKlientov"
+    name: "Evidencia klientov"
+    meaning: "Profily klientov evidované centrálne v IntelliWell (docx kap. 6, 9.2.2)."
+    content_mentioned_in_source:
+      - "identifikačné a kontaktné údaje – docx kap. 5 (registrácia, FR2)"
+      - "kontraindikácie – docx kap. 5, 8.1"
+    usage_in_fr1: "Recepčná vyhľadá / vyberie klienta z evidencie klientov (docx kap. 5, 8.3.2)."
+    owner_component: null # docx neurčuje
+    accessed_by: ["AC-IntelliWell"]
+    related_business_object: null
+    sensitive_data: true # docx kap. 8.1: kontraindikácie patria medzi citlivé údaje podľa GDPR
+    status: "draft"

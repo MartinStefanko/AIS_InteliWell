@@ -1,0 +1,71 @@
+# Technology context pre FR1 (draft).
+# Opisuje iba to, čo uvádza docx (kap. 10.1.2, 10.2.2, 11.2, 13.2) a Layered View TO-BE.
+# Status applicable / not applicable rozhodne človek (AGENTS.md kap. 4). Nevyberá sa DBMS ani platforma.
+
+technology_context:
+  status: null # "applicable" | "not applicable" – rozhodne človek
+  reason: null
+  confirmed_by_role: null
+  approved_by: null
+  reviewed_by: null
+  architecture_baseline: "B-01"
+  draft_status: "draft"
+
+nodes:
+  - id: "NODE-ServerIntelliWell"
+    name: "Server IntelliWell"
+    description_in_source: >
+      Jadro budúceho stavu. Je na ňom nasadený softvér IntelliWell (artifact) spolu
+      s databázovým systémom (docx kap. 10.1.2). Realizuje službu hostovania systému
+      IntelliWell (kap. 10.2.2, 11.2).
+    continuum_note: "Enterprise Continuum uvádza 'Serverová infraštruktúra (virtuálny server pre IntelliWell)' (docx kap. 13.2) – neschválené."
+
+system_software:
+  - id: "SSW-DatabazovySystem"
+    name: "Databázový systém"
+    host_node: "NODE-ServerIntelliWell"
+    provides_services: ["TS-DatabazovaSluzba"]
+    description_in_source: >
+      Uchováva rezervácie, evidenciu klientov a evidenciu zásahov (docx kap. 10.1.2).
+    product: null # konkrétny DBMS docx neurčuje
+    continuum_note: "Enterprise Continuum uvádza 'Centrálna relačná databáza' / 'Relačná databáza' (docx kap. 13) – neschválené."
+
+technology_services:
+  - id: "TS-HostovanieSystemu"
+    name: "Hostovanie systému IntelliWell"
+    realized_by: "NODE-ServerIntelliWell"
+    used_by: ["AC-IntelliWell"]
+    source_view: "spec/architecture/views/B-01-layered-tobe.png"
+  - id: "TS-DatabazovaSluzba"
+    name: "Databázová služba"
+    realized_by: "SSW-DatabazovySystem"
+    used_by: ["AC-IntelliWell"] # "využíva pri každej práci s údajmi" (docx kap. 10.2.2)
+    source_view: "spec/architecture/views/B-01-layered-tobe.png"
+
+communication_networks:
+  - id: "NET-KomunikacnaSiet"
+    name: "Komunikačná sieť"
+    description_in_source: >
+      Prepája server IntelliWell so zariadeniami personálu (zariadenie recepcie,
+      saunového majstra a manažéra) a s inteligentnými zariadeniami v miestnosti
+      NikaWell (docx kap. 10.1.2). Poskytuje službu diaľkového prístupu k zariadeniam
+      (kap. 10.2.2) – tá sa FR1 netýka.
+    continuum_note: "Enterprise Continuum uvádza 'Sieťová infraštruktúra (LAN / Wi-Fi)' (docx kap. 13.2) – neschválené."
+
+artifacts_mentioned:
+  - id: "ART-SoftverIntelliWell"
+    name: "Softvér IntelliWell"
+    description_in_source: "Nasadený na serveri IntelliWell, realizuje systém IntelliWell (docx kap. 10.2.2)."
+    note: "deployment.yaml nebol vytvorený; deployable Artifact je povinný iba ak je súčasťou implementačného zadania."
+
+implementation_platform:
+  value: null
+  note: >
+    Docx uvádza ".NET (C#) ako predpokladaná implementačná platforma" (kap. 13.2)
+    a v kap. 15.2: "Podklady projektu technológiu neurčujú, preto ide o predpoklad."
+    Nie je to schválené rozhodnutie.
+
+open_questions:
+  - "Je technology context pre FR1 applicable alebo not applicable?"
+  - "Konkrétny DBMS (docx uvádza iba 'databázový systém' / 'relačná databáza')."
+  - "Implementačná platforma (.NET je iba predpoklad)."

@@ -1,0 +1,309 @@
+# Návrh stabilných IDs pre FR1 (draft, vytvorila AI v kroku SETUP_FRAMEWORK).
+# Toto NIE SÚ IDs z modelu v Sparx EA. Človek ich potvrdí a doplní do modelu.
+# Zdroj: docs/sources/AIS_IntelliWell.docx (ďalej "docx") a obrázky v spec/architecture/views/.
+# Dokument má vlastné IDs iba pre FR1–FR6, NFR1–NFR4 a UC01–UC06. Tie sa nemenia
+# a sú tu uvedené len pre úplnosť (status "source").
+#
+# Polia:
+#   id          – navrhnuté ID
+#   name        – presný názov prvku tak, ako je v dokumente / na obrázku
+#   type        – typ prvku, iba ak ho uvádza text docx alebo je čitateľný z notácie; inak null
+#   views       – obrázky, kde je prvok viditeľný (B-01-*.png v spec/architecture/views/)
+#   source_text – kapitola docx, kde je prvok opísaný
+#   status      – "proposed" (navrhnuté AI) | "source" (ID je v dokumente)
+
+id_mapping:
+  status: "draft"
+  architecture_baseline: "B-01"
+  approved_by: null
+  reviewed_by: null
+
+  ids_from_source:
+    - { id: "FR1",  name: "(FR1) Vytvorenie rezervácie", type: "Requirement", views: ["B-01-requirements-realization-tobe.png"], source_text: "kap. 8.1", status: "source" }
+    - { id: "NFR1", name: "(NFR1) Validácia zadávaných údajov", type: "Requirement", views: ["B-01-requirements-realization-tobe.png"], source_text: "kap. 8.1", status: "source" }
+    - { id: "NFR4", name: "(NFR4) Prístup len pre prihlásený personál", type: "Requirement", views: ["B-01-requirements-realization-tobe.png"], source_text: "kap. 8.1", status: "source" }
+    - { id: "UC01", name: "UC01 Vytvor rezerváciu", type: "Use case (textový odkaz, nie je v ArchiMate views)", views: [], source_text: "kap. 1, 3.3", status: "source" }
+
+  proposed:
+    # --- Motivation ---
+    - id: "G-001"
+      name: "Centralizovať plánovanie služieb"
+      type: "Goal"
+      views: ["B-01-motivation-tobe.png", "B-01-requirements-realization-tobe.png"]
+      source_text: "kap. 4, 8.1"
+      status: "proposed"
+    - id: "G-002"
+      name: "Zefektívniť prácu recepcie"
+      type: "Goal"
+      views: ["B-01-motivation-tobe.png", "B-01-requirements-realization-tobe.png"]
+      source_text: "kap. 4, 8.1"
+      status: "proposed"
+      note: "Relevantný pre NFR1 (NFR1 realizuje tento cieľ)."
+    - id: "G-005"
+      name: "Zabezpečiť dohľad nad kvalitou služieb"
+      type: "Goal"
+      views: ["B-01-motivation-tobe.png", "B-01-requirements-realization-tobe.png"]
+      source_text: "kap. 4, 8.1"
+      status: "proposed"
+      note: "Relevantný pre NFR4. Čísla G-003, G-004, G-006, G-007 sú rezervované pre ostatné ciele (mimo FR1)."
+    - id: "OUT-001"
+      name: "Rezervácia uložená so zablokovaným termínom"
+      type: "Outcome"
+      views: ["B-01-motivation-tobe.png"]
+      source_text: "kap. 4, 7"
+      status: "proposed"
+    - id: "DRV-001"
+      name: "Požiadavky klientov z viacerých kanálov"
+      type: "Driver"
+      views: ["B-01-motivation-tobe.png"]
+      source_text: "kap. 4"
+      status: "proposed"
+    - id: "ASM-001"
+      name: "Manuálne spracovanie rezervácií a profilov"
+      type: "Assessment"
+      views: ["B-01-motivation-tobe.png"]
+      source_text: "kap. 4"
+      status: "proposed"
+    - id: "CON-001"
+      name: "Požiadavky prichádzajú telefonicky, e-mailom, SMS alebo osobne"
+      type: "Constraint"
+      views: ["B-01-requirements-realization-tobe.png"]
+      source_text: "kap. 6, 8.1"
+      status: "proposed"
+    - id: "CON-002"
+      name: "Interný systém len pre personál"
+      type: "Constraint"
+      views: ["B-01-requirements-realization-tobe.png"]
+      source_text: "kap. 6, 8.1"
+      status: "proposed"
+
+    # --- Business: actors, roles ---
+    - id: "ACT-Recepcna"
+      name: "Recepčná"
+      type: "Business Actor"
+      views: ["B-01-organization-tobe.png", "B-01-application-usage-tobe.png"]
+      source_text: "kap. 3.2, 3.3, 9.2.2"
+      status: "proposed"
+      note: "V Motivation View je Recepčná zobrazená ako Stakeholder (iný prvok s rovnakým názvom)."
+    - id: "ACT-Klient"
+      name: "Klient"
+      type: "Business Actor"
+      views: ["B-01-business-process-cooperation-tobe.png", "B-01-application-usage-tobe.png", "B-01-layered-tobe.png", "B-01-organization-tobe.png"]
+      source_text: "kap. 3.2, 11.2"
+      status: "proposed"
+    - id: "ACT-SaunovyMajster"
+      name: "Saunový majster"
+      type: "Business Actor"
+      views: ["B-01-organization-tobe.png", "B-01-application-usage-tobe.png"]
+      source_text: "kap. 3.2"
+      status: "proposed"
+      note: "Relevantný iba ak FR1 zahŕňa krok Priradenie saunového majstra (otvorená otázka)."
+    - id: "ROLE-SpravcaNavstev"
+      name: "Správca návštev"
+      type: "Business Role"
+      views: ["B-01-organization-tobe.png", "B-01-business-process-cooperation-tobe.png"]
+      source_text: "kap. 3.2, 3.3, 8.3.2"
+      status: "proposed"
+    - id: "ROLE-PoskytovatelDoplnkovejSluzby"
+      name: "Poskytovateľ doplnkovej služby"
+      type: "Business Role"
+      views: ["B-01-organization-tobe.png", "B-01-business-process-cooperation-tobe.png"]
+      source_text: "kap. 3.3, 8.3.2"
+      status: "proposed"
+      note: "Kontext pre krok Priradenie saunového majstra (UC05)."
+
+    # --- Business: events, processes, services ---
+    - id: "BEV-PoziadavkaNaRezervaciu"
+      name: "Požiadavka klienta na rezerváciu"
+      type: "Business Event"
+      views: ["B-01-business-process-cooperation-tobe.png"]
+      source_text: "kap. 8.3.2"
+      status: "proposed"
+    - id: "BP-SpravaNavstev"
+      name: "Správa návštev"
+      type: "Business Process"
+      views: ["B-01-business-process-cooperation-tobe.png", "B-01-application-usage-tobe.png", "B-01-layered-tobe.png"]
+      source_text: "kap. 8.3.2, 9.2.2, 11.2"
+      status: "proposed"
+    - id: "BP-SpravaNavstev-01"
+      name: "Výber alebo registrácia klienta"
+      type: "Business Process (vnorený v Správa návštev)"
+      views: ["B-01-business-process-cooperation-tobe.png"]
+      source_text: "kap. 8.3.2"
+      status: "proposed"
+    - id: "BP-SpravaNavstev-02"
+      name: "Zadanie dátumu a času"
+      type: "Business Process (vnorený v Správa návštev)"
+      views: ["B-01-business-process-cooperation-tobe.png"]
+      source_text: "kap. 8.3.2"
+      status: "proposed"
+    - id: "BP-SpravaNavstev-03"
+      name: "Priradenie saunového majstra"
+      type: "Business Process (vnorený v Správa návštev)"
+      views: ["B-01-business-process-cooperation-tobe.png"]
+      source_text: "kap. 8.3.2"
+      status: "proposed"
+    - id: "BP-SpravaNavstev-04"
+      name: "Overenie dostupnosti a uloženie rezervácie"
+      type: "Business Process (vnorený v Správa návštev)"
+      views: ["B-01-business-process-cooperation-tobe.png"]
+      source_text: "kap. 8.3.2"
+      status: "proposed"
+    - id: "BP-PotvrdeniePriradenia"
+      name: "Potvrdenie priradenia v rozhraní"
+      type: "Business Process"
+      views: ["B-01-business-process-cooperation-tobe.png"]
+      source_text: "kap. 8.3.2"
+      status: "proposed"
+      note: "Kontext (UC05), nie je súčasťou FR1, ak sa nerozhodne inak."
+    - id: "BS-RezervaciaTerminu"
+      name: "Rezervácia termínu"
+      type: "Business Service"
+      views: ["B-01-layered-tobe.png"]
+      source_text: "kap. 8.2.2, 11.2"
+      status: "proposed"
+    - id: "BS-RegistraciaKlienta"
+      name: "Registrácia klienta"
+      type: "Business Service"
+      views: ["B-01-layered-tobe.png"]
+      source_text: "kap. 8.2.2, 11.2"
+      status: "proposed"
+      note: "Kontext (FR2); realizuje ju ten istý proces Správa návštev."
+
+    # --- Application ---
+    - id: "AS-SpravaRezervaciiAKlientov"
+      name: "Služba správy rezervácií a klientov"
+      type: "Application Service"
+      views: ["B-01-requirements-realization-tobe.png", "B-01-application-usage-tobe.png", "B-01-layered-tobe.png"]
+      source_text: "kap. 8.1, 9.2.2, 11.2"
+      status: "proposed"
+    - id: "AC-IntelliWell"
+      name: "IntelliWell"
+      type: "Application Component"
+      views: ["B-01-requirements-realization-tobe.png", "B-01-application-cooperation-tobe.png", "B-01-application-usage-tobe.png", "B-01-layered-tobe.png"]
+      source_text: "kap. 9.1.2, 9.2.2"
+      status: "proposed"
+    - id: "AC-ModulRezervaciiAKlientov"
+      name: "Modul rezervácií a klientov"
+      type: "Application Component"
+      views: ["B-01-application-cooperation-tobe.png", "B-01-application-usage-tobe.png", "B-01-layered-tobe.png", "B-01-implementation-migration-tobe.png"]
+      source_text: "kap. 9.1.2, 9.2.2, 11.2, 12"
+      status: "proposed"
+    - id: "AC-ModulRiadeniaAMonitorovaniaZariadeni"
+      name: "Modul riadenia a monitorovania zariadení"
+      type: "Application Component"
+      views: ["B-01-application-cooperation-tobe.png", "B-01-application-usage-tobe.png", "B-01-layered-tobe.png"]
+      source_text: "kap. 9.1.2"
+      status: "proposed"
+      note: "Kontext: prijíma parametre rezervácie (INT-001)."
+    - id: "AC-ModulKoordinacieSaunovychMajstrov"
+      name: "Modul koordinácie saunových majstrov"
+      type: "Application Component"
+      views: ["B-01-application-cooperation-tobe.png", "B-01-application-usage-tobe.png", "B-01-layered-tobe.png"]
+      source_text: "kap. 9.1.2"
+      status: "proposed"
+      note: "Kontext: INT-002, INT-003."
+    - id: "INT-001"
+      name: "Modul rezervácií a klientov → Modul riadenia a monitorovania zariadení (parametre rezervácie)"
+      type: null
+      views: ["B-01-application-cooperation-tobe.png"]
+      source_text: "kap. 9.1.2"
+      status: "proposed"
+      note: "Typ väzby nie je v texte uvedený; na obrázku prerušovaná čiara so šípkou."
+    - id: "INT-002"
+      name: "Modul rezervácií a klientov → Modul koordinácie saunových majstrov (požiadavka)"
+      type: null
+      views: ["B-01-application-cooperation-tobe.png"]
+      source_text: "kap. 9.1.2"
+      status: "proposed"
+    - id: "INT-003"
+      name: "Modul koordinácie saunových majstrov → Modul rezervácií a klientov (priradenie späť k rezervácii)"
+      type: null
+      views: ["B-01-application-cooperation-tobe.png"]
+      source_text: "kap. 9.1.2"
+      status: "proposed"
+    - id: "DO-Rezervacie"
+      name: "Rezervácie"
+      type: "Data Object"
+      type_evidence: "notácia v obrázku (ikona Data Object); text uvádza len 'údaje'"
+      views: ["B-01-business-process-cooperation-tobe.png", "B-01-application-usage-tobe.png", "B-01-layered-tobe.png", "B-01-implementation-migration-tobe.png"]
+      source_text: "kap. 6, 9.2.2, 11.2"
+      status: "proposed"
+    - id: "DO-EvidenciaKlientov"
+      name: "Evidencia klientov"
+      type: "Data Object"
+      type_evidence: "notácia v obrázku (ikona Data Object); text uvádza len 'údaje'"
+      views: ["B-01-business-process-cooperation-tobe.png", "B-01-application-usage-tobe.png", "B-01-layered-tobe.png", "B-01-implementation-migration-tobe.png"]
+      source_text: "kap. 6, 9.2.2, 11.2"
+      status: "proposed"
+    # BO-*: dokument ani views neobsahujú Business Object pre FR1. Žiadne BO ID sa nenavrhuje.
+
+    # --- Technology ---
+    - id: "NODE-ServerIntelliWell"
+      name: "Server IntelliWell"
+      type: "Node"
+      views: ["B-01-layered-tobe.png", "B-01-implementation-migration-tobe.png"]
+      source_text: "kap. 10.1.2, 10.2.2, 11.2"
+      status: "proposed"
+    - id: "SSW-DatabazovySystem"
+      name: "Databázový systém"
+      type: "System Software"
+      views: ["B-01-layered-tobe.png", "B-01-implementation-migration-tobe.png"]
+      source_text: "kap. 10.1.2, 10.2.2, 11.2"
+      status: "proposed"
+    - id: "TS-HostovanieSystemu"
+      name: "Hostovanie systému IntelliWell"
+      type: "Technology Service"
+      views: ["B-01-layered-tobe.png"]
+      source_text: "kap. 10.2.2, 11.2"
+      status: "proposed"
+    - id: "TS-DatabazovaSluzba"
+      name: "Databázová služba"
+      type: "Technology Service"
+      views: ["B-01-layered-tobe.png"]
+      source_text: "kap. 10.2.2, 11.2"
+      status: "proposed"
+    - id: "NET-KomunikacnaSiet"
+      name: "Komunikačná sieť"
+      type: "Communication Network"
+      views: ["B-01-layered-tobe.png", "B-01-implementation-migration-tobe.png"]
+      source_text: "kap. 10.1.2, 11.2"
+      status: "proposed"
+    - id: "ART-SoftverIntelliWell"
+      name: "Softvér IntelliWell"
+      type: "Artifact"
+      views: ["B-01-implementation-migration-tobe.png"]
+      source_text: "kap. 10.1.2, 10.2.2, 12"
+      status: "proposed"
+
+    # --- Implementation and Migration ---
+    - { id: "PL-Baseline", name: "Baseline architektúra", type: "Plateau", views: ["B-01-implementation-migration-tobe.png"], source_text: "kap. 12", status: "proposed" }
+    - { id: "PL-Faza1", name: "Fáza 1: Základ systému a správa návštev", type: "Plateau", views: ["B-01-implementation-migration-tobe.png"], source_text: "kap. 12", status: "proposed" }
+    - { id: "PL-Faza2", name: "Fáza 2: Diaľkové riadenie prostredia", type: "Plateau", views: ["B-01-implementation-migration-tobe.png"], source_text: "kap. 12", status: "proposed" }
+    - { id: "PL-Faza3", name: "Fáza 3: Koordinácia a prehľady", type: "Plateau", views: ["B-01-implementation-migration-tobe.png"], source_text: "kap. 12", status: "proposed" }
+    - { id: "PL-Ciel", name: "Cieľová architektúra", type: "Plateau", views: ["B-01-implementation-migration-tobe.png"], source_text: "kap. 12", status: "proposed" }
+    - { id: "GAP-001", name: "Manuálna evidencia rezervácií a klientov", type: "Gap", views: ["B-01-implementation-migration-tobe.png"], source_text: "kap. 12", status: "proposed" }
+    - { id: "GAP-002", name: "Ručné nastavovanie zariadení bez záznamu zásahov", type: "Gap", views: ["B-01-implementation-migration-tobe.png"], source_text: "kap. 12", status: "proposed" }
+    - { id: "GAP-003", name: "Ručná koordinácia saunových majstrov a chýbajúce prehľady zásahov", type: "Gap", views: ["B-01-implementation-migration-tobe.png"], source_text: "kap. 12", status: "proposed" }
+    - { id: "GAP-004", name: "Nevyškolený personál a neoverená prevádzka", type: "Gap", views: ["B-01-implementation-migration-tobe.png"], source_text: "kap. 12", status: "proposed" }
+    - { id: "WP-001", name: "Príprava servera IntelliWell a databázy", type: "Work Package", views: ["B-01-implementation-migration-tobe.png"], source_text: "kap. 12", status: "proposed" }
+    - { id: "WP-002", name: "Implementácia modulu rezervácií a klientov", type: "Work Package", views: ["B-01-implementation-migration-tobe.png"], source_text: "kap. 12", status: "proposed" }
+    - { id: "WP-003", name: "Prenos údajov o klientoch z papierových formulárov", type: "Work Package", views: ["B-01-implementation-migration-tobe.png"], source_text: "kap. 12", status: "proposed" }
+    - { id: "D-001", name: "Nainštalovaný server IntelliWell s databázou", type: "Deliverable", views: ["B-01-implementation-migration-tobe.png"], source_text: "kap. 12", status: "proposed" }
+    - { id: "D-002", name: "Funkčný modul rezervácií a klientov", type: "Deliverable", views: ["B-01-implementation-migration-tobe.png"], source_text: "kap. 12", status: "proposed" }
+    - { id: "D-003", name: "Prihlasovanie personálu", type: "Deliverable", views: ["B-01-implementation-migration-tobe.png"], source_text: "kap. 12", status: "proposed" }
+    - { id: "D-004", name: "Prenesené údaje o klientoch", type: "Deliverable", views: ["B-01-implementation-migration-tobe.png"], source_text: "kap. 12", status: "proposed" }
+
+    # --- Business rules (iba z textu docx, nie sú prvkami ArchiMate views) ---
+    - id: "BR-001"
+      name: "Rezervácia sa uloží po overení dostupnosti termínu"
+      type: "Business Rule (textový zdroj)"
+      views: []
+      source_text: "kap. 5 (Vytvorenie rezervácie, TO-BE), 8.3.2"
+      status: "proposed"
+    - id: "BR-002"
+      name: "Po uložení rezervácie je termín zablokovaný pre ďalších klientov"
+      type: "Business Rule (textový zdroj)"
+      views: []
+      source_text: "kap. 4 (outcome), 5, 8.3.2, 13.1"
+      status: "proposed"

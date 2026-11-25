@@ -1,0 +1,42 @@
+# Application Usage a Service Realization pre FR1 (draft).
+# Zdroj: Layered View TO-BE, Application Usage View TO-BE, Requirements Realization View; docx kap. 8.1, 9.2.2, 11.2.
+
+meta:
+  status: "draft"
+  approved_by: null
+  reviewed_by: null
+  architecture_baseline: "B-01"
+
+service_realization:
+  - business_service: "BS-RezervaciaTerminu"
+    used_by_roles: [] # view zobrazuje serving na aktéra Klient, nie na rolu
+    served_actors: ["ACT-Klient"]
+    realized_by_business_processes:
+      - "BP-SpravaNavstev"
+    supported_by_application_services:
+      - "AS-SpravaRezervaciiAKlientov"
+    provided_by_components:
+      - "AC-ModulRezervaciiAKlientov"
+    requirements: ["FR1"]
+    evidence:
+      - view: "spec/architecture/views/B-01-layered-tobe.png"
+        shows: >
+          Správa návštev realizuje Rezervácia termínu; Rezervácia termínu slúži Klientovi;
+          Služba správy rezervácií a klientov slúži Správe návštev; Modul rezervácií
+          a klientov realizuje Službu správy rezervácií a klientov.
+      - view: "spec/architecture/views/B-01-application-usage-tobe.png"
+        shows: >
+          Recepčná je priradená k Správe návštev; Služba správy rezervácií a klientov
+          slúži Správe návštev; Modul rezervácií a klientov realizuje službu
+          (docx kap. 9.2.2: odvodený vzťah realizácie).
+      - view: "spec/architecture/views/B-01-requirements-realization-tobe.png"
+        shows: "Služba správy rezervácií a klientov realizuje FR1 (aj FR2 a NFR1)."
+    model_relationship_types_verified: false # typy väzieb prečítané z notácie obrázkov, neoverené v Sparx EA
+    status: "draft"
+
+application_usage:
+  - business_process: "BP-SpravaNavstev"
+    uses_application_service: "AS-SpravaRezervaciiAKlientov"
+    performed_by: "ACT-Recepcna" # Application Usage View: Recepčná; BPC View: rola ROLE-SpravcaNavstev
+    source_view: "spec/architecture/views/B-01-application-usage-tobe.png"
+    status: "draft"

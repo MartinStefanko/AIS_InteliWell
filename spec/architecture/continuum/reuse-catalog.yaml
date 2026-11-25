@@ -1,0 +1,120 @@
+# Enterprise Continuum – reuse katalóg (draft).
+# Prevzaté z docx kap. 13 v reálnom stave. Docx uvádza iba klasifikáciu a opis položiek.
+# Zdroj (externý katalóg), owner, verzia, maturity ani reuse rozhodnutie v docx NIE SÚ – ostávajú null.
+
+meta:
+  status: "draft"
+  approved_by: null
+  reviewed_by: null
+  source: "docs/sources/AIS_IntelliWell.docx, kap. 13"
+
+architecture_continuum:
+  foundation_architecture:
+    - name: "TOGAF Technical Reference Model (TRM) so všeobecnými platformovými službami a štandardmi"
+    - name: "Architektúra klient-server (server IntelliWell a zariadenia personálu)"
+  common_systems_architecture:
+    - name: "Centrálna relačná databáza (dátové služby)"
+    - name: "Komunikačná sieť (sieťové služby)"
+    - name: "Riadenie prístupu a prihlasovanie personálu"
+    - name: "Validácia vstupných údajov"
+    - name: "Prehľady a reporty (reporting)"
+    - name: "Centrálne riadenie a monitorovanie inteligentných zariadení cez jednotné rozhranie (koncept inteligentnej domácnosti, smart home)"
+  industry_architecture:
+    - name: "Rezervačné procesy wellness a hospitality služieb"
+      description: >
+        Štandardné vzory pre správu termínov, overovanie dostupnosti, vytváranie
+        rezervácií a blokovanie obsadených termínov. Slúžia ako základ pre správu
+        návštev v systéme IntelliWell (UC01, UC02).
+    - name: "Inteligentné wellness (smart wellness)"
+      description: >
+        Uplatnenie konceptu inteligentnej domácnosti v prevádzke wellness centra, kde sa
+        sauna, vírivka, ozvučenie a osvetlenie nastavujú na diaľku, v definovanom poradí
+        a čase a v rámci bezpečných limitov.
+  organization_specific_architecture:
+    - name: "Diaľkové riadenie prostredia NikaWell"
+      description: "Prepojenie systému so saunou, vírivkou vrátane trysiek, ozvučením a osvetlením; bezpečné limity, časový limit odozvy, preddefinované profily (UC03, UC04)."
+    - name: "Koordinácia saunových majstrov"
+      description: "Priraďovanie saunových majstrov k rezerváciám vrátane výberu arómy a typu starostlivosti o pokožku a potvrdzovanie priradení v rozhraní saunového majstra (UC05)."
+
+solutions_continuum:
+  foundation_solutions:
+    - name: "Serverová infraštruktúra (virtuálny server pre IntelliWell)"
+    - name: "Sieťová infraštruktúra (LAN / Wi-Fi)"
+    - name: ".NET (C#) ako predpokladaná implementačná platforma (pozri kapitolu 15.2)"
+  common_systems_solutions:
+    - name: "Relačná databáza"
+    - name: "Prihlasovanie personálu do systému IntelliWell"
+    - name: "E-mail a SMS ako existujúce komunikačné kanály"
+  industry_solutions:
+    - name: "Modul rezervácií a klientov"
+      description: >
+        Implementácia rezervačného systému pre jedno wellness centrum (vyhľadanie alebo
+        registrácia klienta, zadanie termínu, overenie dostupnosti, uloženie rezervácie
+        a zablokovanie termínu).
+  organization_specific_solutions:
+    - name: "Modul prehľadov zásahov"
+      description: "Reporting nad evidenciou zásahov s filtrovaním podľa časového obdobia, zariadení a rozptylu parametrov (UC06)."
+    - name: "Modul riadenia a monitorovania zariadení"
+      description: "Napojenie na ovládanie sauny, vírivky, ozvučenia a osvetlenia (odosielanie parametrov, načítavanie hodnôt a stavov, overovanie bezpečných limitov, zaznamenávanie zásahov)."
+    - name: "Modul koordinácie saunových majstrov a rozhranie saunového majstra"
+      description: "Priraďovanie saunových majstrov k rezerváciám, informovanie o priradení a potvrdzovanie alebo odmietanie priradení."
+
+# Položky relevantné pre FR1. Template (kap. 19) vyžaduje source, owner, version, maturity, decision.
+# Docx tieto údaje neuvádza; žiadny reuse sa nevydáva za rozhodnutý.
+reuse_candidates:
+  - id: null
+    name: "Rezervačné procesy wellness a hospitality služieb"
+    classification: "industry architecture"
+    relevant_for: ["FR1"]
+    source: null
+    owner: null
+    version: null
+    maturity: null
+    evidence: null
+    decision: null
+    related_adr: null
+  - id: null
+    name: "Modul rezervácií a klientov"
+    classification: "industry solution"
+    relevant_for: ["FR1"]
+    source: null
+    owner: null
+    version: null
+    maturity: null
+    evidence: null
+    decision: null
+    related_adr: null
+    note: "Ide o vlastnú implementáciu projektu, nie o existujúci prevzatý building block – potvrdí človek."
+  - id: null
+    name: "Prihlasovanie personálu do systému IntelliWell"
+    classification: "common systems solution"
+    relevant_for: ["NFR4"]
+    source: null
+    owner: null
+    version: null
+    maturity: null
+    evidence: null
+    decision: null
+    related_adr: null
+  - id: null
+    name: "Validácia vstupných údajov"
+    classification: "common systems architecture"
+    relevant_for: ["NFR1"]
+    source: null
+    owner: null
+    version: null
+    maturity: null
+    evidence: null
+    decision: null
+    related_adr: null
+  - id: null
+    name: "Relačná databáza"
+    classification: "common systems solution"
+    relevant_for: ["FR1"]
+    source: null
+    owner: null
+    version: null
+    maturity: null
+    evidence: null
+    decision: null
+    related_adr: null

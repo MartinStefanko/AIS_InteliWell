@@ -1,0 +1,54 @@
+# Application Structure pre FR1 (draft).
+# Zdroj: docx kap. 9.1.2, 9.2.2, 11.2; views Application Cooperation / Usage / Layered TO-BE.
+# Zodpovednosti sú prevzaté z textu docx. Vlastníctvo dát a allowed dependencies docx neurčuje.
+
+meta:
+  status: "draft"
+  approved_by: null
+  reviewed_by: null
+  architecture_baseline: "B-01"
+
+application_components:
+  - id: "AC-IntelliWell"
+    name: "IntelliWell"
+    responsibility: >
+      Interný systém, ktorého súčasťou sú štyri moduly. Číta aj zapisuje spoločné
+      údaje: rezervácie, evidenciu klientov a evidenciu zásahov. (docx kap. 9.2.2, 11.2)
+    composed_of:
+      - "AC-ModulRezervaciiAKlientov"
+      - "AC-ModulRiadeniaAMonitorovaniaZariadeni"
+      - "AC-ModulKoordinacieSaunovychMajstrov"
+      - "Modul prehľadov zásahov" # mimo FR1, ID nenavrhnuté
+    accesses_data_objects: ["DO-Rezervacie", "DO-EvidenciaKlientov"] # aj Evidencia zásahov (mimo FR1)
+    requirements: ["NFR4"]
+
+  - id: "AC-ModulRezervaciiAKlientov"
+    name: "Modul rezervácií a klientov"
+    responsibility: >
+      Eviduje rezervácie a profily klientov a odovzdáva parametre rezervácie modulu
+      riadenia a monitorovania zariadení. Ak si klient želá saunového majstra, pošle
+      požiadavku modulu koordinácie saunových majstrov. (docx kap. 9.1.2)
+      Overuje dostupnosť termínu, blokuje obsadené termíny a kontroluje existenciu
+      klienta. (docx kap. 14)
+    part_of: "AC-IntelliWell"
+    provides_services:
+      - "AS-SpravaRezervaciiAKlientov"
+    uses_services: null # docx neuvádza
+    owns_data_objects: null # docx neurčuje; views zobrazujú prístup k údajom z IntelliWell, nie z modulu
+    allowed_dependencies: null # rozhodne človek
+    observed_interactions: ["INT-001", "INT-002", "INT-003"] # Application Cooperation View TO-BE
+    requirements: ["FR1"] # podľa služby aj FR2, NFR1 (mimo rozsahu FR1)
+
+  - id: "AC-ModulRiadeniaAMonitorovaniaZariadeni"
+    name: "Modul riadenia a monitorovania zariadení"
+    responsibility: "Kontext pre FR1: prijíma parametre rezervácie od modulu rezervácií a klientov (docx kap. 9.1.2)."
+    part_of: "AC-IntelliWell"
+    in_scope_of_fr1: false
+
+  - id: "AC-ModulKoordinacieSaunovychMajstrov"
+    name: "Modul koordinácie saunových majstrov"
+    responsibility: >
+      Kontext pre FR1: prijíma požiadavku od modulu rezervácií a klientov a po potvrdení
+      zaeviduje priradenie späť k rezervácii (docx kap. 9.1.2).
+    part_of: "AC-IntelliWell"
+    in_scope_of_fr1: null # závisí od rozhodnutia, či FR1 zahŕňa priradenie saunového majstra

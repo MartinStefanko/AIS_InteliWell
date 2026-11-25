@@ -1,0 +1,79 @@
+# Requirements a Constraints pre FR1 (draft).
+# Zdroj: docs/sources/AIS_IntelliWell.docx (docx). IDs FR1, NFR1, NFR4, UC01 sú z docx.
+# Ostatné IDs sú navrhnuté v spec/drafts/id-mapping.yaml (status proposed).
+
+meta:
+  status: "draft"
+  approved_by: null
+  reviewed_by: null
+  architecture_baseline: "B-01"
+  specification_version: "0.1.0"
+
+requirements:
+  - id: "FR1"
+    type: "functional"
+    title: "Vytvorenie rezervácie"
+    use_case: "UC01 Vytvor rezerváciu"
+    statement: >
+      Systém musí umožniť recepčnej v role správcu návštev vytvoriť rezerváciu:
+      vyhľadať klienta v systéme a zadať dátum, čas a poznámku. IntelliWell zobrazí
+      sumarizáciu, overí dostupnosť termínu, uloží rezerváciu a termín zablokuje
+      pre ďalších klientov.
+    statement_source: >
+      Docx neobsahuje formálne znenie FR1, iba názov (kap. 8.1). Znenie je zložené
+      z biznis scenára "Vytvorenie rezervácie" TO-BE (kap. 5) a opisu procesu
+      Správa návštev (kap. 8.3.2). Owner musí znenie potvrdiť.
+    rationale: "Realizuje cieľ Centralizovať plánovanie služieb (docx kap. 8.1)."
+    source_goals: ["G-001"]
+    influenced_by_constraints: ["CON-001"]
+    owner: null # docx ownera neuvádza – otvorená otázka
+    priority: null # docx prioritu neuvádza
+    status: "draft"
+    realized_by: ["AS-SpravaRezervaciiAKlientov"] # Requirements Realization View
+    related_business_process: "BP-SpravaNavstev"
+    related_business_service: "BS-RezervaciaTerminu"
+    acceptance_scenarios: [] # vzniknú v PREPARE_SPEC
+    open_questions:
+      - "Je krok Priradenie saunového majstra (BP-SpravaNavstev-03, UC05/FR5) súčasťou FR1?"
+      - "Je možné vytvoriť rezerváciu pre klienta, ktorý nie je v evidencii klientov?"
+      - "Definícia termínu (dĺžka, sloty) a pravidlo dostupnosti nie sú určené."
+      - "Správanie pri nedostupnom termíne nie je určené."
+      - "Je poznámka povinná? Docx ju uvádza iba v biznis scenári (kap. 5), nie v BPC View."
+
+  - id: "NFR1"
+    type: "non-functional"
+    title: "Validácia zadávaných údajov"
+    details: "spec/requirements/quality-requirements.yaml#NFR1"
+    source_goals: ["G-002"]
+    realized_by: ["AS-SpravaRezervaciiAKlientov"] # aj služba riadenia a monitorovania zariadení (mimo FR1)
+    owner: null
+    status: "draft"
+
+  - id: "NFR4"
+    type: "non-functional"
+    title: "Prístup len pre prihlásený personál"
+    details: "spec/requirements/quality-requirements.yaml#NFR4"
+    source_goals: ["G-005"]
+    influenced_by_constraints: ["CON-002"]
+    realized_by: ["AC-IntelliWell"]
+    owner: null
+    status: "draft"
+
+constraints:
+  - id: "CON-001"
+    statement: "Požiadavky prichádzajú telefonicky, e-mailom, SMS alebo osobne."
+    consequence_in_source: >
+      Systém preto musí umožniť recepčnej zaevidovať rezerváciu aj profil klienta
+      bez ohľadu na kanál (docx kap. 6, 8.1).
+    influences: ["FR1"] # aj FR2 (mimo rozsahu)
+    source_view: "spec/architecture/views/B-01-requirements-realization-tobe.png"
+    owner: null
+    status: "draft"
+
+  - id: "CON-002"
+    statement: "Interný systém len pre personál."
+    consequence_in_source: "Klient so systémom priamo nepracuje (docx kap. 6)."
+    influences: ["NFR4"]
+    source_view: "spec/architecture/views/B-01-requirements-realization-tobe.png"
+    owner: null
+    status: "draft"

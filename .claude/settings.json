@@ -1,0 +1,14 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "mkdir -p \"$CLAUDE_PROJECT_DIR/spec/prompts/log/raw\" && { cat; echo; } >> \"$CLAUDE_PROJECT_DIR/spec/prompts/log/raw/prompts.jsonl\""
+          }
+        ]
+      }
+    ]
+  }
+}

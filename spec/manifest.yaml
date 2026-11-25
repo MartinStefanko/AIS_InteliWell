@@ -1,0 +1,121 @@
+# Manifest SDD balíka IntelliWell – FR1 Vytvorenie rezervácie.
+# Podľa SDD_PROJECT_TEMPLATE_v4, kap. 4.3. Cesty sa počítajú od koreňa repozitára.
+# Manifest je zoznam podkladov, nie schválenie. Stav každého súboru je uvedený v súbore samotnom.
+
+specification:
+  version: "0.1.0"
+  status: "draft"
+  architecture_baseline: "B-01"
+  ai_rules_version: "4.0"
+  selected_functionality:
+    requirement: "FR1"
+    use_case: "UC01"
+
+governance:
+  ai_rules: "AGENTS.md"
+
+authoritative:
+  architecture_model: null # model zostáva v Sparx EA u tímu
+  glossary: "spec/glossary.md"
+  requirements: "spec/requirements/requirements.yaml"
+  business_rules: "spec/requirements/business-rules.yaml"
+  quality_requirements: "spec/requirements/quality-requirements.yaml"
+  actors_processes: "spec/business/actors-processes.yaml"
+  business_scenarios: null # spec/business/scenarios/ existuje, zatiaľ prázdny
+  components: "spec/application/components.yaml"
+  service_realization: "spec/application/service-realization.yaml"
+  interactions: "spec/application/interactions.yaml"
+  data_objects: "spec/application/data-objects.yaml"
+  lifecycles: "spec/application/lifecycles.yaml"
+  technology_context: "spec/technology/technology-context.yaml"
+  deployment: null # spec/technology/deployment.yaml nebol vytvorený
+  contract_design_profile: "spec/policies/contract-design-profile.yaml" # kostra, hodnoty null
+  stories: null # vzniknú v PREPARE_SPEC (spec/stories/)
+  scenarios: null # vzniknú v PREPARE_SPEC (spec/stories/features/)
+  decisions: "spec/architecture/decisions/" # obsahuje iba šablónu ADR-000, žiadne rozhodnutie
+  approved_contracts: null # spec/contracts/approved/ existuje, zatiaľ prázdny
+  traceability: "spec/traceability/traceability.yaml"
+  reuse_catalog: "spec/architecture/continuum/reuse-catalog.yaml"
+  implementation_context: "spec/architecture/migration/implementation-context.yaml"
+  gap_analysis: "spec/architecture/migration/gap-analysis.md"
+
+supporting:
+  # Obrázky sú dočasne extrahované z docs/sources/AIS_IntelliWell.docx (word/media), nie export zo Sparx EA.
+  # Človek ich porovná s modelom a prípadne nahradí exportom. Dovtedy status "draft", reviewed_by null.
+  architecture_views:
+    - path: "spec/architecture/views/B-01-requirements-realization-tobe.png"
+      viewpoint: "Requirements Realization"
+      model_baseline: "B-01"
+      status: "draft"
+      reviewed_by: null
+      extracted_from: "docs/sources/AIS_IntelliWell.docx#word/media/image6.png"
+      note: "Titulok diagramu nemá označenie TO-BE."
+    - path: "spec/architecture/views/B-01-business-process-cooperation-tobe.png"
+      viewpoint: "Business Process Cooperation"
+      model_baseline: "B-01"
+      status: "draft"
+      reviewed_by: null
+      extracted_from: "docs/sources/AIS_IntelliWell.docx#word/media/image10.png"
+    - path: "spec/architecture/views/B-01-application-cooperation-tobe.png"
+      viewpoint: "Application Cooperation"
+      model_baseline: "B-01"
+      status: "draft"
+      reviewed_by: null
+      extracted_from: "docs/sources/AIS_IntelliWell.docx#word/media/image12.png"
+    - path: "spec/architecture/views/B-01-application-usage-tobe.png"
+      viewpoint: "Application Usage"
+      model_baseline: "B-01"
+      status: "draft"
+      reviewed_by: null
+      extracted_from: "docs/sources/AIS_IntelliWell.docx#word/media/image14.png"
+    - path: "spec/architecture/views/B-01-layered-tobe.png"
+      viewpoint: "Layered"
+      model_baseline: "B-01"
+      status: "draft"
+      reviewed_by: null
+      extracted_from: "docs/sources/AIS_IntelliWell.docx#word/media/image20.png"
+    - path: "spec/architecture/views/B-01-motivation-tobe.png"
+      viewpoint: "Motivation"
+      model_baseline: "B-01"
+      status: "draft"
+      reviewed_by: null
+      extracted_from: "docs/sources/AIS_IntelliWell.docx#word/media/image3.png"
+      note: "Titulok diagramu nemá označenie TO-BE; view nemá AS-IS variant."
+    - path: "spec/architecture/views/B-01-implementation-migration-tobe.png"
+      viewpoint: "Implementation and Migration"
+      model_baseline: "B-01"
+      status: "draft"
+      reviewed_by: null
+      extracted_from: "docs/sources/AIS_IntelliWell.docx#word/media/image21.png"
+      note: "Titulok diagramu nemá označenie TO-BE; view zobrazuje prechod baseline → cieľ."
+    - path: "spec/architecture/views/B-01-organization-tobe.png"
+      viewpoint: "Organization"
+      model_baseline: "B-01"
+      status: "draft"
+      reviewed_by: null
+      extracted_from: "docs/sources/AIS_IntelliWell.docx#word/media/image2.png"
+      note: "Doplnené nad rámec zadania: jediný view s priradením Recepčná → Správca návštev."
+  architecture_context: null # voliteľný ručný súhrn, nie export
+  # Rozšírenie vzoru šablóny (na potvrdenie človekom): zdrojové dokumenty, z ktorých vznikli drafty.
+  source_documents:
+    - path: "docs/sources/AIS_IntelliWell.docx"
+      role: "architektonický projekt – jediný obsahový zdroj o IntelliWell"
+      status: "draft"
+      reviewed_by: null
+    - path: "docs/sources/SDD_PROJECT_TEMPLATE_v4.pdf"
+      role: "šablóna štruktúry a formátov"
+    - path: "docs/sources/SDD_AI_RULES_v4.pdf"
+      role: "pravidlá práce AI (prepis v AGENTS.md)"
+    - path: "docs/sources/SDD_FIIT_STU_architect_v4.pdf"
+      role: "metodika SDD"
+
+working:
+  proposed_contracts: "spec/contracts/proposed/"
+  specification_drafts: "spec/drafts/"
+  prompts: "spec/prompts/"
+  reports: "reports/"
+
+realization:
+  code: null # src/ zatiaľ neexistuje
+  configuration: "config/"
+  tests: "tests/"
