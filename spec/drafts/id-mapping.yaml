@@ -307,3 +307,22 @@ id_mapping:
       views: []
       source_text: "kap. 4 (outcome), 5, 8.3.2, 13.1"
       status: "proposed"
+
+    # --- Doplnené v 0002 (PREPARE_SPEC, spec 0.2.0) – nové drafty z ľudských rozhodnutí DR-01 až DR-17 ---
+    # Nie sú to prvky z modelu v Sparx EA. Okrem SSW-RuntimeDotNet nejde o ArchiMate elementy views.
+    - { id: "BR-003", name: "Uložené rezervácie sa časovo neprekrývajú", type: "Business Rule (invariant)", views: [], source_text: "DR-01, DR-02", status: "proposed" }
+    - { id: "BR-004", name: "Termín má pevnú dĺžku 60 minút", type: "Business Rule", views: [], source_text: "DR-01", status: "proposed" }
+    - { id: "BR-005", name: "Termín leží celý v otváracích hodinách", type: "Business Rule", views: [], source_text: "DR-01, DR-14", status: "proposed" }
+    - { id: "BR-006", name: "Začiatok termínu je v budúcnosti", type: "Business Rule", views: [], source_text: "DR-14", status: "proposed" }
+    - { id: "BR-007", name: "Rezervácia iba pre existujúceho klienta", type: "Business Rule", views: [], source_text: "DR-03, DR-14", status: "proposed" }
+    - { id: "BR-008", name: "Poznámka je voliteľná a má najviac 500 znakov", type: "Business Rule", views: [], source_text: "DR-14, DR-17", status: "proposed" }
+    - { id: "BR-009", name: "Pri súbehu vyhrá prvá uložená rezervácia", type: "Business Rule", views: [], source_text: "DR-02", status: "proposed" }
+    - { id: "BR-010", name: "Nedostupný termín sa odmietne s pomenovaným dôvodom", type: "Business Rule", views: [], source_text: "DR-11", status: "proposed" }
+    - { id: "BR-011", name: "Rezerváciu smie vytvoriť iba správca návštev", type: "Business Rule", views: [], source_text: "DR-07", status: "proposed" }
+    - { id: "QR-001", name: "Auditovateľnosť vytvorenia rezervácie", type: "Quality requirement", views: [], source_text: "DR-13", status: "proposed", note: "Nie NFR5 – rad NFR1–NFR4 patrí docx." }
+    - { id: "US-001", name: "Vytvorenie rezervácie", type: "User story", views: [], source_text: "FR1", status: "proposed" }
+    - { id: "SC-001-01..SC-001-14", name: "Scenáre US-001 (spec/stories/features/US-001.feature)", type: "Scenario", views: [], source_text: "FR1, BR-001 – BR-011", status: "proposed" }
+    - { id: "ADR-001..ADR-006", name: "ADR k DR-02, 05, 06, 07, 08, 12", type: "ADR (Proposed)", views: [], source_text: "log 0002", status: "proposed" }
+    - { id: "SSW-RuntimeDotNet", name: "Runtime .NET 10 (ASP.NET Core)", type: "System Software", views: [], source_text: "DR-05, ADR-002", status: "proposed", note: "Nový prvok, v B-01 views nie je; doplnenie do modelu rozhodne človek." }
+    - { id: "ACT-Manazer", name: "Manažér", type: "Business Actor", views: ["B-01-organization-tobe.png"], source_text: "kap. 3.2", status: "proposed", note: "DR-21: owner FR1, BR-*, NFR1, NFR4, QR-001; = „Manažér NikaWell“." }
+    - { id: "CON-003", name: "Obsah poznámky rezervácie sa nesmie zapisovať do aplikačného logu", type: "Constraint", views: [], source_text: "DR-27", status: "proposed" }

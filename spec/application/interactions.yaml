@@ -20,7 +20,7 @@ interactions:
     information: "parametre rezervácie" # docx kap. 9.1.2; Data Object nie je pomenovaný
     communication_style: "undecided"
     requirements: [] # priama väzba na FR1 nie je v docx uvedená
-    relevance_for_fr1: null # potvrdí človek
+    relevance_for_fr1: false # DR-25: INT-001 nie je súčasťou FR1
     decision: null
 
   - id: "INT-002"
@@ -31,8 +31,8 @@ interactions:
     uses_application_service: null
     information: "požiadavka (ak si klient želá saunového majstra)" # docx kap. 9.1.2
     communication_style: "undecided"
-    requirements: [] # FR5; k FR1 iba ak sa rozhodne, že FR1 zahŕňa priradenie
-    relevance_for_fr1: null
+    requirements: [] # FR5
+    relevance_for_fr1: false # DR-10: priradenie saunového majstra je mimo FR1
     decision: null
 
   - id: "INT-003"
@@ -44,7 +44,7 @@ interactions:
     information: "priradenie zaevidované späť k rezervácii (po potvrdení)" # docx kap. 9.1.2
     communication_style: "undecided"
     requirements: []
-    relevance_for_fr1: null
+    relevance_for_fr1: false # DR-10: priradenie saunového majstra je mimo FR1
     decision: null
 
 source_view: "spec/architecture/views/B-01-application-cooperation-tobe.png"

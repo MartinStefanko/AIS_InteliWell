@@ -4,9 +4,10 @@
 - approved_by: null
 - reviewed_by: null
 - architecture_baseline: "B-01"
-- zdroj: `docs/sources/AIS_IntelliWell.docx` (ďalej „docx“); IDs sú navrhnuté v `spec/drafts/id-mapping.yaml` (status proposed)
+- specification_version: "0.2.0"
+- zdroj: `docs/sources/AIS_IntelliWell.docx` (ďalej „docx“) a ľudské rozhodnutia DR-01 až DR-17 (`spec/drafts/open-decisions.md`, log 0002); IDs sú navrhnuté v `spec/drafts/id-mapping.yaml` (status proposed)
 
-Definície sú prevzaté alebo zhrnuté z textu docx. Kde docx pojem nedefinuje, je to uvedené ako otvorená otázka.
+Definície sú prevzaté alebo zhrnuté z textu docx alebo z ľudských rozhodnutí (uvedené ako DR-xx). Kde pojem nie je určený, je to uvedené ako otvorená otázka.
 
 ## IntelliWell
 
@@ -24,7 +25,7 @@ Organizácia, pre ktorú je IntelliWell navrhnutý. Jedno wellness centrum (docx
 Osoba mimo organizácie, ktorá navštevuje wellness centrum. Požiadavky oznamuje recepčnej telefonicky, e-mailom, SMS alebo osobne (docx kap. 3.2).
 
 - IDs: ACT-Klient
-- Otvorená otázka: či rezervácia vyžaduje klienta zaregistrovaného v evidencii klientov.
+- Rezerváciu možno vytvoriť iba pre klienta, ktorý existuje v evidencii klientov (DR-03, BR-007).
 
 ## Recepčná
 
@@ -38,6 +39,12 @@ Rola recepčnej v budúcom stave. V systéme vytvára rezervácie (UC01), regist
 
 - IDs: ROLE-SpravcaNavstev
 
+## Manažér
+
+Interný aktér wellness centra NikaWell (Organization View TO-BE). V rozhodnutiach sa označuje aj ako „Manažér NikaWell“. Je ownerom FR1, pravidiel BR-*, NFR1, NFR4 a QR-001 (DR-15, DR-21).
+
+- IDs: ACT-Manazer
+
 ## Personál
 
 Recepčná, saunový majster a manažér wellness centra NikaWell (docx kap. 3.2).
@@ -48,8 +55,8 @@ Recepčná, saunový majster a manažér wellness centra NikaWell (docx kap. 3.2
 
 Personál, ktorý má prístup do IntelliWell. Vďaka prihláseniu je každý zásah priradený konkrétnej prihlásenej osobe (docx kap. 8.1).
 
-- IDs: NFR4
-- Otvorená otázka: spôsob prihlasovania nie je v docx určený.
+- IDs: NFR4, ADR-004
+- Personál má lokálny účet v IntelliWell; prihlásenie sa preukazuje JWT bearer tokenom (DR-07). Pre prototyp tokeny vydáva vývojársky nástroj dotnet user-jwts, rola je v claime „role“; prihlasovací endpoint nie je súčasťou slice (DR-23).
 
 ## Správa návštev
 
@@ -68,8 +75,10 @@ Udalosť, ktorou klient (telefonicky, e-mailom, SMS alebo osobne) spúšťa spr�
 
 Záznam o termíne návštevy klienta, ktorý recepčná vytvorí v systéme. Pri vytvorení sa zadáva dátum, čas a poznámka (docx kap. 5). K rezervácii sa môže priradiť saunový majster (docx kap. 9.1.2) a pri príprave prostredia sa do nej uložia parametre zariadení alebo profil (docx kap. 8.3.2).
 
+V rozsahu FR1 obsahuje rezervácia klienta, termín, voliteľnú poznámku, stav a záznam, kto a kedy ju vytvoril (DR-13). Saunový majster a parametre zariadení sú mimo FR1 (DR-10).
+
 - IDs: DO-Rezervacie (údaje „Rezervácie“)
-- Otvorená otázka: stavy rezervácie (napr. zrušenie) docx neuvádza.
+- Stav: rezervácia má iba stav „vytvorená“; zrušenie a zmena sú mimo rozsahu (DR-04).
 
 ## Rezervácia termínu
 
@@ -80,28 +89,74 @@ Biznis služba, ktorá slúži klientovi. Realizuje ju proces Správa návštev 
 
 ## Termín
 
-Docx opisuje návštevu ako „rezerváciu termínu, počas ktorého má [klient] k dispozícii prostredie“ (kap. 8.2.1). Termín sa zadáva dátumom a časom (kap. 5).
+Docx opisuje návštevu ako „rezerváciu termínu, počas ktorého má [klient] k dispozícii prostredie“ (kap. 8.2.1). Termín je časový úsek s pevnou dĺžkou 60 minút. Jeho začiatok (dátum a čas) zadá recepčná; koniec je začiatok + 60 minút. Sloty sa nepoužívajú. Termín musí celý ležať v otváracích hodinách (DR-01).
 
-- Otvorená otázka: presná definícia termínu (dĺžka, sloty, začiatok/koniec) nie je v docx určená.
+- Termín je polootvorený interval [začiatok, koniec): rezervácia môže začať presne v čase konca predchádzajúcej (DR-19).
+- IDs: BR-003, BR-004, BR-005
 
 ## Overenie dostupnosti termínu
 
 Kontrola, ktorú systém vykoná pred uložením rezervácie (docx kap. 5, 8.3.2).
 
-- IDs: BP-SpravaNavstev-04, BR-001
-- Otvorená otázka: čo znamená „dostupný“ termín a čo sa stane, ak dostupný nie je.
+Termín je dostupný, ak sa neprekrýva so žiadnou uloženou rezerváciou, leží celý v otváracích hodinách a jeho začiatok je v budúcnosti. Ak termín dostupný nie je, systém rezerváciu neuloží, uvedie pomenovaný dôvod a iný termín neponúka (DR-01, DR-11, DR-14).
+
+- IDs: BP-SpravaNavstev-04, BR-001, BR-010
 
 ## Zablokovanie termínu
 
 Po uložení rezervácie systém termín zablokuje pre ďalších klientov (docx kap. 5, 8.3.2).
 
-- IDs: BR-002, OUT-001
+- IDs: BR-002, BR-003, OUT-001
+
+## Termín obsadený
+
+Dôvod odmietnutia rezervácie, ktorej termín sa prekrýva s už uloženou rezerváciou, vrátane súbehu dvoch rezervácií (DR-02).
+
+- IDs: BR-003, BR-009, BR-010, ADR-001
+
+## Súbeh rezervácií
+
+Situácia, keď dvaja správcovia návštev ukladajú rezervácie s prekrývajúcim sa termínom v rovnakom čase. Uloží sa prvá uložená rezervácia; druhá dostane odmietnutie „termín obsadený“ (DR-02).
+
+- IDs: BR-009, ADR-001
+
+## Otváracie hodiny
+
+Čas, v ktorom je wellness centrum NikaWell otvorené: 10:00–22:00 (DR-01).
+
+- Platia v časovom pásme Europe/Bratislava (DR-18) a každý deň rovnako; sviatky a výnimky sú mimo rozsahu (DR-20).
+- IDs: BR-005
+
+## Miestnosť NikaWell
+
+Jediná miestnosť wellness centra, v ktorej prebieha návšteva klienta. Preto v jednom čase môže existovať najviac jedna rezervácia (DR-01).
+
+- IDs: BR-003
+
+## Poznámka
+
+Voliteľný text rezervácie, ktorý zadá recepčná; najviac 500 znakov (DR-14, DR-17).
+
+- Poznámka je osobný údaj; jej obsah sa nesmie zapisovať do aplikačného logu (DR-27).
+- IDs: BR-008, CON-003
+
+## Dôvod odmietnutia
+
+Pomenovanie príčiny, prečo systém rezerváciu neuložil (napr. „termín obsadený“). Iný termín systém neponúka (DR-11).
+
+- IDs: BR-010
+
+## Záznam o vytvorení rezervácie
+
+Údaj o tom, kto (prihlásená osoba personálu) a kedy rezerváciu vytvoril (DR-13).
+
+- IDs: QR-001
 
 ## Sumarizácia rezervácie
 
 Prehľad, ktorý IntelliWell zobrazí pri vytváraní rezervácie pred overením dostupnosti (docx kap. 5, kap. 15.2 ako „Sumarizácia rezervácie (UC01)“).
 
-- Otvorená otázka: obsah sumarizácie nie je v docx určený.
+- Sumarizácia je súčasť UI, nie contractu. UI nie je v rozsahu prototypu (DR-17).
 
 ## Evidencia klientov
 
@@ -133,7 +188,7 @@ Interný aktér, ktorý poskytuje doplnkovú službu. Priradenie k rezervácii p
 Krok procesu Správa návštev, ak si to klient želá. Recepčná vyberie saunového majstra, typ arómy a starostlivosti o pokožku (docx kap. 5, 8.3.2). Patrí k UC05 / FR5.
 
 - IDs: BP-SpravaNavstev-03
-- Otvorená otázka: či je súčasťou rozsahu FR1.
+- Nie je súčasťou FR1 (DR-10).
 
 ## Služba správy rezervácií a klientov
 
@@ -143,9 +198,9 @@ Aplikačná služba IntelliWell, ktorá podporuje správu návštev a realizuje 
 
 ## Modul rezervácií a klientov
 
-Modul IntelliWell, ktorý eviduje rezervácie a profily klientov a realizuje službu správy rezervácií a klientov (docx kap. 9.1.2, 9.2.2).
+Modul IntelliWell, ktorý eviduje rezervácie a profily klientov a realizuje službu správy rezervácií a klientov (docx kap. 9.1.2, 9.2.2). Je vlastníkom údajov Rezervácie a Evidencia klientov (DR-12).
 
-- IDs: AC-ModulRezervaciiAKlientov
+- IDs: AC-ModulRezervaciiAKlientov, ADR-006
 
 ## Kanál požiadavky
 

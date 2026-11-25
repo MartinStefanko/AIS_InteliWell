@@ -1,10 +1,11 @@
 # Manifest SDD balíka IntelliWell – FR1 Vytvorenie rezervácie.
 # Podľa SDD_PROJECT_TEMPLATE_v4, kap. 4.3. Cesty sa počítajú od koreňa repozitára.
 # Manifest je zoznam podkladov, nie schválenie. Stav každého súboru je uvedený v súbore samotnom.
+# Zmeny pre 0.2.0 navrhla AI v úlohe 0002; sú necommitnuté a čakajú na kontrolu človekom.
 
 specification:
-  version: "0.1.0"
-  status: "draft"
+  version: "0.2.0" # návrh AI v 0002 (PREPARE_SPEC); predchádzajúci baseline 0.1.0
+  status: "approved" # návrh AI v 0002 (PREPARE_SPEC); predchádzajúci baseline draft
   architecture_baseline: "B-01"
   ai_rules_version: "4.0"
   selected_functionality:
@@ -28,11 +29,11 @@ authoritative:
   data_objects: "spec/application/data-objects.yaml"
   lifecycles: "spec/application/lifecycles.yaml"
   technology_context: "spec/technology/technology-context.yaml"
-  deployment: null # spec/technology/deployment.yaml nebol vytvorený
-  contract_design_profile: "spec/policies/contract-design-profile.yaml" # kostra, hodnoty null
-  stories: null # vzniknú v PREPARE_SPEC (spec/stories/)
-  scenarios: null # vzniknú v PREPARE_SPEC (spec/stories/features/)
-  decisions: "spec/architecture/decisions/" # obsahuje iba šablónu ADR-000, žiadne rozhodnutie
+  deployment: "spec/technology/deployment.yaml" # vznikol v 0002 (DR-09)
+  contract_design_profile: "spec/policies/contract-design-profile.yaml" # draft, čiastočne vyplnený (DR-07, DR-08)
+  stories: "spec/stories/" # US-001 (draft, 0002); umiestnenie pozri DR-29
+  scenarios: "spec/stories/features/" # US-001.feature (draft, 0002)
+  decisions: "spec/architecture/decisions/" # ADR-001 – ADR-006 v stave Proposed (0002) + šablóna ADR-000
   approved_contracts: null # spec/contracts/approved/ existuje, zatiaľ prázdny
   traceability: "spec/traceability/traceability.yaml"
   reuse_catalog: "spec/architecture/continuum/reuse-catalog.yaml"
@@ -102,6 +103,7 @@ supporting:
       role: "architektonický projekt – jediný obsahový zdroj o IntelliWell"
       status: "draft"
       reviewed_by: null
+      confirmed_as_source_for: "B-01 (DR-16, človek v 0001 – Ľudské rozhodnutie)"
     - path: "docs/sources/SDD_PROJECT_TEMPLATE_v4.pdf"
       role: "šablóna štruktúry a formátov"
     - path: "docs/sources/SDD_AI_RULES_v4.pdf"

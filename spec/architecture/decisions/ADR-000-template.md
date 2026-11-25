@@ -4,7 +4,7 @@
 > AI smie pripraviť ADR iba v stave Proposed. O stave Accepted, Rejected alebo Superseded rozhoduje človek.
 
 ## Status
-Proposed
+Accepted
 
 ## Owner
 <rola alebo meno človeka, ktorý rozhoduje>

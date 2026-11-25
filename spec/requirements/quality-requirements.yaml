@@ -1,15 +1,17 @@
 # Quality (nefunkčné) requirements relevantné pre FR1 (draft).
-# Zdroj: docs/sources/AIS_IntelliWell.docx. Čísla, limity ani metriky docx neuvádza – nič sa nedopĺňa.
+# Zdroj: docs/sources/AIS_IntelliWell.docx a ľudské rozhodnutia DR-07, DR-13, DR-14, DR-21 až DR-23, DR-26 (log 0002).
+# Čísla, limity ani metriky, ktoré nikto nerozhodol, sa nedopĺňajú.
 
 meta:
-  status: "draft"
+  status: "approved"
   approved_by: null
   reviewed_by: null
   architecture_baseline: "B-01"
+  specification_version: "0.2.0"
 
 quality_requirements:
   - id: "NFR1"
-    category: null # docx kategóriu neuvádza (napr. data quality / validácia) – potvrdí owner
+    category: null # docx kategóriu neuvádza – potvrdí owner
     title: "Validácia zadávaných údajov"
     statement: >
       Zadávané údaje sa overujú podľa validačných pravidiel.
@@ -18,10 +20,14 @@ quality_requirements:
       NFR1 realizuje Služba správy rezervácií a klientov aj Služba riadenia
       a monitorovania zariadení. Kap. 5: pri registrácii "systém ich overí podľa
       validačných pravidiel".
-    applies_to_fr1: null # docx výslovne neuvádza, či a ktoré údaje rezervácie sa validujú
+    applies_to_fr1: true # DR-14
+    validation_rules_fr1: # DR-14
+      - { rule: "BR-006", text: "začiatok termínu je v budúcnosti" }
+      - { rule: "BR-005", text: "termín leží celý v otváracích hodinách 10:00–22:00 (Europe/Bratislava)" }
+      - { rule: "BR-007", text: "klient existuje v evidencii klientov" }
+      - { rule: "BR-008", text: "poznámka je voliteľná, max. 500 znakov" }
     measure: null
-    validation_rules: null # docx validačné pravidlá nedefinuje
-    owner: null
+    owner: "ACT-Manazer" # DR-21
     status: "draft"
 
   - id: "NFR4"
@@ -35,8 +41,31 @@ quality_requirements:
       údaje klientov vrátane kontraindikácií (citlivé údaje podľa GDPR). Ovplyvňuje
       ju obmedzenie CON-002. Kap. 12: výstup "Prihlasovanie personálu" realizuje NFR4.
     measure: null
-    authentication_method: null # docx neurčuje
-    authorization_per_role: null # docx neurčuje, ktoré roly smú vytvoriť rezerváciu
-    audit_of_reservation_creation: null # docx viaže priradenie osobe na "zásah" (nastavenia zariadení), pre rezerváciu neurčuje
-    owner: null
+    accounts: "lokálne účty personálu v IntelliWell (DR-07)"
+    authentication_method: "JWT bearer token (DR-07, ADR-004)"
+    authorization_per_role:
+      create_reservation: ["ROLE-SpravcaNavstev"] # DR-07, BR-011
+    token_issuance: "prototyp: dotnet user-jwts; rola v claime role; prihlasovací endpoint mimo slice (DR-23, ADR-004)"
+    audit_of_reservation_creation: "QR-001" # DR-13
+    decisions: ["ADR-004"]
+    owner: "ACT-Manazer" # DR-21
+    status: "draft"
+
+  - id: "QR-001"
+    category: "auditability"
+    title: "Auditovateľnosť vytvorenia rezervácie"
+    statement: >
+      Systém pri každej uloženej rezervácii zaznamená, kto ju vytvoril (prihlásená osoba personálu)
+      a kedy ju vytvoril.
+    source: "DR-13 (ľudské rozhodnutie; docx ho neobsahuje)."
+    measure: "Ku každej uloženej rezervácii existuje záznam o autorovi a čase vytvorenia." # návrh AI – potvrdí owner
+    identity_source: "identita prihlásenej osoby z JWT bearer tokenu (ADR-004)"
+    time_format: "RFC 3339 UTC (DR-08)"
+    scope: "iba úspešné vytvorenie rezervácie; odmietnuté ani neoprávnené pokusy sa neauditujú (DR-26)"
+    related_constraints: ["CON-003"] # obsah poznámky sa nesmie zapisovať do aplikačného logu
+    open_points:
+      - "Doba uchovania záznamu nebola rozhodnutá (neblokuje DESIGN_CONTRACT)."
+    related_requirements: ["FR1", "NFR4"]
+    scenarios: ["SC-001-01"]
+    owner: "ACT-Manazer" # DR-21
     status: "draft"

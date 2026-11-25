@@ -16,6 +16,11 @@ actors:
   - id: "ACT-Klient"
     name: "Klient"
     note: "Stojí mimo organizácie; so systémom priamo nepracuje (docx kap. 3.2, CON-002)."
+  - id: "ACT-Manazer"
+    name: "Manažér"
+    assigned_roles: [] # Organization View: Kontrolór zásahov recepcie, Analytik efektivity služieb – IDs nenavrhnuté (mimo FR1)
+    source_view: "spec/architecture/views/B-01-organization-tobe.png"
+    note: "Owner FR1, BR-*, NFR1, NFR4 a QR-001; „Manažér NikaWell“ = tento actor (DR-15, DR-21)."
   - id: "ACT-SaunovyMajster"
     name: "Saunový majster"
     assigned_roles: ["ROLE-PoskytovatelDoplnkovejSluzby"]
@@ -29,7 +34,8 @@ actors_roles:
       a k rezervácii priraďuje saunového majstra s typom arómy a starostlivosti
       o pokožku (UC05). (docx kap. 3.3)
     performed_by_actor: "ACT-Recepcna"
-    permissions: null # práva docx neurčuje
+    permissions:
+      - "vytvoriť rezerváciu (DR-07, BR-011, ADR-004) – iba táto rola"
 
   - id: "ROLE-PoskytovatelDoplnkovejSluzby"
     name: "Poskytovateľ doplnkovej služby"
@@ -62,15 +68,18 @@ processes:
     alternative_flows_in_source:
       - "Klient nie je v evidencii klientov → recepčná ho zaregistruje (UC02/FR2) – docx kap. 8.3.2."
       - "Klient si želá saunového majstra → priradenie saunového majstra; saunovému majstrovi príde požiadavka, ktorú vo svojom rozhraní potvrdí alebo odmietne (UC05) – docx kap. 8.3.2."
+    fr1_scope_note: >
+      Pre FR1 platia kroky BP-SpravaNavstev-01 (iba výber existujúceho klienta, DR-03), -02 a -04.
+      Krok -03 (priradenie saunového majstra) je mimo FR1 (DR-10).
     exceptions:
-      # Docx neuvádza žiadnu výnimku, ktorá mení výsledok vytvorenia rezervácie.
       - id: null
         text: "Termín nie je dostupný."
-        behavior: null # docx neurčuje – otvorená otázka
-        source: "Implicitne z kroku Overenie dostupnosti (docx kap. 5, 8.3.2); správanie neuvedené."
+        behavior: >
+          Systém rezerváciu neuloží a uvedie pomenovaný dôvod; iný termín neponúka (DR-11, BR-010).
+        source: "Implicitne z kroku Overenie dostupnosti (docx kap. 5, 8.3.2); správanie podľa DR-11."
       - id: null
         text: "Saunový majster priradenie odmietne."
-        behavior: null # docx neurčuje dopad na rezerváciu
+        behavior: null # mimo FR1 (DR-10); docx neurčuje dopad na rezerváciu
         source: "docx kap. 3.2, 8.3.2"
     outcome: "Rezervácia je uložená a termín je zablokovaný pre ďalších klientov (OUT-001)."
     accesses_data_objects:

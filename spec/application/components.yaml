@@ -1,12 +1,13 @@
 # Application Structure pre FR1 (draft).
 # Zdroj: docx kap. 9.1.2, 9.2.2, 11.2; views Application Cooperation / Usage / Layered TO-BE.
-# Zodpovednosti sú prevzaté z textu docx. Vlastníctvo dát a allowed dependencies docx neurčuje.
+# Vlastníctvo dát podľa DR-12 (ADR-006, Proposed). Allowed dependencies nie sú rozhodnuté.
 
 meta:
   status: "draft"
   approved_by: null
   reviewed_by: null
   architecture_baseline: "B-01"
+  specification_version: "0.2.0"
 
 application_components:
   - id: "AC-IntelliWell"
@@ -20,7 +21,9 @@ application_components:
       - "AC-ModulKoordinacieSaunovychMajstrov"
       - "Modul prehľadov zásahov" # mimo FR1, ID nenavrhnuté
     accesses_data_objects: ["DO-Rezervacie", "DO-EvidenciaKlientov"] # aj Evidencia zásahov (mimo FR1)
+    access_note: "Vlastníkom DO-Rezervacie a DO-EvidenciaKlientov je modul AC-ModulRezervaciiAKlientov (DR-12, ADR-006)."
     requirements: ["NFR4"]
+    decisions: ["ADR-004"]
 
   - id: "AC-ModulRezervaciiAKlientov"
     name: "Modul rezervácií a klientov"
@@ -30,14 +33,18 @@ application_components:
       požiadavku modulu koordinácie saunových majstrov. (docx kap. 9.1.2)
       Overuje dostupnosť termínu, blokuje obsadené termíny a kontroluje existenciu
       klienta. (docx kap. 14)
+    responsibility_in_fr1: >
+      Vytvára rezerváciu pre existujúceho klienta, overuje dostupnosť termínu (BR-001, BR-003 až BR-008),
+      rieši súbeh (BR-009, ADR-001), blokuje termín (BR-002) a zaznamenáva autora a čas vytvorenia (QR-001).
     part_of: "AC-IntelliWell"
     provides_services:
       - "AS-SpravaRezervaciiAKlientov"
-    uses_services: null # docx neuvádza
-    owns_data_objects: null # docx neurčuje; views zobrazujú prístup k údajom z IntelliWell, nie z modulu
-    allowed_dependencies: null # rozhodne človek
-    observed_interactions: ["INT-001", "INT-002", "INT-003"] # Application Cooperation View TO-BE
-    requirements: ["FR1"] # podľa služby aj FR2, NFR1 (mimo rozsahu FR1)
+    uses_services: null # nerozhodnuté
+    owns_data_objects: ["DO-Rezervacie", "DO-EvidenciaKlientov"] # DR-12, ADR-006 (Proposed)
+    allowed_dependencies: null # nerozhodnuté – rozhodne človek
+    observed_interactions: ["INT-001", "INT-002", "INT-003"] # Application Cooperation View TO-BE; pre FR1 pozri interactions.yaml
+    requirements: ["FR1", "NFR1", "QR-001"] # podľa služby aj FR2 (mimo rozsahu FR1)
+    decisions: ["ADR-001", "ADR-006"]
 
   - id: "AC-ModulRiadeniaAMonitorovaniaZariadeni"
     name: "Modul riadenia a monitorovania zariadení"
@@ -51,4 +58,4 @@ application_components:
       Kontext pre FR1: prijíma požiadavku od modulu rezervácií a klientov a po potvrdení
       zaeviduje priradenie späť k rezervácii (docx kap. 9.1.2).
     part_of: "AC-IntelliWell"
-    in_scope_of_fr1: null # závisí od rozhodnutia, či FR1 zahŕňa priradenie saunového majstra
+    in_scope_of_fr1: false # DR-10: priradenie saunového majstra je mimo FR1

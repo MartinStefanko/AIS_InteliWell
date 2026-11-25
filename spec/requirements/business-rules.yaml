@@ -1,44 +1,165 @@
 # Business rules pre FR1 (draft).
-# Obsahuje IBA pravidlá, ktoré docx (docs/sources/AIS_IntelliWell.docx) výslovne uvádza.
-# Typ (invariant / rule) ani správanie pri porušení docx neurčuje – otvorené otázky.
+# BR-001, BR-002: z docx (docs/sources/AIS_IntelliWell.docx).
+# BR-003 až BR-011: zápis ľudských rozhodnutí DR-01, 02, 03, 07, 11, 14, 17 (log 0002). Znenie formuloval AI;
+# význam potvrdzuje owner ACT-Manazer (DR-21). Doplnené DR-18 až DR-22 a DR-28 (doplňujúci prompt 0002).
+# Časové údaje (10:00, 22:00) sú v časovom pásme Europe/Bratislava (DR-18).
 
 meta:
-  status: "draft"
+  status: "approved"
   approved_by: null
   reviewed_by: null
   architecture_baseline: "B-01"
+  specification_version: "0.2.0"
 
 business_rules:
   - id: "BR-001"
     title: "Rezervácia sa uloží po overení dostupnosti termínu"
-    type: null # rule vs. invariant – rozhodne owner
+    type: "rule"
     statement: >
-      Systém pred uložením rezervácie overí dostupnosť termínu.
+      Systém pred uložením rezervácie overí dostupnosť termínu. Termín je dostupný, ak sa neprekrýva
+      so žiadnou uloženou rezerváciou (BR-003), leží celý v otváracích hodinách (BR-005)
+      a jeho začiatok je v budúcnosti (BR-006).
     source: >
-      docx kap. 5 (TO-BE: "IntelliWell zobrazí sumarizáciu, overí dostupnosť termínu,
-      uloží rezerváciu a termín zablokuje"), kap. 8.3.2, BPC View TO-BE
-      (vnorený proces "Overenie dostupnosti a uloženie rezervácie").
-    owner: null
+      docx kap. 5, 8.3.2, BPC View TO-BE (Overenie dostupnosti a uloženie rezervácie);
+      význam „dostupný“ podľa DR-01 a DR-14.
+    owner: "ACT-Manazer" # DR-21
     requirements: ["FR1"]
-    scenarios: []
+    scenarios: ["SC-001-01", "SC-001-04", "SC-001-05", "SC-001-08", "SC-001-09", "SC-001-10"]
     status: "draft"
-    open_questions:
-      - "Čo znamená, že termín je dostupný (pravidlo kolízie, dĺžka termínu)?"
-      - "Čo systém urobí, ak termín dostupný nie je?"
 
   - id: "BR-002"
     title: "Po uložení rezervácie je termín zablokovaný pre ďalších klientov"
-    type: null # rule vs. invariant – rozhodne owner
+    type: "rule"
     statement: >
-      Po uložení rezervácie systém zablokuje termín pre ďalších klientov.
-    source: >
-      docx kap. 4 a 7 (outcome "Rezervácia uložená so zablokovaným termínom"),
-      kap. 5, kap. 8.3.2, kap. 13.1 (blokovanie obsadených termínov).
-    owner: null
+      Po uložení rezervácie systém zablokuje jej termín (začiatok + 60 minút) pre ďalších klientov.
+      Termín zostáva zablokovaný, kým rezervácia existuje. Uvoľnenie termínu nie je v rozsahu,
+      lebo zrušenie rezervácie je mimo rozsahu (DR-04).
+    source: "docx kap. 4, 5, 7, 8.3.2, 13.1; DR-04."
+    owner: "ACT-Manazer" # DR-21
     requirements: ["FR1"]
     realizes_outcome: "OUT-001"
-    scenarios: []
+    scenarios: ["SC-001-01", "SC-001-04"]
     status: "draft"
-    open_questions:
-      - "Ako sa správa súbeh dvoch rezervácií na ten istý termín?"
-      - "Uvoľní sa termín pri zrušení rezervácie? (zrušenie docx neuvádza)"
+
+  - id: "BR-003"
+    title: "Uložené rezervácie sa časovo neprekrývajú"
+    type: "invariant"
+    statement: >
+      NikaWell má jednu miestnosť. V každom okamihu existuje najviac jedna uložená rezervácia, ktorej
+      termín tento okamih obsahuje. Žiadne dve uložené rezervácie sa časovo neprekrývajú.
+    source: "DR-01 (jedna miestnosť NikaWell → max. 1 rezervácia v čase), DR-02."
+    interval: "polootvorený [začiatok, koniec) – rezervácia môže začať presne v čase konca predchádzajúcej (DR-19)"
+    enforcement_note: >
+      Invariant platí v každom platnom stave vrátane súbežného spracovania (ADR-001). Vytvorenie nie je
+      idempotentné: opakované odoslanie tej istej požiadavky invariant odmietne s dôvodom „termín obsadený“ (DR-28).
+    owner: "ACT-Manazer" # DR-21
+    requirements: ["FR1"]
+    decisions: ["ADR-001"]
+    scenarios: ["SC-001-04", "SC-001-05", "SC-001-06", "SC-001-14"]
+    status: "draft"
+
+  - id: "BR-004"
+    title: "Termín má pevnú dĺžku 60 minút"
+    type: "rule"
+    statement: >
+      Termín rezervácie je určený začiatkom (dátum a čas), ktorý zadá recepčná. Koniec termínu je
+      začiatok + 60 minút. Dĺžku termínu recepčná nezadáva. Termín je polootvorený interval
+      [začiatok, koniec) (DR-19).
+    source: "DR-01, DR-19."
+    owner: "ACT-Manazer" # DR-21
+    requirements: ["FR1"]
+    scenarios: ["SC-001-01", "SC-001-14"]
+    status: "draft"
+
+  - id: "BR-005"
+    title: "Termín leží celý v otváracích hodinách"
+    type: "rule"
+    statement: >
+      Otváracie hodiny NikaWell sú 10:00–22:00 v časovom pásme Europe/Bratislava a platia každý deň
+      rovnako. Začiatok aj koniec termínu musia ležať v otváracích hodinách. Termín, ktorý začína pred 10:00
+      alebo končí po 22:00 miestneho času, systém odmietne. Čas prijatý v UTC systém na overenie prepočíta
+      do Europe/Bratislava. Sviatky a výnimky sú mimo rozsahu.
+    source: "DR-01, DR-14, DR-18, DR-20."
+    owner: "ACT-Manazer" # DR-21
+    requirements: ["FR1", "NFR1"]
+    scenarios: ["SC-001-03", "SC-001-08", "SC-001-09"]
+    status: "draft"
+
+  - id: "BR-006"
+    title: "Začiatok termínu je v budúcnosti"
+    type: "rule"
+    statement: "Systém odmietne rezerváciu, ktorej začiatok nie je v budúcnosti v čase uloženia."
+    source: "DR-14."
+    owner: "ACT-Manazer" # DR-21
+    requirements: ["FR1", "NFR1"]
+    scenarios: ["SC-001-10"]
+    status: "draft"
+
+  - id: "BR-007"
+    title: "Rezervácia iba pre existujúceho klienta"
+    type: "rule"
+    statement: >
+      Rezerváciu možno vytvoriť iba pre klienta, ktorý existuje v evidencii klientov
+      (DO-EvidenciaKlientov). Registrácia klienta (FR2) nie je súčasťou FR1.
+    source: "DR-03, DR-14; docx kap. 14 (modul kontroluje existenciu klienta)."
+    owner: "ACT-Manazer" # DR-21
+    requirements: ["FR1", "NFR1"]
+    scenarios: ["SC-001-07"]
+    status: "draft"
+
+  - id: "BR-008"
+    title: "Poznámka je voliteľná a má najviac 500 znakov"
+    type: "rule"
+    statement: >
+      Poznámka je voliteľná súčasť rezervácie. Ak ju recepčná zadá, má najviac 500 znakov.
+      Dlhšiu poznámku systém odmietne.
+    source: "DR-14, DR-17; hodnota 500 je konečná (DR-22)."
+    related_constraints: ["CON-003"] # obsah poznámky sa nesmie zapisovať do aplikačného logu (DR-27)
+    owner: "ACT-Manazer" # DR-21
+    requirements: ["FR1", "NFR1"]
+    scenarios: ["SC-001-01", "SC-001-02", "SC-001-11"]
+    status: "draft"
+
+  - id: "BR-009"
+    title: "Pri súbehu vyhrá prvá uložená rezervácia"
+    type: "rule"
+    statement: >
+      Ak dve rezervácie s prekrývajúcim sa termínom vznikajú súčasne, uloží sa iba tá, ktorá bola uložená
+      ako prvá. Druhú systém odmietne s dôvodom „termín obsadený“.
+    source: "DR-02."
+    owner: "ACT-Manazer" # DR-21
+    requirements: ["FR1"]
+    decisions: ["ADR-001"]
+    scenarios: ["SC-001-06"]
+    status: "draft"
+
+  - id: "BR-010"
+    title: "Nedostupný termín sa odmietne s pomenovaným dôvodom"
+    type: "rule"
+    statement: >
+      Ak termín nie je dostupný alebo vstup nespĺňa pravidlá, systém rezerváciu neuloží a uvedie
+      pomenovaný dôvod odmietnutia. Iný termín systém neponúka.
+    source: "DR-11."
+    reasons_proposed: # znenie navrhla AI; iba „termín obsadený“ je doslovne z rozhodnutia (DR-02)
+      - { rule: "BR-003 / BR-009", reason: "termín obsadený", wording: "z rozhodnutia DR-02" }
+      - { rule: "BR-005", reason: "termín mimo otváracích hodín", wording: "návrh AI" }
+      - { rule: "BR-006", reason: "začiatok termínu nie je v budúcnosti", wording: "návrh AI" }
+      - { rule: "BR-007", reason: "klient neexistuje v evidencii klientov", wording: "návrh AI" }
+      - { rule: "BR-008", reason: "poznámka je dlhšia ako 500 znakov", wording: "návrh AI" }
+    owner: "ACT-Manazer" # DR-21
+    requirements: ["FR1"]
+    scenarios: ["SC-001-04", "SC-001-05", "SC-001-06", "SC-001-07", "SC-001-08", "SC-001-09", "SC-001-10", "SC-001-11"]
+    status: "draft"
+
+  - id: "BR-011"
+    title: "Rezerváciu smie vytvoriť iba správca návštev"
+    type: "rule"
+    statement: >
+      Rezerváciu smie vytvoriť iba prihlásená osoba personálu v role ROLE-SpravcaNavstev.
+      Neprihlásenú osobu ani osobu v inej role systém odmietne a rezerváciu neuloží.
+    source: "DR-07; NFR4, CON-002."
+    owner: "ACT-Manazer" # DR-21
+    requirements: ["FR1", "NFR4"]
+    decisions: ["ADR-004"]
+    scenarios: ["SC-001-12", "SC-001-13"]
+    status: "draft"

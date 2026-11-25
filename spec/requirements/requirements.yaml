@@ -1,13 +1,15 @@
 # Requirements a Constraints pre FR1 (draft).
-# Zdroj: docs/sources/AIS_IntelliWell.docx (docx). IDs FR1, NFR1, NFR4, UC01 sú z docx.
-# Ostatné IDs sú navrhnuté v spec/drafts/id-mapping.yaml (status proposed).
+# Zdroj: docs/sources/AIS_IntelliWell.docx (docx) a ľudské rozhodnutia DR-01 až DR-17
+# a doplňujúce rozhodnutia DR-05 (zmena), DR-18 až DR-29
+# (spec/drafts/open-decisions.md, log spec/prompts/log/0002-2026-11-25-PREPARE_SPEC.md).
+# IDs FR1, NFR1, NFR4, UC01 sú z docx. Ostatné IDs sú navrhnuté v spec/drafts/id-mapping.yaml (status proposed).
 
 meta:
-  status: "draft"
+  status: "approved"
   approved_by: null
   reviewed_by: null
   architecture_baseline: "B-01"
-  specification_version: "0.1.0"
+  specification_version: "0.2.0"
 
 requirements:
   - id: "FR1"
@@ -20,25 +22,63 @@ requirements:
       sumarizáciu, overí dostupnosť termínu, uloží rezerváciu a termín zablokuje
       pre ďalších klientov.
     statement_source: >
-      Docx neobsahuje formálne znenie FR1, iba názov (kap. 8.1). Znenie je zložené
-      z biznis scenára "Vytvorenie rezervácie" TO-BE (kap. 5) a opisu procesu
-      Správa návštev (kap. 8.3.2). Owner musí znenie potvrdiť.
+      Znenie zložené AI v 0001 z docx kap. 5 a 8.3.2. Owner znenie potvrdil (DR-15).
+    statement_confirmed_by: "DR-15 (Martin Štefanko, 2026-11-25)"
     rationale: "Realizuje cieľ Centralizovať plánovanie služieb (docx kap. 8.1)."
     source_goals: ["G-001"]
     influenced_by_constraints: ["CON-001"]
-    owner: null # docx ownera neuvádza – otvorená otázka
-    priority: null # docx prioritu neuvádza
+    owner: "ACT-Manazer" # DR-15, DR-21: Business Actor Manažér (Organization View TO-BE) = „Manažér NikaWell“
+    priority: null # nebolo rozhodnuté
     status: "draft"
     realized_by: ["AS-SpravaRezervaciiAKlientov"] # Requirements Realization View
     related_business_process: "BP-SpravaNavstev"
     related_business_service: "BS-RezervaciaTerminu"
-    acceptance_scenarios: [] # vzniknú v PREPARE_SPEC
-    open_questions:
-      - "Je krok Priradenie saunového majstra (BP-SpravaNavstev-03, UC05/FR5) súčasťou FR1?"
-      - "Je možné vytvoriť rezerváciu pre klienta, ktorý nie je v evidencii klientov?"
-      - "Definícia termínu (dĺžka, sloty) a pravidlo dostupnosti nie sú určené."
-      - "Správanie pri nedostupnom termíne nie je určené."
-      - "Je poznámka povinná? Docx ju uvádza iba v biznis scenári (kap. 5), nie v BPC View."
+    scope: # rozsah tohto SDD slice podľa rozhodnutí
+      in_scope:
+        - "vytvorenie rezervácie pre klienta existujúceho v evidencii klientov (DR-03)"
+        - "termín = začiatok zadaný recepčnou + pevná dĺžka 60 minút (DR-01)"
+        - "overenie dostupnosti termínu a jeho zablokovanie (BR-001, BR-002, BR-003)"
+        - "validácia vstupu (DR-14, NFR1)"
+        - "oprávnenie iba pre ROLE-SpravcaNavstev (DR-07, NFR4)"
+        - "záznam, kto a kedy rezerváciu vytvoril (DR-13, QR-001)"
+      out_of_scope:
+        - "registrácia nového klienta – FR2 / UC02; klienti sú pre prototyp seed dáta (DR-03)"
+        - "priradenie saunového majstra – BP-SpravaNavstev-03, UC05 / FR5 (DR-10)"
+        - "zrušenie a zmena rezervácie (DR-04)"
+        - "zobrazenie sumarizácie – UI, mimo contractu; UI nie je v rozsahu prototypu (DR-17)"
+        - "ponuka iného termínu pri nedostupnom termíne (DR-11)"
+        - "vyhľadanie klienta – contract prijíma identifikátor existujúceho klienta (DR-24)"
+        - "odovzdanie parametrov rezervácie modulu riadenia zariadení – INT-001 (DR-25)"
+        - "prihlasovací endpoint a vydávanie tokenov – prototyp používa dotnet user-jwts (DR-23)"
+        - "sviatky a výnimky z otváracích hodín (DR-20)"
+    scope_note: >
+      Potvrdené znenie FR1 obsahuje aj zobrazenie sumarizácie a vyhľadanie klienta. Podľa DR-17 a DR-24
+      ich prototyp ani contract nerealizujú. FR1 je preto v tomto slice realizovaný čiastočne. Znenie FR1 sa nemení.
+    acceptance_scenarios:
+      - "SC-001-01"
+      - "SC-001-02"
+      - "SC-001-03"
+      - "SC-001-04"
+      - "SC-001-05"
+      - "SC-001-06"
+      - "SC-001-07"
+      - "SC-001-08"
+      - "SC-001-09"
+      - "SC-001-10"
+      - "SC-001-11"
+      - "SC-001-12"
+      - "SC-001-13"
+      - "SC-001-14"
+    user_stories: ["US-001"]
+    business_rules: ["BR-001", "BR-002", "BR-003", "BR-004", "BR-005", "BR-006", "BR-007", "BR-008", "BR-009", "BR-010", "BR-011"]
+    decisions: ["ADR-001", "ADR-002", "ADR-003", "ADR-004", "ADR-005", "ADR-006"]
+    resolved_questions:
+      - { question: "Je priradenie saunového majstra súčasťou FR1?", answer: "Nie (DR-10)." }
+      - { question: "Rezervácia bez klienta v evidencii?", answer: "Nie, klient musí existovať (DR-03)." }
+      - { question: "Definícia termínu a pravidlo dostupnosti?", answer: "DR-01 → BR-003, BR-004, BR-005." }
+      - { question: "Správanie pri nedostupnom termíne?", answer: "Odmietnutie s pomenovaným dôvodom, bez ponuky iného termínu (DR-11 → BR-010)." }
+      - { question: "Je poznámka povinná?", answer: "Nie, je voliteľná, max. 500 znakov (DR-14, DR-17 → BR-008)." }
+    open_questions: []
 
   - id: "NFR1"
     type: "non-functional"
@@ -46,7 +86,8 @@ requirements:
     details: "spec/requirements/quality-requirements.yaml#NFR1"
     source_goals: ["G-002"]
     realized_by: ["AS-SpravaRezervaciiAKlientov"] # aj služba riadenia a monitorovania zariadení (mimo FR1)
-    owner: null
+    applies_to_fr1: true # DR-14
+    owner: "ACT-Manazer" # DR-21
     status: "draft"
 
   - id: "NFR4"
@@ -56,7 +97,18 @@ requirements:
     source_goals: ["G-005"]
     influenced_by_constraints: ["CON-002"]
     realized_by: ["AC-IntelliWell"]
-    owner: null
+    decisions: ["ADR-004"]
+    owner: "ACT-Manazer" # DR-21
+    status: "draft"
+
+  - id: "QR-001"
+    type: "non-functional"
+    title: "Auditovateľnosť vytvorenia rezervácie"
+    details: "spec/requirements/quality-requirements.yaml#QR-001"
+    origin: "DR-13 (nová požiadavka z ľudského rozhodnutia, nie je v docx)"
+    source_goals: [] # väzbu na Goal nikto nerozhodol; NFR4 (G-005) uvádza priradenie zásahu prihlásenej osobe
+    related_requirements: ["FR1", "NFR4"]
+    owner: "ACT-Manazer" # DR-21
     status: "draft"
 
 constraints:
@@ -76,4 +128,13 @@ constraints:
     influences: ["NFR4"]
     source_view: "spec/architecture/views/B-01-requirements-realization-tobe.png"
     owner: null
+    status: "draft"
+
+  - id: "CON-003"
+    statement: "Obsah poznámky rezervácie sa nesmie zapisovať do aplikačného logu."
+    reason: "Poznámka je osobný údaj (DR-27)."
+    origin: "DR-27 (ľudské rozhodnutie, nie je v docx)"
+    influences: ["FR1", "QR-001"]
+    applies_to_data_objects: ["DO-Rezervacie"]
+    owner: null # DR-21 určuje ownera FR1, BR-*, NFR1, NFR4 a QR-001; owner constraintov nebol určený
     status: "draft"

@@ -1,26 +1,37 @@
 # Lifecycles pre FR1 (draft).
-# Docx (docs/sources/AIS_IntelliWell.docx) NEDEFINUJE stavy rezervácie ani prechody.
-# Nič sa nedopĺňa. Nižšie sú iba udalosti, ktoré docx spomína, ako podklad pre rozhodnutie.
+# Stavy podľa ľudského rozhodnutia DR-04: rezervácia má iba stav „vytvorená“; zrušenie je mimo rozsahu.
+# Docx (docs/sources/AIS_IntelliWell.docx) stavy rezervácie nedefinuje.
 
 meta:
   status: "draft"
   approved_by: null
   reviewed_by: null
   architecture_baseline: "B-01"
+  specification_version: "0.2.0"
 
 lifecycles:
   - data_object: "DO-Rezervacie"
-    initial_state: null
-    states: null
-    transitions: []
-    events_mentioned_in_source:
-      - "rezervácia je uložená a termín zablokovaný (docx kap. 5, 8.3.2)"
-      - "k rezervácii je zaevidované priradenie saunového majstra po potvrdení (docx kap. 9.1.2)"
-      - "do rezervácie sa uložia parametre zariadení alebo profil (docx kap. 8.3.2, mimo FR1)"
-    not_mentioned_in_source:
+    initial_state: "vytvorena"
+    states:
+      - id: "vytvorena"
+        name: "vytvorená"
+        meaning: "Rezervácia je uložená a jej termín je zablokovaný pre ďalších klientov (BR-002, OUT-001)."
+    transitions:
+      - from: null # rezervácia ešte neexistuje
+        to: "vytvorena"
+        trigger: "správca návštev uloží rezerváciu"
+        guard_rules: ["BR-001", "BR-003", "BR-005", "BR-006", "BR-007", "BR-008", "BR-009", "BR-011"]
+        effects: ["BR-002", "QR-001"]
+        requirements: ["FR1"]
+        scenarios: ["SC-001-01", "SC-001-02", "SC-001-03", "SC-001-14"]
+    rejected_creation: >
+      Ak niektoré guard pravidlo neplatí, rezervácia nevznikne a stav sa nemení (BR-010).
+    out_of_scope: # DR-04
       - "zrušenie rezervácie"
       - "zmena rezervácie"
       - "ukončenie / realizácia návštevy ako stav rezervácie"
-    open_questions:
-      - "Má rezervácia stavy? Ak áno, ktoré a s akými prechodmi (vrátane zrušenia)?"
+    events_mentioned_in_source_out_of_fr1:
+      - "k rezervácii je zaevidované priradenie saunového majstra po potvrdení (docx kap. 9.1.2) – DR-10"
+      - "do rezervácie sa uložia parametre zariadení alebo profil (docx kap. 8.3.2)"
+    decision_source: "DR-04"
     status: "draft"

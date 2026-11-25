@@ -1,0 +1,35 @@
+# Deployment context pre FR1 (draft) – podľa SDD_PROJECT_TEMPLATE_v4, kap. 14.
+# Vznikol v 0002 po rozhodnutí DR-09 (technology context = applicable).
+# Zdroj: docx kap. 10.1.2, 10.2.2, 12; I&M View; ADR-002, ADR-003 (Proposed).
+# Container runtime, cloud ani CI/CD neboli rozhodnuté – nevypĺňajú sa.
+
+meta:
+  status: "draft"
+  approved_by: null
+  reviewed_by: null
+  architecture_baseline: "B-01"
+  specification_version: "0.2.0"
+
+artifacts:
+  - id: "ART-SoftverIntelliWell"
+    name: "Softvér IntelliWell"
+    description_in_source: "Nasadený na serveri IntelliWell, realizuje systém IntelliWell (docx kap. 10.2.2)."
+    realizes: "AC-IntelliWell" # docx kap. 10.2.2; v prototype obsahuje iba AC-ModulRezervaciiAKlientov v rozsahu FR1
+    form: "aplikácia ASP.NET Core na .NET 10 (LTS)" # DR-05, ADR-002
+    packaging: null # spôsob zabalenia (napr. container image) nebol rozhodnutý
+    deployed_on: "NODE-ServerIntelliWell"
+    uses_technology_services:
+      - "TS-HostovanieSystemu"
+      - "TS-DatabazovaSluzba"
+    runtime: "SSW-RuntimeDotNet"
+    database: "SQLite (prototyp, ADR-003)"
+    seed_data: "evidencia klientov – seed dáta pre prototyp (DR-03); obsah a spôsob naplnenia nerozhodnuté"
+    dev_token_issuance: "dotnet user-jwts – iba vývojové prostredie (DR-23, ADR-004)"
+    logging_constraint: "CON-003 – obsah poznámky sa nesmie zapisovať do aplikačného logu"
+    required_by_implementation_task: null # či je deployable Artifact súčasťou zadania IMPLEMENT_CHANGE, rozhodne človek
+    status: "draft"
+
+open_questions:
+  - "Je deployable Artifact súčasťou zadania IMPLEMENT_CHANGE? (AGENTS.md kap. 4)"
+  - "Prostredie prototypu: lokálny počítač alebo NODE-ServerIntelliWell?"
+  - "Packaging (spustiteľná aplikácia / container image) – nerozhodnuté."

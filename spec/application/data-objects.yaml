@@ -1,5 +1,6 @@
 # Data Objects pre FR1 (draft) – bez databázového návrhu.
-# Zdroj: docx kap. 5, 6, 8.1, 8.3.2, 9.1.2, 9.2.2; views BPC, Application Usage, Layered TO-BE.
+# Zdroj: docx kap. 5, 6, 8.1, 8.3.2, 9.1.2, 9.2.2; views BPC, Application Usage, Layered TO-BE;
+# ľudské rozhodnutia DR-01, 03, 04, 10, 12, 13, 14, 17 (log 0002).
 # Typ "Data Object" je prečítaný z notácie obrázkov; text docx hovorí iba o "údajoch".
 
 meta:
@@ -7,21 +8,30 @@ meta:
   approved_by: null
   reviewed_by: null
   architecture_baseline: "B-01"
+  specification_version: "0.2.0"
 
 data_objects:
   - id: "DO-Rezervacie"
     name: "Rezervácie"
     meaning: "Rezervácie klientov evidované centrálne v IntelliWell (docx kap. 6, 9.2.2)."
-    content_mentioned_in_source:
-      - "klient (vyhľadaný v systéme) – docx kap. 5"
-      - "dátum a čas – docx kap. 5, 8.3.2"
-      - "poznámka – docx kap. 5"
-      - "priradenie saunového majstra (typ arómy a starostlivosti o pokožku) – docx kap. 3.3, 9.1.2"
-      - "parametre zariadení alebo profil (ukladajú sa pri príprave prostredia, mimo FR1) – docx kap. 8.3.2"
-    owner_component: null # docx neurčuje; views: prístup z AC-IntelliWell
-    accessed_by: ["AC-IntelliWell"] # číta aj zapisuje (docx kap. 9.2.2)
+    content_in_fr1: # význam údajov, nie databázový návrh
+      - "klient – systémový identifikátor (UUID) existujúceho klienta v DO-EvidenciaKlientov (DR-03, DR-24, DR-30, BR-007)"
+      - "začiatok termínu – dátum a čas zadaný recepčnou (DR-01)"
+      - "koniec termínu – odvodený: začiatok + 60 minút (DR-01, BR-004)"
+      - "poznámka – voliteľná, max. 500 znakov; osobný údaj (DR-14, DR-17, DR-22, DR-27, BR-008)"
+      - "stav – „vytvorená“ (DR-04, lifecycles.yaml)"
+      - "kto rezerváciu vytvoril – prihlásená osoba personálu (DR-13, QR-001)"
+      - "kedy bola rezervácia vytvorená (DR-13, QR-001)"
+    content_out_of_fr1:
+      - "priradenie saunového majstra (typ arómy a starostlivosti o pokožku) – docx kap. 3.3, 9.1.2; mimo FR1 (DR-10)"
+      - "parametre zariadení alebo profil – docx kap. 8.3.2; príprava prostredia, mimo FR1"
+    owner_component: "AC-ModulRezervaciiAKlientov" # DR-12, ADR-006 (Proposed)
+    accessed_by: ["AC-IntelliWell"] # číta aj zapisuje (docx kap. 9.2.2); modul je jeho súčasťou
     related_business_object: null # Business Object v docx nie je
-    sensitive_data: null # docx neurčuje
+    sensitive_data: true # DR-27: poznámka je osobný údaj
+    personal_data_fields: ["poznámka"] # DR-27
+    constraints: ["CON-003"] # obsah poznámky sa nesmie zapisovať do aplikačného logu
+    invariants: ["BR-003"]
     lifecycle: "spec/application/lifecycles.yaml#DO-Rezervacie"
     status: "draft"
 
@@ -31,9 +41,13 @@ data_objects:
     content_mentioned_in_source:
       - "identifikačné a kontaktné údaje – docx kap. 5 (registrácia, FR2)"
       - "kontraindikácie – docx kap. 5, 8.1"
-    usage_in_fr1: "Recepčná vyhľadá / vyberie klienta z evidencie klientov (docx kap. 5, 8.3.2)."
-    owner_component: null # docx neurčuje
+    client_identifier: "systémový identifikátor UUID, ktorý nie je odvodený z osobných údajov (DR-30)"
+    usage_in_fr1: >
+      FR1 evidenciu klientov iba číta: overí, že klient existuje (BR-007). Klienta nevytvára ani nemení.
+      Pre prototyp je evidencia naplnená seed dátami (DR-03).
+    owner_component: "AC-ModulRezervaciiAKlientov" # DR-12, ADR-006 (Proposed)
     accessed_by: ["AC-IntelliWell"]
     related_business_object: null
     sensitive_data: true # docx kap. 8.1: kontraindikácie patria medzi citlivé údaje podľa GDPR
+    seed_data_note: "Obsah seed dát (ktorí klienti, aké údaje) nebol rozhodnutý; nesmie obsahovať skutočné osobné údaje – potvrdí človek."
     status: "draft"
