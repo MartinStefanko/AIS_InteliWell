@@ -1,23 +1,31 @@
-# Contract design profile (draft).
-# Hodnoty podľa ľudských rozhodnutí DR-07, DR-08, DR-18, DR-23, DR-27, DR-28, DR-30, DR-31 (log 0002, ADR-004, ADR-005 – Proposed).
+# Contract design profile.
+# Hodnoty podľa ľudských rozhodnutí DR-07, DR-08, DR-18, DR-23, DR-27, DR-28, DR-30, DR-31 (log 0002, ADR-004, ADR-005 – Accepted)
+# a DR-C03, DR-C05, DR-C07, DR-C09, DR-C11 (contract review 0.1.0, zapísané v 0004).
+# Zmeny z 0004 (DR-C03, DR-C05, DR-C07) zapísala AI; čakajú na kontrolu človekom. Stav profilu AI nemenila (F-03).
 # Položky s null neboli rozhodnuté. AI ich nesmie doplniť z ukážky šablóny.
 
 contract_design_profile:
   status: "approved"
   approved_by: "Martin Štefanko (Software architect)"
-  reviewed_by: null
-  specification_version: "0.2.0"
+  reviewed_by: "Martin Štefanko (Software architect)"
+  specification_version: "0.3.0" # návrh 0004; profil bol schválený vo verzii 0.2.0
   interface_style: "HTTP API" # DR-08, ADR-005
   http:
     specification: "OpenAPI 3.1" # DR-08
     naming:
       paths: "kebab-case, podstatné mená v množnom čísle, prefix /api/v1 (napr. /api/v1/reservations)" # DR-31
       operation_ids: "lowerCamelCase" # DR-31
+      fields: "anglicky, lowerCamelCase (napr. clientId, startTime, note, createdBy)" # DR-C07
+      enum_values: "anglicky (napr. stav rezervácie „vytvorená“ = created); mapovanie na business pojmy v glossary a lifecycles.yaml" # DR-C11
     date_time: "RFC 3339 UTC" # DR-08; API prijíma a vracia UTC
+    date_time_input: "API prijíma čas iba v UTC s príponou „Z“; iný zápis (napr. posun +01:00) → 400" # DR-C03
     business_time_zone: "Europe/Bratislava" # DR-18; systém prepočíta UTC pri overení otváracích hodín
     errors: "problem-details (RFC 9457)" # DR-08
+    problem_types: "URN v tvare urn:intelliwell:problem:<kód>; kód v kebab-case (napr. slot-occupied)" # DR-C07; kebab-case podľa kódov v DR-C04
     correlation_id_header: "X-Correlation-ID" # DR-31
     correlation_id_behavior: "ak hlavička v požiadavke chýba, systém ID vygeneruje; ID sa vždy vráti v odpovedi" # DR-31
+    correlation_id_format: "reťazec dĺžky 1–128 zo znakov 0x21–0x7E (tlačiteľné ASCII bez medzery); prázdna hodnota je neplatná" # DR-C05, DR-C09
+    correlation_id_invalid: "ak hodnota chýba alebo je neplatná, systém vygeneruje UUID a vráti ho v odpovedi; požiadavku pre neplatné ID neodmietne" # DR-C05
     idempotency: "none – vytvorenie rezervácie nie je idempotentné; opakovanie odmietne BR-003 („termín obsadený“)" # DR-28
   events:
     specification: null # FR1 eventy nepoužíva (DR-08)
@@ -26,7 +34,7 @@ contract_design_profile:
     authentication: "JWT bearer token" # DR-07, ADR-004
     authorization: "podľa roly; vytvorenie rezervácie iba ROLE-SpravcaNavstev" # DR-07, BR-011
     token_issuance: "prototyp: dotnet user-jwts; prihlasovací endpoint mimo slice" # DR-23
-    role_claim: "role" # DR-23; hodnota pre ROLE-SpravcaNavstev sa navrhne v contracte
+    role_claim: "role" # DR-23; hodnotu pre ROLE-SpravcaNavstev a claim identity autora rieši ADR-007 (Accepted, DR-C01, DR-C02)
   logging:
     personal_data: "obsah poznámky rezervácie sa nezapisuje do aplikačného logu (CON-003)" # DR-27
   identifiers:

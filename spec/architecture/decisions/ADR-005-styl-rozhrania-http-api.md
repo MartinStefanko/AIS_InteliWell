@@ -40,4 +40,4 @@ FR1, AS-SpravaRezervaciiAKlientov, AC-ModulRezervaciiAKlientov, spec/policies/co
 BR-010
 
 ## Specification baseline
-0.2.0 (draft) / architecture baseline B-01
+0.2.0 / architecture baseline B-01

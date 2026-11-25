@@ -1,13 +1,15 @@
 # Quality (nefunkčné) requirements relevantné pre FR1 (draft).
 # Zdroj: docs/sources/AIS_IntelliWell.docx a ľudské rozhodnutia DR-07, DR-13, DR-14, DR-21 až DR-23, DR-26 (log 0002).
 # Čísla, limity ani metriky, ktoré nikto nerozhodol, sa nedopĺňajú.
+# 0004 (návrh 0.3.0): nové QR-002 podľa DR-C06; QR-001 a NFR4 odkazujú na ADR-007 (Accepted, DR-C01, DR-C02).
+# Zmeny čakajú na kontrolu človekom; stav súboru ani položiek AI nemenila (F-03).
 
 meta:
   status: "approved"
-  approved_by: null
-  reviewed_by: null
+  approved_by: "Martin Štefanko (Software architect)"
+  reviewed_by: "Martin Štefanko (Software architect)"
   architecture_baseline: "B-01"
-  specification_version: "0.2.0"
+  specification_version: "0.3.0" # návrh 0004
 
 quality_requirements:
   - id: "NFR1"
@@ -23,12 +25,15 @@ quality_requirements:
     applies_to_fr1: true # DR-14
     validation_rules_fr1: # DR-14
       - { rule: "BR-006", text: "začiatok termínu je v budúcnosti" }
-      - { rule: "BR-005", text: "termín leží celý v otváracích hodinách 10:00–22:00 (Europe/Bratislava)" }
+      - {
+          rule: "BR-005",
+          text: "termín leží celý v otváracích hodinách 10:00–22:00 (Europe/Bratislava)",
+        }
       - { rule: "BR-007", text: "klient existuje v evidencii klientov" }
       - { rule: "BR-008", text: "poznámka je voliteľná, max. 500 znakov" }
     measure: null
     owner: "ACT-Manazer" # DR-21
-    status: "draft"
+    status: "approved"
 
   - id: "NFR4"
     category: null # docx kategóriu neuvádza; text spomína prístup a ochranu osobných údajov (kap. 8.1) – potvrdí owner
@@ -46,10 +51,11 @@ quality_requirements:
     authorization_per_role:
       create_reservation: ["ROLE-SpravcaNavstev"] # DR-07, BR-011
     token_issuance: "prototyp: dotnet user-jwts; rola v claime role; prihlasovací endpoint mimo slice (DR-23, ADR-004)"
+    role_claim_value: "SpravcaNavstev" # DR-C01, ADR-007 (Accepted)
     audit_of_reservation_creation: "QR-001" # DR-13
-    decisions: ["ADR-004"]
+    decisions: ["ADR-004", "ADR-007"]
     owner: "ACT-Manazer" # DR-21
-    status: "draft"
+    status: "approved"
 
   - id: "QR-001"
     category: "auditability"
@@ -59,7 +65,7 @@ quality_requirements:
       a kedy ju vytvoril.
     source: "DR-13 (ľudské rozhodnutie; docx ho neobsahuje)."
     measure: "Ku každej uloženej rezervácii existuje záznam o autorovi a čase vytvorenia." # návrh AI – potvrdí owner
-    identity_source: "identita prihlásenej osoby z JWT bearer tokenu (ADR-004)"
+    identity_source: "identita prihlásenej osoby z JWT bearer tokenu (ADR-004), claim „sub“ (DR-C02, ADR-007 – Accepted)"
     time_format: "RFC 3339 UTC (DR-08)"
     scope: "iba úspešné vytvorenie rezervácie; odmietnuté ani neoprávnené pokusy sa neauditujú (DR-26)"
     related_constraints: ["CON-003"] # obsah poznámky sa nesmie zapisovať do aplikačného logu
@@ -68,4 +74,25 @@ quality_requirements:
     related_requirements: ["FR1", "NFR4"]
     scenarios: ["SC-001-01"]
     owner: "ACT-Manazer" # DR-21
-    status: "draft"
+    status: "approved"
+
+  - id: "QR-002"
+    category: null # návrh AI: spoľahlivosť / správanie pri chybe – potvrdí owner
+    title: "Správanie pri nedostupnom úložisku rezervácií"
+    statement: >
+      Ak úložisko rezervácií nie je pri vytváraní rezervácie dostupné, systém rezerváciu neuloží
+      a oznámi, že služba je dočasne nedostupná. Systém uloženie automaticky neopakuje.
+    contract_behavior: # DR-C06; tvar typu problému podľa DR-C07
+      http_status: 503
+      problem_type: "urn:intelliwell:problem:service-unavailable"
+      reservation_saved: false
+      automatic_retry: false
+    reason_wording: "služba je dočasne nedostupná" # návrh AI (rovnako ako ostatné znenia v BR-010)
+    source: "DR-C06 (ľudské rozhodnutie k contract review 0.1.0, 0004)."
+    measure: null # SLA, dostupnosť ani RTO/RPO neboli rozhodnuté
+    position_in_reason_order: "BR-012 pozícia 4 – po 400, pred prvým 422 (DR-C10)"
+    related_requirements: ["FR1"]
+    related_decisions: ["ADR-003"] # úložisko prototypu SQLite
+    scenarios: ["SC-001-15"]
+    owner: "ACT-Manazer" # doplňujúci prompt 0004
+    status: "approved"

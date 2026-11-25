@@ -3,13 +3,14 @@
 # a doplňujúce rozhodnutia DR-05 (zmena), DR-18 až DR-29
 # (spec/drafts/open-decisions.md, log spec/prompts/log/0002-2026-11-25-PREPARE_SPEC.md).
 # IDs FR1, NFR1, NFR4, UC01 sú z docx. Ostatné IDs sú navrhnuté v spec/drafts/id-mapping.yaml (status proposed).
+# 0004 (návrh 0.3.0): DR-C01 až DR-C08 → QR-002, BR-012, ADR-007 (Accepted), SC-001-15, SC-001-16. Stav AI nemenila (F-03).
 
 meta:
   status: "approved"
-  approved_by: null
-  reviewed_by: null
+  approved_by: "Martin Štefanko (Software architect)"
+  reviewed_by: "Martin Štefanko (Software architect)"
   architecture_baseline: "B-01"
-  specification_version: "0.2.0"
+  specification_version: "0.3.0" # návrh 0004
 
 requirements:
   - id: "FR1"
@@ -29,7 +30,7 @@ requirements:
     influenced_by_constraints: ["CON-001"]
     owner: "ACT-Manazer" # DR-15, DR-21: Business Actor Manažér (Organization View TO-BE) = „Manažér NikaWell“
     priority: null # nebolo rozhodnuté
-    status: "draft"
+    status: "approved"
     realized_by: ["AS-SpravaRezervaciiAKlientov"] # Requirements Realization View
     related_business_process: "BP-SpravaNavstev"
     related_business_service: "BS-RezervaciaTerminu"
@@ -69,15 +70,56 @@ requirements:
       - "SC-001-12"
       - "SC-001-13"
       - "SC-001-14"
+      - "SC-001-15" # 0004, QR-002 (DR-C06)
+      - "SC-001-16" # 0004, BR-012 (DR-C04)
     user_stories: ["US-001"]
-    business_rules: ["BR-001", "BR-002", "BR-003", "BR-004", "BR-005", "BR-006", "BR-007", "BR-008", "BR-009", "BR-010", "BR-011"]
-    decisions: ["ADR-001", "ADR-002", "ADR-003", "ADR-004", "ADR-005", "ADR-006"]
+    business_rules:
+      [
+        "BR-001",
+        "BR-002",
+        "BR-003",
+        "BR-004",
+        "BR-005",
+        "BR-006",
+        "BR-007",
+        "BR-008",
+        "BR-009",
+        "BR-010",
+        "BR-011",
+        "BR-012",
+      ]
+    quality_requirements: ["QR-001", "QR-002"]
+    decisions:
+      [
+        "ADR-001",
+        "ADR-002",
+        "ADR-003",
+        "ADR-004",
+        "ADR-005",
+        "ADR-006",
+        "ADR-007",
+      ]
     resolved_questions:
-      - { question: "Je priradenie saunového majstra súčasťou FR1?", answer: "Nie (DR-10)." }
-      - { question: "Rezervácia bez klienta v evidencii?", answer: "Nie, klient musí existovať (DR-03)." }
-      - { question: "Definícia termínu a pravidlo dostupnosti?", answer: "DR-01 → BR-003, BR-004, BR-005." }
-      - { question: "Správanie pri nedostupnom termíne?", answer: "Odmietnutie s pomenovaným dôvodom, bez ponuky iného termínu (DR-11 → BR-010)." }
-      - { question: "Je poznámka povinná?", answer: "Nie, je voliteľná, max. 500 znakov (DR-14, DR-17 → BR-008)." }
+      - {
+          question: "Je priradenie saunového majstra súčasťou FR1?",
+          answer: "Nie (DR-10).",
+        }
+      - {
+          question: "Rezervácia bez klienta v evidencii?",
+          answer: "Nie, klient musí existovať (DR-03).",
+        }
+      - {
+          question: "Definícia termínu a pravidlo dostupnosti?",
+          answer: "DR-01 → BR-003, BR-004, BR-005.",
+        }
+      - {
+          question: "Správanie pri nedostupnom termíne?",
+          answer: "Odmietnutie s pomenovaným dôvodom, bez ponuky iného termínu (DR-11 → BR-010).",
+        }
+      - {
+          question: "Je poznámka povinná?",
+          answer: "Nie, je voliteľná, max. 500 znakov (DR-14, DR-17 → BR-008).",
+        }
     open_questions: []
 
   - id: "NFR1"
@@ -88,7 +130,7 @@ requirements:
     realized_by: ["AS-SpravaRezervaciiAKlientov"] # aj služba riadenia a monitorovania zariadení (mimo FR1)
     applies_to_fr1: true # DR-14
     owner: "ACT-Manazer" # DR-21
-    status: "draft"
+    status: "approved"
 
   - id: "NFR4"
     type: "non-functional"
@@ -99,7 +141,7 @@ requirements:
     realized_by: ["AC-IntelliWell"]
     decisions: ["ADR-004"]
     owner: "ACT-Manazer" # DR-21
-    status: "draft"
+    status: "approved"
 
   - id: "QR-001"
     type: "non-functional"
@@ -109,7 +151,17 @@ requirements:
     source_goals: [] # väzbu na Goal nikto nerozhodol; NFR4 (G-005) uvádza priradenie zásahu prihlásenej osobe
     related_requirements: ["FR1", "NFR4"]
     owner: "ACT-Manazer" # DR-21
-    status: "draft"
+    status: "approved"
+
+  - id: "QR-002"
+    type: "non-functional"
+    title: "Správanie pri nedostupnom úložisku rezervácií"
+    details: "spec/requirements/quality-requirements.yaml#QR-002"
+    origin: "DR-C06 (ľudské rozhodnutie k contract review 0.1.0, 0004; nie je v docx)"
+    source_goals: [] # väzbu na Goal nikto nerozhodol
+    related_requirements: ["FR1"]
+    owner: "ACT-Manazer" # doplňujúci prompt 0004
+    status: "approved"
 
 constraints:
   - id: "CON-001"
@@ -119,16 +171,16 @@ constraints:
       bez ohľadu na kanál (docx kap. 6, 8.1).
     influences: ["FR1"] # aj FR2 (mimo rozsahu)
     source_view: "spec/architecture/views/B-01-requirements-realization-tobe.png"
-    owner: null
-    status: "draft"
+    owner: "ACT-Manazer" # doplňujúci prompt 0004
+    status: "approved"
 
   - id: "CON-002"
     statement: "Interný systém len pre personál."
     consequence_in_source: "Klient so systémom priamo nepracuje (docx kap. 6)."
     influences: ["NFR4"]
     source_view: "spec/architecture/views/B-01-requirements-realization-tobe.png"
-    owner: null
-    status: "draft"
+    owner: "ACT-Manazer" # doplňujúci prompt 0004
+    status: "approved"
 
   - id: "CON-003"
     statement: "Obsah poznámky rezervácie sa nesmie zapisovať do aplikačného logu."
@@ -136,5 +188,5 @@ constraints:
     origin: "DR-27 (ľudské rozhodnutie, nie je v docx)"
     influences: ["FR1", "QR-001"]
     applies_to_data_objects: ["DO-Rezervacie"]
-    owner: null # DR-21 určuje ownera FR1, BR-*, NFR1, NFR4 a QR-001; owner constraintov nebol určený
-    status: "draft"
+    owner: "ACT-Manazer" # doplňujúci prompt 0004
+    status: "approved"

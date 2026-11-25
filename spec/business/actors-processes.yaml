@@ -3,9 +3,9 @@
 # IDs sú navrhnuté v spec/drafts/id-mapping.yaml (status proposed).
 
 meta:
-  status: "draft"
-  approved_by: null
-  reviewed_by: null
+  status: "approved"
+  approved_by: "Martin Štefanko (Software architect)"
+  reviewed_by: "Martin Štefanko (Software architect)"
   architecture_baseline: "B-01"
 
 actors:
@@ -97,7 +97,7 @@ processes:
       - "spec/architecture/views/B-01-business-process-cooperation-tobe.png"
       - "spec/architecture/views/B-01-layered-tobe.png"
       - "spec/architecture/views/B-01-application-usage-tobe.png"
-    status: "draft"
+    status: "approved"
 
 business_events:
   - id: "BEV-PoziadavkaNaRezervaciu"

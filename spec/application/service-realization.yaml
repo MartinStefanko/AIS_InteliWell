@@ -2,9 +2,9 @@
 # Zdroj: Layered View TO-BE, Application Usage View TO-BE, Requirements Realization View; docx kap. 8.1, 9.2.2, 11.2.
 
 meta:
-  status: "draft"
-  approved_by: null
-  reviewed_by: null
+  status: "approved"
+  approved_by: "Martin Štefanko (Software architect)"
+  reviewed_by: "Martin Štefanko (Software architect)"
   architecture_baseline: "B-01"
 
 service_realization:
@@ -32,11 +32,11 @@ service_realization:
       - view: "spec/architecture/views/B-01-requirements-realization-tobe.png"
         shows: "Služba správy rezervácií a klientov realizuje FR1 (aj FR2 a NFR1)."
     model_relationship_types_verified: false # typy väzieb prečítané z notácie obrázkov, neoverené v Sparx EA
-    status: "draft"
+    status: "approved"
 
 application_usage:
   - business_process: "BP-SpravaNavstev"
     uses_application_service: "AS-SpravaRezervaciiAKlientov"
     performed_by: "ACT-Recepcna" # Application Usage View: Recepčná; BPC View: rola ROLE-SpravcaNavstev
     source_view: "spec/architecture/views/B-01-application-usage-tobe.png"
-    status: "draft"
+    status: "approved"

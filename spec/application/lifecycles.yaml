@@ -3,9 +3,9 @@
 # Docx (docs/sources/AIS_IntelliWell.docx) stavy rezervácie nedefinuje.
 
 meta:
-  status: "draft"
-  approved_by: null
-  reviewed_by: null
+  status: "approved"
+  approved_by: "Martin Štefanko (Software architect)"
+  reviewed_by: "Martin Štefanko (Software architect)"
   architecture_baseline: "B-01"
   specification_version: "0.2.0"
 
@@ -15,12 +15,23 @@ lifecycles:
     states:
       - id: "vytvorena"
         name: "vytvorená"
+        api_value: "created" # DR-C11
         meaning: "Rezervácia je uložená a jej termín je zablokovaný pre ďalších klientov (BR-002, OUT-001)."
     transitions:
       - from: null # rezervácia ešte neexistuje
         to: "vytvorena"
         trigger: "správca návštev uloží rezerváciu"
-        guard_rules: ["BR-001", "BR-003", "BR-005", "BR-006", "BR-007", "BR-008", "BR-009", "BR-011"]
+        guard_rules:
+          [
+            "BR-001",
+            "BR-003",
+            "BR-005",
+            "BR-006",
+            "BR-007",
+            "BR-008",
+            "BR-009",
+            "BR-011",
+          ]
         effects: ["BR-002", "QR-001"]
         requirements: ["FR1"]
         scenarios: ["SC-001-01", "SC-001-02", "SC-001-03", "SC-001-14"]
@@ -34,4 +45,4 @@ lifecycles:
       - "k rezervácii je zaevidované priradenie saunového majstra po potvrdení (docx kap. 9.1.2) – DR-10"
       - "do rezervácie sa uložia parametre zariadení alebo profil (docx kap. 8.3.2)"
     decision_source: "DR-04"
-    status: "draft"
+    status: "approved"

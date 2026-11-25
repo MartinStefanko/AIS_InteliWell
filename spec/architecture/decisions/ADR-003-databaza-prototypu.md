@@ -42,4 +42,4 @@ SSW-DatabazovySystem, TS-DatabazovaSluzba, NODE-ServerIntelliWell, DO-Rezervacie
 BR-003, ADR-001, ADR-006
 
 ## Specification baseline
-0.2.0 (draft) / architecture baseline B-01
+0.2.0 / architecture baseline B-01

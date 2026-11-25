@@ -1,10 +1,10 @@
 # Glossary – IntelliWell (FR1 Vytvorenie rezervácie)
 
-- status: "draft"
-- approved_by: null
-- reviewed_by: null
+- status: "approved"
+- approved_by: "Martin Štefanko (Software architect)"
+- reviewed_by: "Martin Štefanko (Software architect)"
 - architecture_baseline: "B-01"
-- specification_version: "0.2.0"
+- specification_version: "0.3.0" (návrh 0004)
 - zdroj: `docs/sources/AIS_IntelliWell.docx` (ďalej „docx“) a ľudské rozhodnutia DR-01 až DR-17 (`spec/drafts/open-decisions.md`, log 0002); IDs sú navrhnuté v `spec/drafts/id-mapping.yaml` (status proposed)
 
 Definície sú prevzaté alebo zhrnuté z textu docx alebo z ľudských rozhodnutí (uvedené ako DR-xx). Kde pojem nie je určený, je to uvedené ako otvorená otázka.
@@ -41,7 +41,7 @@ Rola recepčnej v budúcom stave. V systéme vytvára rezervácie (UC01), regist
 
 ## Manažér
 
-Interný aktér wellness centra NikaWell (Organization View TO-BE). V rozhodnutiach sa označuje aj ako „Manažér NikaWell“. Je ownerom FR1, pravidiel BR-*, NFR1, NFR4 a QR-001 (DR-15, DR-21).
+Interný aktér wellness centra NikaWell (Organization View TO-BE). V rozhodnutiach sa označuje aj ako „Manažér NikaWell“. Je ownerom FR1, pravidiel BR-\*, NFR1, NFR4 a QR-001 (DR-15, DR-21).
 
 - IDs: ACT-Manazer
 
@@ -79,6 +79,7 @@ V rozsahu FR1 obsahuje rezervácia klienta, termín, voliteľnú poznámku, stav
 
 - IDs: DO-Rezervacie (údaje „Rezervácie“)
 - Stav: rezervácia má iba stav „vytvorená“; zrušenie a zmena sú mimo rozsahu (DR-04).
+- V API sa stav „vytvorená“ zapisuje anglickou hodnotou `created` (DR-C11, lifecycles.yaml `api_value`).
 
 ## Rezervácia termínu
 
@@ -135,7 +136,7 @@ Jediná miestnosť wellness centra, v ktorej prebieha návšteva klienta. Preto 
 
 ## Poznámka
 
-Voliteľný text rezervácie, ktorý zadá recepčná; najviac 500 znakov (DR-14, DR-17).
+Voliteľný text rezervácie, ktorý zadá recepčná; najviac 500 znakov (DR-14, DR-17). Znak = Unicode code point (DR-C08).
 
 - Poznámka je osobný údaj; jej obsah sa nesmie zapisovať do aplikačného logu (DR-27).
 - IDs: BR-008, CON-003
@@ -143,8 +144,23 @@ Voliteľný text rezervácie, ktorý zadá recepčná; najviac 500 znakov (DR-14
 ## Dôvod odmietnutia
 
 Pomenovanie príčiny, prečo systém rezerváciu neuložil (napr. „termín obsadený“). Iný termín systém neponúka (DR-11).
+Pri viacerých porušeniach systém uvedie iba jeden dôvod podľa pevného poradia (DR-C04).
 
-- IDs: BR-010
+- IDs: BR-010, BR-012
+
+## Evidencia rezervácií
+
+Uložené rezervácie v IntelliWell (Data Object Rezervácie). Pojem sa používa v scenároch, keď úložisko rezervácií
+nie je dostupné.
+
+- IDs: DO-Rezervacie, QR-002
+
+## Dočasná nedostupnosť služby
+
+Stav, keď evidencia rezervácií nie je dostupná. Systém rezerváciu neuloží, oznámi dôvod „služba je dočasne
+nedostupná“ (znenie návrh AI) a uloženie automaticky neopakuje (DR-C06).
+
+- IDs: QR-002
 
 ## Záznam o vytvorení rezervácie
 

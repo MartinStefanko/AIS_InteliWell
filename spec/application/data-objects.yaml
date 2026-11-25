@@ -4,9 +4,9 @@
 # Typ "Data Object" je prečítaný z notácie obrázkov; text docx hovorí iba o "údajoch".
 
 meta:
-  status: "draft"
-  approved_by: null
-  reviewed_by: null
+  status: "approved"
+  approved_by: "Martin Štefanko (Software architect)"
+  reviewed_by: "Martin Štefanko (Software architect)"
   architecture_baseline: "B-01"
   specification_version: "0.2.0"
 
@@ -25,7 +25,7 @@ data_objects:
     content_out_of_fr1:
       - "priradenie saunového majstra (typ arómy a starostlivosti o pokožku) – docx kap. 3.3, 9.1.2; mimo FR1 (DR-10)"
       - "parametre zariadení alebo profil – docx kap. 8.3.2; príprava prostredia, mimo FR1"
-    owner_component: "AC-ModulRezervaciiAKlientov" # DR-12, ADR-006 (Proposed)
+    owner_component: "AC-ModulRezervaciiAKlientov" # DR-12, ADR-006 (Accepted)
     accessed_by: ["AC-IntelliWell"] # číta aj zapisuje (docx kap. 9.2.2); modul je jeho súčasťou
     related_business_object: null # Business Object v docx nie je
     sensitive_data: true # DR-27: poznámka je osobný údaj
@@ -33,7 +33,7 @@ data_objects:
     constraints: ["CON-003"] # obsah poznámky sa nesmie zapisovať do aplikačného logu
     invariants: ["BR-003"]
     lifecycle: "spec/application/lifecycles.yaml#DO-Rezervacie"
-    status: "draft"
+    status: "approved"
 
   - id: "DO-EvidenciaKlientov"
     name: "Evidencia klientov"
@@ -45,9 +45,9 @@ data_objects:
     usage_in_fr1: >
       FR1 evidenciu klientov iba číta: overí, že klient existuje (BR-007). Klienta nevytvára ani nemení.
       Pre prototyp je evidencia naplnená seed dátami (DR-03).
-    owner_component: "AC-ModulRezervaciiAKlientov" # DR-12, ADR-006 (Proposed)
+    owner_component: "AC-ModulRezervaciiAKlientov" # DR-12, ADR-006 (Accepted)
     accessed_by: ["AC-IntelliWell"]
     related_business_object: null
     sensitive_data: true # docx kap. 8.1: kontraindikácie patria medzi citlivé údaje podľa GDPR
     seed_data_note: "Obsah seed dát (ktorí klienti, aké údaje) nebol rozhodnutý; nesmie obsahovať skutočné osobné údaje – potvrdí človek."
-    status: "draft"
+    status: "approved"

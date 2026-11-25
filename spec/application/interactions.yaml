@@ -5,9 +5,9 @@
 # nie sú v docx uvedené, preto sú null.
 
 meta:
-  status: "draft"
-  approved_by: null
-  reviewed_by: null
+  status: "approved"
+  approved_by: "Martin Štefanko (Software architect)"
+  reviewed_by: "Martin Štefanko (Software architect)"
   architecture_baseline: "B-01"
 
 interactions:

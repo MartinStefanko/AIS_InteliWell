@@ -322,7 +322,13 @@ id_mapping:
     - { id: "QR-001", name: "Auditovateľnosť vytvorenia rezervácie", type: "Quality requirement", views: [], source_text: "DR-13", status: "proposed", note: "Nie NFR5 – rad NFR1–NFR4 patrí docx." }
     - { id: "US-001", name: "Vytvorenie rezervácie", type: "User story", views: [], source_text: "FR1", status: "proposed" }
     - { id: "SC-001-01..SC-001-14", name: "Scenáre US-001 (spec/stories/features/US-001.feature)", type: "Scenario", views: [], source_text: "FR1, BR-001 – BR-011", status: "proposed" }
-    - { id: "ADR-001..ADR-006", name: "ADR k DR-02, 05, 06, 07, 08, 12", type: "ADR (Proposed)", views: [], source_text: "log 0002", status: "proposed" }
+    - { id: "ADR-001..ADR-006", name: "ADR k DR-02, 05, 06, 07, 08, 12", type: "ADR (Accepted)", views: [], source_text: "log 0002", status: "proposed" }
     - { id: "SSW-RuntimeDotNet", name: "Runtime .NET 10 (ASP.NET Core)", type: "System Software", views: [], source_text: "DR-05, ADR-002", status: "proposed", note: "Nový prvok, v B-01 views nie je; doplnenie do modelu rozhodne človek." }
     - { id: "ACT-Manazer", name: "Manažér", type: "Business Actor", views: ["B-01-organization-tobe.png"], source_text: "kap. 3.2", status: "proposed", note: "DR-21: owner FR1, BR-*, NFR1, NFR4, QR-001; = „Manažér NikaWell“." }
     - { id: "CON-003", name: "Obsah poznámky rezervácie sa nesmie zapisovať do aplikačného logu", type: "Constraint", views: [], source_text: "DR-27", status: "proposed" }
+
+    # --- Doplnené v 0004 (PREPARE_SPEC, návrh spec 0.3.0) – z ľudských rozhodnutí DR-C01 až DR-C08 ---
+    - { id: "BR-012", name: "Pri viacerých porušeniach systém uvedie jeden dôvod podľa pevného poradia", type: "Business Rule", views: [], source_text: "DR-C04", status: "proposed" }
+    - { id: "QR-002", name: "Správanie pri nedostupnom úložisku rezervácií", type: "Quality requirement", views: [], source_text: "DR-C06", status: "proposed" }
+    - { id: "SC-001-15..SC-001-16", name: "Scenáre US-001: nedostupná evidencia rezervácií; viac porušení naraz", type: "Scenario", views: [], source_text: "QR-002, BR-012", status: "proposed" }
+    - { id: "ADR-007", name: "Hodnota claimu roly a identita autora rezervácie v JWT", type: "ADR (Accepted)", views: [], source_text: "DR-C01, DR-C02, log 0004", status: "proposed" }

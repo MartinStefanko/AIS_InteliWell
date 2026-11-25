@@ -1,12 +1,116 @@
 # Rozhodnutia – FR1 (draft)
 
 - status: "draft"
-- architecture_baseline: "B-01", specification baseline: "0.2.0" (návrh)
+- architecture_baseline: "B-01", specification baseline: "0.3.0" (návrh 0004; predchádzajúci baseline 0.2.0 approved)
 - DR-01 až DR-17 sú ľudské rozhodnutia: rozhodol Martin Štefanko (Software architect), 2026-11-25, úloha 0002.
   Plné znenie je v `spec/prompts/log/0002-2026-11-25-PREPARE_SPEC.md`.
 - DR-18 až DR-29 vznikli pri zapracovaní v 0002 a boli rozhodnuté doplňujúcim promptom 0002 (vrátane zmeny DR-05).
-- DR-30 a DR-31 boli rozhodnuté doplňujúcim promptom 2 v 0002. Žiadna DR nie je otvorená.
-- ADR-001 až ADR-006 sú v stave **Proposed**. Prijatie (Accepted) zapisuje človek.
+- DR-30 a DR-31 boli rozhodnuté doplňujúcim promptom 2 v 0002.
+- ADR-001 až ADR-006 sú v stave **Accepted** (zapísal človek). ADR-007 (0004) je v stave **Accepted** (zapísal človek).
+- DR-C01 až DR-C08 (contract review 0.1.0) rozhodol človek; zapísané v 0004. DR-C09 až DR-C11 rozhodol človek doplňujúcim promptom 0004. Žiadna DR nie je otvorená.
+
+## Rozhodnuté doplňujúcim promptom 0004 (DR-C09 – DR-C11, owneri)
+
+Rozhodol Martin Štefanko (Software architect), 2026-11-25.
+
+| ID | Rozhodnutie (skrátene) | Zapísané v |
+|---|---|---|
+| DR-C09 | X-Correlation-ID: znaky 0x21–0x7E, dĺžka 1–128; prázdna hodnota je neplatná | contract-design-profile.yaml (http.correlation_id_format) |
+| DR-C10 | 503 service-unavailable je v poradí BR-012 po 400 a pred prvým 422 | BR-012 (order, pozícia 4); QR-002 (position_in_reason_order) |
+| DR-C11 | hodnoty enum v API anglicky; stav „vytvorená“ = `created` | contract-design-profile.yaml (http.naming.enum_values); lifecycles.yaml (api_value); glossary (Rezervácia) |
+| – | owner QR-002 a CON-001 až CON-003 = ACT-Manazer | requirements.yaml; quality-requirements.yaml |
+
+Znenie otázok DR-C09 – DR-C11 (archív):
+
+### DR-C09
+
+```text
+DECISION REQUIRED
+
+Kontext:
+DR-C05, DR-31; contract-design-profile.yaml http.correlation_id_format; baseline 0.3.0 (návrh) / B-01
+
+Čo specification neurčuje alebo v čom si odporuje:
+„Tlačiteľné ASCII znaky“ nemá jednoznačný rozsah (s medzerou 0x20 alebo bez nej) a nie je určené, či je prázdna hodnota neplatná.
+
+Možnosti:
+A. Znaky 0x21–0x7E (bez medzery), dĺžka 1–128; prázdna hodnota je neplatná → systém vygeneruje UUID.
+B. Znaky 0x20–0x7E (s medzerou), dĺžka 1–128; prázdna hodnota je neplatná → systém vygeneruje UUID.
+
+Odporúčanie AI:
+A – ID bez medzier sa jednoduchšie hľadá v logoch. Ide iba o odporúčanie.
+
+Otázka pre človeka:
+Ktorý rozsah znakov a akú minimálnu dĺžku má platné X-Correlation-ID?
+
+Kam zapísať rozhodnutie:
+Project policy (contract-design-profile.yaml http.correlation_id_format)
+```
+
+### DR-C10
+
+```text
+DECISION REQUIRED
+
+Kontext:
+DR-C04 (BR-012), DR-C06 (QR-002); baseline 0.3.0 (návrh) / B-01
+
+Čo specification neurčuje alebo v čom si odporuje:
+Poradie dôvodov 401 → 403 → 400 → 422 → 409 neurčuje, kedy sa vráti 503, ak je úložisko nedostupné a požiadavka zároveň porušuje iné pravidlo.
+
+Možnosti:
+A. 503 sa vráti hneď, keď systém potrebuje úložisko: po 401, 403 a 400, pred prvým 422 (client-not-found vyžaduje čítanie evidencie klientov).
+B. 503 sa vráti až po všetkých kontrolách, ktoré úložisko nepotrebujú (400, start-not-in-future, outside-opening-hours, note-too-long). Tým sa mení poradie z DR-C04 pri výpadku.
+
+Odporúčanie AI:
+A – zachováva poradie z DR-C04 bez výnimky. Ide iba o odporúčanie.
+
+Otázka pre človeka:
+Na ktorom mieste poradia BR-012 sa uplatní 503 service-unavailable?
+
+Kam zapísať rozhodnutie:
+Rule (BR-012) + Quality requirement (QR-002)
+```
+
+### DR-C11
+
+```text
+DECISION REQUIRED
+
+Kontext:
+DR-C07 (polia anglicky lowerCamelCase), lifecycles.yaml (stav „vytvorená“, id `vytvorena`), contract 0.1.0 (`status: [vytvorena]`); baseline 0.3.0 (návrh)
+
+Čo specification neurčuje alebo v čom si odporuje:
+DR-C07 určuje jazyk názvov polí, ale nie jazyk hodnôt enum (napr. stav rezervácie).
+
+Možnosti:
+A. Hodnoty enum podľa ID v lifecycles.yaml (`vytvorena`) – zhodné so špecifikáciou.
+B. Hodnoty enum anglicky (napr. `created`) – zhodné s jazykom polí; vyžaduje mapovanie na lifecycles.yaml.
+
+Odporúčanie AI:
+A – contract 0.1.0 ho už používa a nevyžaduje ďalšie mapovanie. Ide iba o odporúčanie.
+
+Otázka pre človeka:
+V akom jazyku a tvare sú hodnoty enum v contracte?
+
+Kam zapísať rozhodnutie:
+Project policy (contract-design-profile.yaml http.naming.enum_values)
+```
+
+## Rozhodnuté k contract review 0.1.0 (DR-C01 – DR-C08)
+
+Rozhodol Martin Štefanko (Software architect), 2026-11-25, úloha 0004. Znenie otázok: `reports/contract-review-0.1.0.md`, časť 6.
+
+| ID | Rozhodnutie (skrátene) | Zapísané v |
+|---|---|---|
+| DR-C01 | hodnota claimu `role` pre správcu návštev = `SpravcaNavstev` | ADR-007 (Accepted); quality-requirements.yaml (NFR4 role_claim_value); contract-design-profile.yaml (odkaz) |
+| DR-C02 | autor rezervácie (`createdBy`) z claimu `sub` | ADR-007 (Accepted); quality-requirements.yaml (QR-001 identity_source) |
+| DR-C03 | API prijíma čas iba v UTC s príponou „Z“; inak 400 | contract-design-profile.yaml (http.date_time_input) |
+| DR-C04 | jeden dôvod v poradí 401 → 403 → 400 → 422 (client-not-found → start-not-in-future → outside-opening-hours → note-too-long) → 409 slot-occupied | BR-012 (nové); BR-010 (reason_ordering); SC-001-16 |
+| DR-C05 | X-Correlation-ID: reťazec max. 128 tlačiteľných ASCII znakov; ak chýba alebo je neplatný, systém vygeneruje UUID a vráti ho | contract-design-profile.yaml (http.correlation_id_format, correlation_id_invalid); spresnenie DR-C09 |
+| DR-C06 | nedostupné úložisko → 503 `service-unavailable`, rezervácia sa neuloží, bez automatického opakovania | QR-002 (nové); SC-001-15; poradie DR-C10 |
+| DR-C07 | polia anglicky lowerCamelCase; typy problémov `urn:intelliwell:problem:<kód>` | contract-design-profile.yaml (http.naming.fields, http.problem_types); enum DR-C11 |
+| DR-C08 | 500 znakov poznámky = Unicode code points | BR-008 (length_unit); glossary (Poznámka) |
 
 ## Rozhodnuté (DR-01 – DR-17)
 

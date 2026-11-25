@@ -44,4 +44,4 @@ FR1, BR-001, BR-002, BR-003, BR-009, BP-SpravaNavstev-04, AS-SpravaRezervaciiAKl
 AC-ModulRezervaciiAKlientov, DO-Rezervacie, SC-001-04, SC-001-05, SC-001-06
 
 ## Specification baseline
-0.2.0 (draft) / architecture baseline B-01
+0.2.0 / architecture baseline B-01

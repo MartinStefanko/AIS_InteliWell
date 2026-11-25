@@ -1,8 +1,8 @@
 # GAP Analysis
 
-- status: "draft"
-- approved_by: null
-- reviewed_by: null
+- status: "approved"
+- approved_by: "Martin Štefanko (Software architect)"
+- reviewed_by: "Martin Štefanko (Software architect)"
 - architecture_baseline: "B-01"
 
 **Stav:** spracovaná v architektonickom projekte (`docs/sources/AIS_IntelliWell.docx`, kap. 14).
@@ -15,16 +15,16 @@ Porovnávané Plateaus (navrhnuté IDs, `spec/drafts/id-mapping.yaml`):
 
 ## Tabuľka (prevzatá z docx kap. 14)
 
-| BASELINE ↓ / TARGET → | Modul rezervácií a klientov | Modul riadenia a monitorovania zariadení | Modul koordinácie saunových majstrov | Modul prehľadov zásahov | Server, databázový systém a sieť | E-mail a SMS | Chýbajúce / eliminované |
-|---|---|---|---|---|---|---|---|
-| Papierový formulár klienta | Nahradené | | | | Migrované | | Eliminované |
-| Záznam rezervácií (ručný) | Nahradené | | | | Migrované | | Eliminované |
-| Ručná obsluha prostredia | | Nahradené | | | | | Eliminované |
-| Ovládanie sauny, vírivky, ozvučenia a osvetlenia | | Integrované | | | Pripojené | | |
-| Ručná koordinácia saunových majstrov | | | Nahradené | | | | Eliminované |
-| E-mail | | | | | | Zachované | |
-| SMS | | | | | | Zachované | |
-| Nové | Overenie dostupnosti, blokovanie termínu, evidencia klientov bez duplicít | Diaľkové nastavovanie prostredia v bezpečných limitoch | Potvrdzovanie priradení v rozhraní saunového majstra | Evidencia zásahov a reporty za zvolené obdobie | Centrálne údaje, prepojenie zariadení a personálu | | |
+| BASELINE ↓ / TARGET →                            | Modul rezervácií a klientov                                               | Modul riadenia a monitorovania zariadení               | Modul koordinácie saunových majstrov                 | Modul prehľadov zásahov                        | Server, databázový systém a sieť                  | E-mail a SMS | Chýbajúce / eliminované |
+| ------------------------------------------------ | ------------------------------------------------------------------------- | ------------------------------------------------------ | ---------------------------------------------------- | ---------------------------------------------- | ------------------------------------------------- | ------------ | ----------------------- |
+| Papierový formulár klienta                       | Nahradené                                                                 |                                                        |                                                      |                                                | Migrované                                         |              | Eliminované             |
+| Záznam rezervácií (ručný)                        | Nahradené                                                                 |                                                        |                                                      |                                                | Migrované                                         |              | Eliminované             |
+| Ručná obsluha prostredia                         |                                                                           | Nahradené                                              |                                                      |                                                |                                                   |              | Eliminované             |
+| Ovládanie sauny, vírivky, ozvučenia a osvetlenia |                                                                           | Integrované                                            |                                                      |                                                | Pripojené                                         |              |                         |
+| Ručná koordinácia saunových majstrov             |                                                                           |                                                        | Nahradené                                            |                                                |                                                   |              | Eliminované             |
+| E-mail                                           |                                                                           |                                                        |                                                      |                                                |                                                   | Zachované    |                         |
+| SMS                                              |                                                                           |                                                        |                                                      |                                                |                                                   | Zachované    |                         |
+| Nové                                             | Overenie dostupnosti, blokovanie termínu, evidencia klientov bez duplicít | Diaľkové nastavovanie prostredia v bezpečných limitoch | Potvrdzovanie priradení v rozhraní saunového majstra | Evidencia zásahov a reporty za zvolené obdobie | Centrálne údaje, prepojenie zariadení a personálu |              |                         |
 
 ## Text z docx kap. 14 (relevantný pre FR1)
 

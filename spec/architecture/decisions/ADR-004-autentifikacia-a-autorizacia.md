@@ -47,4 +47,4 @@ Rozhodol Martin Štefanko, 2026-11-25.
 NFR4, CON-002, BR-011, QR-001, ROLE-SpravcaNavstev, ACT-Recepcna, AC-IntelliWell, D-003, SC-001-12, SC-001-13
 
 ## Specification baseline
-0.2.0 (draft) / architecture baseline B-01
+0.2.0 / architecture baseline B-01

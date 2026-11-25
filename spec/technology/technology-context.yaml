@@ -1,6 +1,6 @@
 # Technology context pre FR1 (draft).
 # Zdroj: docx kap. 10.1.2, 10.2.2, 11.2, 13.2, Layered View TO-BE a ľudské rozhodnutia DR-05 (zmena na .NET 10), DR-06, DR-09
-# (log 0002, ADR-002, ADR-003 – oba Proposed).
+# (log 0002, ADR-002, ADR-003 – oba Accepted).
 
 technology_context:
   status: "applicable" # DR-09
@@ -8,11 +8,11 @@ technology_context:
     FR1 sa v prototype implementuje na rozhodnutej platforme (.NET 10 LTS, ASP.NET Core – ADR-002) s databázou
     SQLite (ADR-003). Tieto voľby ovplyvňujú code, configuration aj deployable Artifact.
   confirmed_by_role: "Software architect" # DR-09, Martin Štefanko
-  approved_by: null
-  reviewed_by: null
+  approved_by: "Martin Štefanko (Software architect)"
+  reviewed_by: "Martin Štefanko (Software architect)"
   architecture_baseline: "B-01"
   specification_version: "0.2.0"
-  draft_status: "draft"
+  draft_status: "approved"
 
 nodes:
   - id: "NODE-ServerIntelliWell"
@@ -32,7 +32,7 @@ system_software:
     description_in_source: >
       Uchováva rezervácie, evidenciu klientov a evidenciu zásahov (docx kap. 10.1.2).
     product:
-      prototype: "SQLite" # DR-06, ADR-003 (Proposed)
+      prototype: "SQLite" # DR-06, ADR-003 (Accepted)
       production: null # DR-06: zostáva otvorené
     version: null # nebolo rozhodnuté
     note: >
@@ -47,7 +47,7 @@ system_software:
     description: "Runtime pre ART-SoftverIntelliWell podľa DR-05 / ADR-002."
     in_architecture_views: false # nový prvok; v B-01 views nie je zobrazený – navrhnuté ID
     version: "10 (LTS)" # DR-05
-    status: "proposed"
+    status: "approved"
 
 technology_services:
   - id: "TS-HostovanieSystemu"
@@ -76,7 +76,7 @@ artifacts:
 
 implementation_platform:
   value: ".NET 10 LTS (C#), ASP.NET Core" # DR-05 (zmena z .NET 8)
-  decision: "ADR-002" # Proposed
+  decision: "ADR-002" # Accepted
   source_note: >
     Docx uvádza ".NET (C#) ako predpokladaná implementačná platforma" (kap. 13.2, 15.2).
 

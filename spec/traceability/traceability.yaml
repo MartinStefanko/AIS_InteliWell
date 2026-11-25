@@ -1,13 +1,14 @@
 # Traceability pre FR1 (draft).
 # Stopy vychádzajú z views B-01 (draft, extrahované z docx), textu docx a ľudských rozhodnutí DR-01 až DR-17 (log 0002).
 # IDs okrem FR1/NFR1/NFR4 sú navrhnuté (spec/drafts/id-mapping.yaml). Typy väzieb neboli overené v Sparx EA.
+# 0004 (návrh 0.3.0): doplnené stopy pre DR-C01 až DR-C11 (ADR-007, BR-012, QR-002, SC-001-15, SC-001-16, profil).
 
 meta:
-  status: "draft"
-  approved_by: null
-  reviewed_by: null
+  status: "approved"
+  approved_by: "Martin Štefanko (Software architect)"
+  reviewed_by: "Martin Štefanko (Software architect)"
   architecture_baseline: "B-01"
-  specification_version: "0.2.0"
+  specification_version: "0.3.0" # návrh 0004
 
 traces:
   # --- Motivation → Requirement ---
@@ -158,51 +159,314 @@ traces:
   - from: "AC-ModulRezervaciiAKlientov"
     to: "DO-Rezervacie"
     meaning: "Modul rezervácií a klientov je vlastníkom údajov Rezervácie."
-    evidence: "DR-12, ADR-006 (Proposed)"
+    evidence: "DR-12, ADR-006 (Accepted)"
   - from: "AC-ModulRezervaciiAKlientov"
     to: "DO-EvidenciaKlientov"
     meaning: "Modul rezervácií a klientov je vlastníkom evidencie klientov."
-    evidence: "DR-12, ADR-006 (Proposed)"
+    evidence: "DR-12, ADR-006 (Accepted)"
 
-  # --- Decisions (ADR, všetky Proposed) ---
-  - { from: "BR-009", to: "ADR-001", meaning: "Pravidlo súbehu je zdôvodnené v ADR.", evidence: "DR-02" }
-  - { from: "AC-IntelliWell", to: "ADR-002", meaning: "Implementačná platforma systému.", evidence: "DR-05" }
-  - { from: "SSW-DatabazovySystem", to: "ADR-003", meaning: "Databázový systém prototypu (SQLite).", evidence: "DR-06" }
-  - { from: "NFR4", to: "ADR-004", meaning: "Spôsob autentifikácie a autorizácie personálu.", evidence: "DR-07" }
-  - { from: "AS-SpravaRezervaciiAKlientov", to: "ADR-005", meaning: "Služba sa sprístupní ako HTTP API (OpenAPI 3.1).", evidence: "DR-08" }
-  - { from: "DO-Rezervacie", to: "ADR-006", meaning: "Vlastníctvo údajov.", evidence: "DR-12" }
+  # --- Decisions (ADR-001 až ADR-006 Accepted) ---
+  - {
+      from: "BR-009",
+      to: "ADR-001",
+      meaning: "Pravidlo súbehu je zdôvodnené v ADR.",
+      evidence: "DR-02",
+    }
+  - {
+      from: "AC-IntelliWell",
+      to: "ADR-002",
+      meaning: "Implementačná platforma systému.",
+      evidence: "DR-05",
+    }
+  - {
+      from: "SSW-DatabazovySystem",
+      to: "ADR-003",
+      meaning: "Databázový systém prototypu (SQLite).",
+      evidence: "DR-06",
+    }
+  - {
+      from: "NFR4",
+      to: "ADR-004",
+      meaning: "Spôsob autentifikácie a autorizácie personálu.",
+      evidence: "DR-07",
+    }
+  - {
+      from: "AS-SpravaRezervaciiAKlientov",
+      to: "ADR-005",
+      meaning: "Služba sa sprístupní ako HTTP API (OpenAPI 3.1).",
+      evidence: "DR-08",
+    }
+  - {
+      from: "DO-Rezervacie",
+      to: "ADR-006",
+      meaning: "Vlastníctvo údajov.",
+      evidence: "DR-12",
+    }
 
   # --- Requirement → Story → Scenarios ---
   - from: "FR1"
     to: "US-001"
     meaning: "User story opisuje FR1 z pohľadu správcu návštev."
     evidence: "spec/stories/US-001.md"
-  - { from: "FR1", to: "SC-001-01", meaning: "Pozitívny scenár: rezervácia na voľný termín (BR-001, BR-002, BR-004, QR-001).", evidence: "US-001.feature" }
-  - { from: "FR1", to: "SC-001-02", meaning: "Pozitívny scenár: rezervácia bez poznámky (BR-008).", evidence: "US-001.feature" }
-  - { from: "FR1", to: "SC-001-03", meaning: "Pozitívny scenár: termín končiaci pri zatvorení (BR-005).", evidence: "US-001.feature" }
-  - { from: "FR1", to: "SC-001-04", meaning: "Negatívny scenár: obsadený termín (BR-003, BR-010).", evidence: "US-001.feature" }
-  - { from: "FR1", to: "SC-001-05", meaning: "Negatívny scenár: čiastočné prekrytie (BR-003).", evidence: "US-001.feature" }
-  - { from: "FR1", to: "SC-001-06", meaning: "Negatívny scenár: súbeh (BR-009, ADR-001).", evidence: "US-001.feature" }
-  - { from: "FR1", to: "SC-001-07", meaning: "Negatívny scenár: neexistujúci klient (BR-007).", evidence: "US-001.feature" }
-  - { from: "FR1", to: "SC-001-08", meaning: "Negatívny scenár: termín po zatváracej hodine (BR-005).", evidence: "US-001.feature" }
-  - { from: "FR1", to: "SC-001-09", meaning: "Negatívny scenár: termín pred otvorením (BR-005).", evidence: "US-001.feature" }
-  - { from: "FR1", to: "SC-001-10", meaning: "Negatívny scenár: začiatok v minulosti (BR-006).", evidence: "US-001.feature" }
-  - { from: "FR1", to: "SC-001-11", meaning: "Negatívny scenár: príliš dlhá poznámka (BR-008).", evidence: "US-001.feature" }
-  - { from: "NFR4", to: "SC-001-12", meaning: "Negatívny scenár: neoprávnená rola (BR-011).", evidence: "US-001.feature" }
-  - { from: "NFR4", to: "SC-001-13", meaning: "Negatívny scenár: neprihlásená osoba (BR-011).", evidence: "US-001.feature" }
-  - { from: "FR1", to: "SC-001-14", meaning: "Pozitívny scenár: rezervácia nadväzujúca na koniec predchádzajúcej (BR-003 polootvorený interval).", evidence: "US-001.feature; DR-19" }
+  - {
+      from: "FR1",
+      to: "SC-001-01",
+      meaning: "Pozitívny scenár: rezervácia na voľný termín (BR-001, BR-002, BR-004, QR-001).",
+      evidence: "US-001.feature",
+    }
+  - {
+      from: "FR1",
+      to: "SC-001-02",
+      meaning: "Pozitívny scenár: rezervácia bez poznámky (BR-008).",
+      evidence: "US-001.feature",
+    }
+  - {
+      from: "FR1",
+      to: "SC-001-03",
+      meaning: "Pozitívny scenár: termín končiaci pri zatvorení (BR-005).",
+      evidence: "US-001.feature",
+    }
+  - {
+      from: "FR1",
+      to: "SC-001-04",
+      meaning: "Negatívny scenár: obsadený termín (BR-003, BR-010).",
+      evidence: "US-001.feature",
+    }
+  - {
+      from: "FR1",
+      to: "SC-001-05",
+      meaning: "Negatívny scenár: čiastočné prekrytie (BR-003).",
+      evidence: "US-001.feature",
+    }
+  - {
+      from: "FR1",
+      to: "SC-001-06",
+      meaning: "Negatívny scenár: súbeh (BR-009, ADR-001).",
+      evidence: "US-001.feature",
+    }
+  - {
+      from: "FR1",
+      to: "SC-001-07",
+      meaning: "Negatívny scenár: neexistujúci klient (BR-007).",
+      evidence: "US-001.feature",
+    }
+  - {
+      from: "FR1",
+      to: "SC-001-08",
+      meaning: "Negatívny scenár: termín po zatváracej hodine (BR-005).",
+      evidence: "US-001.feature",
+    }
+  - {
+      from: "FR1",
+      to: "SC-001-09",
+      meaning: "Negatívny scenár: termín pred otvorením (BR-005).",
+      evidence: "US-001.feature",
+    }
+  - {
+      from: "FR1",
+      to: "SC-001-10",
+      meaning: "Negatívny scenár: začiatok v minulosti (BR-006).",
+      evidence: "US-001.feature",
+    }
+  - {
+      from: "FR1",
+      to: "SC-001-11",
+      meaning: "Negatívny scenár: príliš dlhá poznámka (BR-008).",
+      evidence: "US-001.feature",
+    }
+  - {
+      from: "NFR4",
+      to: "SC-001-12",
+      meaning: "Negatívny scenár: neoprávnená rola (BR-011).",
+      evidence: "US-001.feature",
+    }
+  - {
+      from: "NFR4",
+      to: "SC-001-13",
+      meaning: "Negatívny scenár: neprihlásená osoba (BR-011).",
+      evidence: "US-001.feature",
+    }
+  - {
+      from: "FR1",
+      to: "SC-001-14",
+      meaning: "Pozitívny scenár: rezervácia nadväzujúca na koniec predchádzajúcej (BR-003 polootvorený interval).",
+      evidence: "US-001.feature; DR-19",
+    }
 
   # --- Doplnené rozhodnutia DR-18 až DR-28 ---
-  - { from: "ACT-Manazer", to: "FR1", meaning: "Manažér je owner FR1 (aj BR-*, NFR1, NFR4, QR-001).", evidence: "DR-15, DR-21; B-01-organization-tobe.png" }
-  - { from: "CON-003", to: "DO-Rezervacie", meaning: "Poznámka je osobný údaj; jej obsah sa nesmie zapisovať do aplikačného logu.", evidence: "DR-27" }
-  - { from: "CON-003", to: "FR1", meaning: "Obmedzenie ovplyvňuje realizáciu FR1 (logovanie).", evidence: "DR-27" }
-  - { from: "BR-003", to: "ADR-001", meaning: "Opakované odoslanie odmietne invariant; vytvorenie nie je idempotentné.", evidence: "DR-28" }
-  - { from: "BR-005", to: "ADR-005", meaning: "Otváracie hodiny v Europe/Bratislava, API v UTC – systém prepočíta.", evidence: "DR-18" }
-  - { from: "BR-007", to: "DO-EvidenciaKlientov", meaning: "Existencia klienta sa overuje podľa systémového identifikátora (UUID).", evidence: "DR-24, DR-30" }
-  - { from: "ADR-005", to: "spec/policies/contract-design-profile.yaml", meaning: "Konvencie pomenovania, correlation ID a verziovania HTTP API.", evidence: "DR-31" }
+  - {
+      from: "ACT-Manazer",
+      to: "FR1",
+      meaning: "Manažér je owner FR1 (aj BR-*, NFR1, NFR4, QR-001).",
+      evidence: "DR-15, DR-21; B-01-organization-tobe.png",
+    }
+  - {
+      from: "CON-003",
+      to: "DO-Rezervacie",
+      meaning: "Poznámka je osobný údaj; jej obsah sa nesmie zapisovať do aplikačného logu.",
+      evidence: "DR-27",
+    }
+  - {
+      from: "CON-003",
+      to: "FR1",
+      meaning: "Obmedzenie ovplyvňuje realizáciu FR1 (logovanie).",
+      evidence: "DR-27",
+    }
+  - {
+      from: "BR-003",
+      to: "ADR-001",
+      meaning: "Opakované odoslanie odmietne invariant; vytvorenie nie je idempotentné.",
+      evidence: "DR-28",
+    }
+  - {
+      from: "BR-005",
+      to: "ADR-005",
+      meaning: "Otváracie hodiny v Europe/Bratislava, API v UTC – systém prepočíta.",
+      evidence: "DR-18",
+    }
+  - {
+      from: "BR-007",
+      to: "DO-EvidenciaKlientov",
+      meaning: "Existencia klienta sa overuje podľa systémového identifikátora (UUID).",
+      evidence: "DR-24, DR-30",
+    }
+  - {
+      from: "ADR-005",
+      to: "spec/policies/contract-design-profile.yaml",
+      meaning: "Konvencie pomenovania, correlation ID a verziovania HTTP API.",
+      evidence: "DR-31",
+    }
+
+  # --- Rozhodnutia k contract review 0.1.0 (DR-C01 – DR-C08, zapísané v 0004) ---
+  - {
+      from: "NFR4",
+      to: "ADR-007",
+      meaning: "Hodnota claimu role pre ROLE-SpravcaNavstev je SpravcaNavstev.",
+      evidence: "DR-C01; ADR-007 (Accepted)",
+    }
+  - {
+      from: "BR-011",
+      to: "ADR-007",
+      meaning: "Oprávnenie správcu návštev sa overuje hodnotou SpravcaNavstev v claime role.",
+      evidence: "DR-C01; ADR-007 (Accepted)",
+    }
+  - {
+      from: "QR-001",
+      to: "ADR-007",
+      meaning: "Autor rezervácie (createdBy) sa berie z claimu sub.",
+      evidence: "DR-C02; ADR-007 (Accepted)",
+    }
+  - {
+      from: "ADR-007",
+      to: "ADR-004",
+      meaning: "ADR-007 dopĺňa ADR-004 (hodnotu claimu roly a claim identity); ADR-004 sa nemení.",
+      evidence: "DR-C01, DR-C02",
+    }
+  - {
+      from: "ADR-005",
+      to: "spec/policies/contract-design-profile.yaml",
+      meaning: "API prijíma čas iba v UTC s príponou Z; iný zápis → 400 (http.date_time_input).",
+      evidence: "DR-C03",
+    }
+  - {
+      from: "FR1",
+      to: "BR-012",
+      meaning: "Pri viacerých porušeniach jeden dôvod odmietnutia v pevnom poradí.",
+      evidence: "DR-C04",
+    }
+  - {
+      from: "BR-010",
+      to: "BR-012",
+      meaning: "Poradie pomenovaných dôvodov odmietnutia.",
+      evidence: "DR-C04",
+    }
+  - {
+      from: "ADR-005",
+      to: "spec/policies/contract-design-profile.yaml",
+      meaning: "Tvar X-Correlation-ID a správanie pri chýbajúcej alebo neplatnej hodnote.",
+      evidence: "DR-C05",
+    }
+  - {
+      from: "FR1",
+      to: "QR-002",
+      meaning: "Pri nedostupnom úložisku sa rezervácia neuloží (503 service-unavailable), bez automatického opakovania.",
+      evidence: "DR-C06",
+    }
+  - {
+      from: "DO-Rezervacie",
+      to: "QR-002",
+      meaning: "Nedostupnosť úložiska rezervácií.",
+      evidence: "DR-C06; ADR-003",
+    }
+  - {
+      from: "ADR-005",
+      to: "spec/policies/contract-design-profile.yaml",
+      meaning: "Polia anglicky lowerCamelCase; typy problémov urn:intelliwell:problem:<kód>.",
+      evidence: "DR-C07",
+    }
+  - {
+      from: "BR-008",
+      to: "DO-Rezervacie",
+      meaning: "Limit 500 znakov poznámky sa počíta v Unicode code points.",
+      evidence: "DR-C08",
+    }
+  - {
+      from: "QR-002",
+      to: "SC-001-15",
+      meaning: "Negatívny scenár: nedostupná evidencia rezervácií.",
+      evidence: "US-001.feature; DR-C06",
+    }
+  - {
+      from: "FR1",
+      to: "SC-001-15",
+      meaning: "Negatívny scenár: nedostupná evidencia rezervácií (QR-002).",
+      evidence: "US-001.feature",
+    }
+  - {
+      from: "FR1",
+      to: "SC-001-16",
+      meaning: "Negatívny scenár: viac porušení naraz → jeden dôvod (BR-012).",
+      evidence: "US-001.feature; DR-C04",
+    }
+  - {
+      from: "ADR-005",
+      to: "spec/policies/contract-design-profile.yaml",
+      meaning: "X-Correlation-ID: 1–128 znakov 0x21–0x7E; prázdna hodnota je neplatná.",
+      evidence: "DR-C09",
+    }
+  - {
+      from: "QR-002",
+      to: "BR-012",
+      meaning: "503 service-unavailable je v poradí dôvodov po 400 a pred prvým 422.",
+      evidence: "DR-C10",
+    }
+  - {
+      from: "ADR-005",
+      to: "spec/policies/contract-design-profile.yaml",
+      meaning: "Hodnoty enum anglicky; stav „vytvorená“ = created.",
+      evidence: "DR-C11",
+    }
+  - {
+      from: "DO-Rezervacie",
+      to: "spec/application/lifecycles.yaml",
+      meaning: "Stav vytvorena má v API hodnotu created.",
+      evidence: "DR-C11; glossary (Rezervácia)",
+    }
+  - {
+      from: "ACT-Manazer",
+      to: "QR-002",
+      meaning: "Manažér je owner QR-002.",
+      evidence: "doplňujúci prompt 0004",
+    }
+  - {
+      from: "ACT-Manazer",
+      to: "CON-001",
+      meaning: "Manažér je owner CON-001, CON-002 a CON-003.",
+      evidence: "doplňujúci prompt 0004",
+    }
 
 missing_links:
-  - "FR1 → contract (DESIGN_CONTRACT)"
+  - "FR1 → approved contract (proposed API-Reservations 0.1.0 ešte nezohľadňuje DR-C03 – DR-C08 v plnom rozsahu; úprava v 0005)"
   - "FR1 → tests (IMPLEMENT_CHANGE)"
   - "QR-001 → Goal (nerozhodnuté)"
-  - "ADR-001 až ADR-006 sú Proposed – nie sú prijatými rozhodnutiami"
+  - "QR-002 → Goal (nerozhodnuté)"

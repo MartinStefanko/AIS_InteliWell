@@ -3,13 +3,15 @@
 # BR-003 až BR-011: zápis ľudských rozhodnutí DR-01, 02, 03, 07, 11, 14, 17 (log 0002). Znenie formuloval AI;
 # význam potvrdzuje owner ACT-Manazer (DR-21). Doplnené DR-18 až DR-22 a DR-28 (doplňujúci prompt 0002).
 # Časové údaje (10:00, 22:00) sú v časovom pásme Europe/Bratislava (DR-18).
+# 0004 (návrh 0.3.0): BR-008 spresnené podľa DR-C08, nové BR-012 podľa DR-C04 a DR-C10 (contract review 0.1.0).
+# Zmeny čakajú na kontrolu človekom; stav súboru ani položiek AI nemenila (F-03).
 
 meta:
   status: "approved"
-  approved_by: null
-  reviewed_by: null
+  approved_by: "Martin Štefanko (Software architect)"
+  reviewed_by: "Martin Štefanko (Software architect)"
   architecture_baseline: "B-01"
-  specification_version: "0.2.0"
+  specification_version: "0.3.0" # návrh 0004
 
 business_rules:
   - id: "BR-001"
@@ -24,8 +26,16 @@ business_rules:
       význam „dostupný“ podľa DR-01 a DR-14.
     owner: "ACT-Manazer" # DR-21
     requirements: ["FR1"]
-    scenarios: ["SC-001-01", "SC-001-04", "SC-001-05", "SC-001-08", "SC-001-09", "SC-001-10"]
-    status: "draft"
+    scenarios:
+      [
+        "SC-001-01",
+        "SC-001-04",
+        "SC-001-05",
+        "SC-001-08",
+        "SC-001-09",
+        "SC-001-10",
+      ]
+    status: "approved"
 
   - id: "BR-002"
     title: "Po uložení rezervácie je termín zablokovaný pre ďalších klientov"
@@ -39,7 +49,7 @@ business_rules:
     requirements: ["FR1"]
     realizes_outcome: "OUT-001"
     scenarios: ["SC-001-01", "SC-001-04"]
-    status: "draft"
+    status: "approved"
 
   - id: "BR-003"
     title: "Uložené rezervácie sa časovo neprekrývajú"
@@ -56,7 +66,7 @@ business_rules:
     requirements: ["FR1"]
     decisions: ["ADR-001"]
     scenarios: ["SC-001-04", "SC-001-05", "SC-001-06", "SC-001-14"]
-    status: "draft"
+    status: "approved"
 
   - id: "BR-004"
     title: "Termín má pevnú dĺžku 60 minút"
@@ -69,7 +79,7 @@ business_rules:
     owner: "ACT-Manazer" # DR-21
     requirements: ["FR1"]
     scenarios: ["SC-001-01", "SC-001-14"]
-    status: "draft"
+    status: "approved"
 
   - id: "BR-005"
     title: "Termín leží celý v otváracích hodinách"
@@ -83,7 +93,7 @@ business_rules:
     owner: "ACT-Manazer" # DR-21
     requirements: ["FR1", "NFR1"]
     scenarios: ["SC-001-03", "SC-001-08", "SC-001-09"]
-    status: "draft"
+    status: "approved"
 
   - id: "BR-006"
     title: "Začiatok termínu je v budúcnosti"
@@ -93,7 +103,7 @@ business_rules:
     owner: "ACT-Manazer" # DR-21
     requirements: ["FR1", "NFR1"]
     scenarios: ["SC-001-10"]
-    status: "draft"
+    status: "approved"
 
   - id: "BR-007"
     title: "Rezervácia iba pre existujúceho klienta"
@@ -105,20 +115,21 @@ business_rules:
     owner: "ACT-Manazer" # DR-21
     requirements: ["FR1", "NFR1"]
     scenarios: ["SC-001-07"]
-    status: "draft"
+    status: "approved"
 
   - id: "BR-008"
     title: "Poznámka je voliteľná a má najviac 500 znakov"
     type: "rule"
     statement: >
       Poznámka je voliteľná súčasť rezervácie. Ak ju recepčná zadá, má najviac 500 znakov.
-      Dlhšiu poznámku systém odmietne.
-    source: "DR-14, DR-17; hodnota 500 je konečná (DR-22)."
+      Znaky sa počítajú ako Unicode code points. Dlhšiu poznámku systém odmietne.
+    length_unit: "Unicode code point" # DR-C08
+    source: "DR-14, DR-17; hodnota 500 je konečná (DR-22); počítanie znakov DR-C08."
     related_constraints: ["CON-003"] # obsah poznámky sa nesmie zapisovať do aplikačného logu (DR-27)
     owner: "ACT-Manazer" # DR-21
     requirements: ["FR1", "NFR1"]
     scenarios: ["SC-001-01", "SC-001-02", "SC-001-11"]
-    status: "draft"
+    status: "approved"
 
   - id: "BR-009"
     title: "Pri súbehu vyhrá prvá uložená rezervácia"
@@ -131,7 +142,7 @@ business_rules:
     requirements: ["FR1"]
     decisions: ["ADR-001"]
     scenarios: ["SC-001-06"]
-    status: "draft"
+    status: "approved"
 
   - id: "BR-010"
     title: "Nedostupný termín sa odmietne s pomenovaným dôvodom"
@@ -141,15 +152,46 @@ business_rules:
       pomenovaný dôvod odmietnutia. Iný termín systém neponúka.
     source: "DR-11."
     reasons_proposed: # znenie navrhla AI; iba „termín obsadený“ je doslovne z rozhodnutia (DR-02)
-      - { rule: "BR-003 / BR-009", reason: "termín obsadený", wording: "z rozhodnutia DR-02" }
-      - { rule: "BR-005", reason: "termín mimo otváracích hodín", wording: "návrh AI" }
-      - { rule: "BR-006", reason: "začiatok termínu nie je v budúcnosti", wording: "návrh AI" }
-      - { rule: "BR-007", reason: "klient neexistuje v evidencii klientov", wording: "návrh AI" }
-      - { rule: "BR-008", reason: "poznámka je dlhšia ako 500 znakov", wording: "návrh AI" }
+      - {
+          rule: "BR-003 / BR-009",
+          reason: "termín obsadený",
+          wording: "z rozhodnutia DR-02",
+        }
+      - {
+          rule: "BR-005",
+          reason: "termín mimo otváracích hodín",
+          wording: "návrh AI",
+        }
+      - {
+          rule: "BR-006",
+          reason: "začiatok termínu nie je v budúcnosti",
+          wording: "návrh AI",
+        }
+      - {
+          rule: "BR-007",
+          reason: "klient neexistuje v evidencii klientov",
+          wording: "návrh AI",
+        }
+      - {
+          rule: "BR-008",
+          reason: "poznámka je dlhšia ako 500 znakov",
+          wording: "návrh AI",
+        }
+    reason_ordering: "BR-012" # DR-C04: pri viacerých porušeniach jeden dôvod v pevnom poradí
     owner: "ACT-Manazer" # DR-21
     requirements: ["FR1"]
-    scenarios: ["SC-001-04", "SC-001-05", "SC-001-06", "SC-001-07", "SC-001-08", "SC-001-09", "SC-001-10", "SC-001-11"]
-    status: "draft"
+    scenarios:
+      [
+        "SC-001-04",
+        "SC-001-05",
+        "SC-001-06",
+        "SC-001-07",
+        "SC-001-08",
+        "SC-001-09",
+        "SC-001-10",
+        "SC-001-11",
+      ]
+    status: "approved"
 
   - id: "BR-011"
     title: "Rezerváciu smie vytvoriť iba správca návštev"
@@ -162,4 +204,81 @@ business_rules:
     requirements: ["FR1", "NFR4"]
     decisions: ["ADR-004"]
     scenarios: ["SC-001-12", "SC-001-13"]
-    status: "draft"
+    status: "approved"
+
+  - id: "BR-012"
+    title: "Pri viacerých porušeniach systém uvedie jeden dôvod podľa pevného poradia"
+    type: "rule"
+    statement: >
+      Ak požiadavka na vytvorenie rezervácie porušuje viac pravidiel naraz, systém rezerváciu neuloží
+      a uvedie iba jeden dôvod odmietnutia: prvý porušený v pevnom poradí uvedenom v `order`.
+    order: # DR-C04, DR-C10; HTTP status a kód podľa rozhodnutia, znenie dôvodov podľa BR-010 a QR-002
+      - {
+          position: 1,
+          http: 401,
+          code: "unauthenticated",
+          reason: "osoba nie je prihlásená",
+          rule: "BR-011",
+        }
+      - {
+          position: 2,
+          http: 403,
+          code: "forbidden",
+          reason: "nedostatočné oprávnenie",
+          rule: "BR-011",
+        }
+      - {
+          position: 3,
+          http: 400,
+          code: "invalid-request",
+          reason: "neplatná požiadavka (tvar vstupu, vrátane času mimo UTC – DR-C03)",
+          rule: "NFR1",
+        }
+      - {
+          position: 4,
+          http: 503,
+          code: "service-unavailable",
+          reason: "služba je dočasne nedostupná",
+          rule: "QR-002",
+        } # DR-C10
+      - {
+          position: 5,
+          http: 422,
+          code: "client-not-found",
+          reason: "klient neexistuje v evidencii klientov",
+          rule: "BR-007",
+        }
+      - {
+          position: 6,
+          http: 422,
+          code: "start-not-in-future",
+          reason: "začiatok termínu nie je v budúcnosti",
+          rule: "BR-006",
+        }
+      - {
+          position: 7,
+          http: 422,
+          code: "outside-opening-hours",
+          reason: "termín mimo otváracích hodín",
+          rule: "BR-005",
+        }
+      - {
+          position: 8,
+          http: 422,
+          code: "note-too-long",
+          reason: "poznámka je dlhšia ako 500 znakov",
+          rule: "BR-008",
+        }
+      - {
+          position: 9,
+          http: 409,
+          code: "slot-occupied",
+          reason: "termín obsadený",
+          rule: "BR-003 / BR-009",
+        }
+    source: "DR-C04, DR-C10 (ľudské rozhodnutia k contract review 0.1.0, 0004)."
+    owner: "ACT-Manazer" # podľa DR-21 (owner BR-*) – potvrdí človek
+    requirements: ["FR1", "NFR1"]
+    related_rules: ["BR-010"]
+    scenarios: ["SC-001-16"]
+    status: "approved"

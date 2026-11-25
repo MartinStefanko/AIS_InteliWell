@@ -1,11 +1,11 @@
 # Application Structure pre FR1 (draft).
 # Zdroj: docx kap. 9.1.2, 9.2.2, 11.2; views Application Cooperation / Usage / Layered TO-BE.
-# Vlastníctvo dát podľa DR-12 (ADR-006, Proposed). Allowed dependencies nie sú rozhodnuté.
+# Vlastníctvo dát podľa DR-12 (ADR-006, Accepted). Allowed dependencies nie sú rozhodnuté.
 
 meta:
-  status: "draft"
-  approved_by: null
-  reviewed_by: null
+  status: "approved"
+  approved_by: "Martin Štefanko (Software architect)"
+  reviewed_by: "Martin Štefanko (Software architect)"
   architecture_baseline: "B-01"
   specification_version: "0.2.0"
 
@@ -40,7 +40,7 @@ application_components:
     provides_services:
       - "AS-SpravaRezervaciiAKlientov"
     uses_services: null # nerozhodnuté
-    owns_data_objects: ["DO-Rezervacie", "DO-EvidenciaKlientov"] # DR-12, ADR-006 (Proposed)
+    owns_data_objects: ["DO-Rezervacie", "DO-EvidenciaKlientov"] # DR-12, ADR-006 (Accepted)
     allowed_dependencies: null # nerozhodnuté – rozhodne človek
     observed_interactions: ["INT-001", "INT-002", "INT-003"] # Application Cooperation View TO-BE; pre FR1 pozri interactions.yaml
     requirements: ["FR1", "NFR1", "QR-001"] # podľa služby aj FR2 (mimo rozsahu FR1)

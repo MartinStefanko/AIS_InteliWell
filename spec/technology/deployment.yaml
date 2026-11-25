@@ -1,12 +1,12 @@
 # Deployment context pre FR1 (draft) – podľa SDD_PROJECT_TEMPLATE_v4, kap. 14.
 # Vznikol v 0002 po rozhodnutí DR-09 (technology context = applicable).
-# Zdroj: docx kap. 10.1.2, 10.2.2, 12; I&M View; ADR-002, ADR-003 (Proposed).
+# Zdroj: docx kap. 10.1.2, 10.2.2, 12; I&M View; ADR-002, ADR-003 (Accepted).
 # Container runtime, cloud ani CI/CD neboli rozhodnuté – nevypĺňajú sa.
 
 meta:
-  status: "draft"
-  approved_by: null
-  reviewed_by: null
+  status: "approved"
+  approved_by: "Martin Štefanko (Software architect)"
+  reviewed_by: "Martin Štefanko (Software architect)"
   architecture_baseline: "B-01"
   specification_version: "0.2.0"
 
@@ -27,7 +27,7 @@ artifacts:
     dev_token_issuance: "dotnet user-jwts – iba vývojové prostredie (DR-23, ADR-004)"
     logging_constraint: "CON-003 – obsah poznámky sa nesmie zapisovať do aplikačného logu"
     required_by_implementation_task: null # či je deployable Artifact súčasťou zadania IMPLEMENT_CHANGE, rozhodne človek
-    status: "draft"
+    status: "approved"
 
 open_questions:
   - "Je deployable Artifact súčasťou zadania IMPLEMENT_CHANGE? (AGENTS.md kap. 4)"

@@ -41,4 +41,4 @@ FR1, AC-IntelliWell, AC-ModulRezervaciiAKlientov, ART-SoftverIntelliWell, NODE-S
 SSW-RuntimeDotNet
 
 ## Specification baseline
-0.2.0 (draft) / architecture baseline B-01
+0.2.0 / architecture baseline B-01

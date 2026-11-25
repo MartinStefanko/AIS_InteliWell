@@ -1,11 +1,12 @@
 # Manifest SDD balíka IntelliWell – FR1 Vytvorenie rezervácie.
 # Podľa SDD_PROJECT_TEMPLATE_v4, kap. 4.3. Cesty sa počítajú od koreňa repozitára.
 # Manifest je zoznam podkladov, nie schválenie. Stav každého súboru je uvedený v súbore samotnom.
-# Zmeny pre 0.2.0 navrhla AI v úlohe 0002; sú necommitnuté a čakajú na kontrolu človekom.
+# Zmeny pre 0.2.0 navrhla AI v úlohe 0002 (baseline 0.2.0 schválil človek).
+# Zmeny pre 0.3.0 navrhla AI v úlohe 0004 (DR-C01 až DR-C11); sú necommitnuté a čakajú na kontrolu človekom.
 
 specification:
-  version: "0.2.0" # návrh AI v 0002 (PREPARE_SPEC); predchádzajúci baseline 0.1.0
-  status: "approved" # návrh AI v 0002 (PREPARE_SPEC); predchádzajúci baseline draft
+  version: "0.3.0" # návrh AI v 0004 (PREPARE_SPEC); predchádzajúci baseline 0.2.0
+  status: "approved" # návrh AI v 0004; predchádzajúci baseline 0.2.0 approved
   architecture_baseline: "B-01"
   ai_rules_version: "4.0"
   selected_functionality:
@@ -30,10 +31,10 @@ authoritative:
   lifecycles: "spec/application/lifecycles.yaml"
   technology_context: "spec/technology/technology-context.yaml"
   deployment: "spec/technology/deployment.yaml" # vznikol v 0002 (DR-09)
-  contract_design_profile: "spec/policies/contract-design-profile.yaml" # draft, čiastočne vyplnený (DR-07, DR-08)
+  contract_design_profile: "spec/policies/contract-design-profile.yaml" # approved v 0.2.0; doplnené DR-C03, C05, C07, C09, C11 v 0004
   stories: "spec/stories/" # US-001 (draft, 0002); umiestnenie pozri DR-29
-  scenarios: "spec/stories/features/" # US-001.feature (draft, 0002)
-  decisions: "spec/architecture/decisions/" # ADR-001 – ADR-006 v stave Proposed (0002) + šablóna ADR-000
+  scenarios: "spec/stories/features/" # US-001.feature (draft, 0002; SC-001-15, SC-001-16 doplnené v 0004)
+  decisions: "spec/architecture/decisions/" # ADR-001 – ADR-007 Accepted; šablóna ADR-000
   approved_contracts: null # spec/contracts/approved/ existuje, zatiaľ prázdny
   traceability: "spec/traceability/traceability.yaml"
   reuse_catalog: "spec/architecture/continuum/reuse-catalog.yaml"

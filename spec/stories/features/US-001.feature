@@ -1,7 +1,8 @@
-# status: draft | approved_by: null | reviewed_by: null
-# architecture_baseline: B-01 | specification_version: 0.2.0 | pripravila AI v PREPARE_SPEC (log 0002)
+# status: "approved" | approved_by: "Martin Štefanko (Software architect)" | reviewed_by: "Martin Štefanko (Software architect)"
+# architecture_baseline: B-01 | specification_version: 0.3.0 (návrh) | pripravila AI v PREPARE_SPEC (log 0002, 0004)
+# 0004: doplnené SC-001-15 (QR-002, DR-C06) a SC-001-16 (BR-012, DR-C04).
 # Časy sú v časovom pásme Europe/Bratislava (DR-18); API ich prenáša v UTC.
-# Znenie dôvodov odmietnutia okrem „termín obsadený“ (DR-02) je návrh AI (BR-010).
+# Znenie dôvodov odmietnutia okrem „termín obsadený“ (DR-02) je návrh AI (BR-010, QR-002).
 
 Feature: Vytvorenie rezervácie
   Recepčná v role správcu návštev vytvorí rezerváciu pre existujúceho klienta
@@ -111,3 +112,18 @@ Feature: Vytvorenie rezervácie
     When osoba odošle rezerváciu pre klientku „Eva Nováková“ so začiatkom 1. 12. 2026 20:00
     Then systém rezerváciu neuloží, lebo osoba nie je prihlásená
     And termín 1. 12. 2026 20:00–21:00 zostane voľný
+
+  @SC-001-15 @FR1 @QR-002
+  Scenario: Pri nedostupnej evidencii rezervácií sa rezervácia neuloží
+    Given recepčná „Jana“ je prihlásená v role správca návštev
+    And evidencia rezervácií je dočasne nedostupná
+    When Jana uloží rezerváciu pre klientku „Eva Nováková“ so začiatkom 5. 12. 2026 14:00
+    Then systém rezerváciu neuloží a uvedie dôvod „služba je dočasne nedostupná“
+    And po obnovení dostupnosti je termín 5. 12. 2026 14:00–15:00 voľný
+
+  @SC-001-16 @FR1 @BR-012 @BR-010 @NFR1
+  Scenario: Pri viacerých porušeniach systém uvedie iba prvý dôvod podľa poradia
+    Given recepčná „Jana“ je prihlásená v role správca návštev
+    And klient „Peter Horváth“ nie je v evidencii klientov
+    When Jana uloží rezerváciu pre klienta „Peter Horváth“ so začiatkom 25. 11. 2026 09:00 a poznámkou dlhou 501 znakov
+    Then systém rezerváciu neuloží a uvedie iba dôvod „klient neexistuje v evidencii klientov“

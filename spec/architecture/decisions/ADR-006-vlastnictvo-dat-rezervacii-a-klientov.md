@@ -40,4 +40,4 @@ Vlastníkom DO-Rezervacie a DO-EvidenciaKlientov je AC-ModulRezervaciiAKlientov 
 DO-Rezervacie, DO-EvidenciaKlientov, AC-ModulRezervaciiAKlientov, AC-IntelliWell, INT-001, INT-003, FR1
 
 ## Specification baseline
-0.2.0 (draft) / architecture baseline B-01
+0.2.0 / architecture baseline B-01

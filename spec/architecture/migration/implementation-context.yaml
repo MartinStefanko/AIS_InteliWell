@@ -3,14 +3,18 @@
 # Plateaus, Work Packages a Deliverables nie sú schválené – IDs sú navrhnuté (spec/drafts/id-mapping.yaml).
 
 meta:
-  status: "draft"
-  approved_by: null
-  reviewed_by: null
+  status: "approved"
+  approved_by: "Martin Štefanko (Software architect)"
+  reviewed_by: "Martin Štefanko (Software architect)"
   architecture_baseline: "B-01"
   source_view: "spec/architecture/views/B-01-implementation-migration-tobe.png"
 
 plateaus:
-  - { id: "PL-Baseline", name: "Baseline architektúra", note: "súčasná manuálna prevádzka" }
+  - {
+      id: "PL-Baseline",
+      name: "Baseline architektúra",
+      note: "súčasná manuálna prevádzka",
+    }
   - { id: "PL-Faza1", name: "Fáza 1: Základ systému a správa návštev" }
   - { id: "PL-Faza2", name: "Fáza 2: Diaľkové riadenie prostredia" }
   - { id: "PL-Faza3", name: "Fáza 3: Koordinácia a prehľady" }
@@ -18,10 +22,26 @@ plateaus:
 plateau_sequence: ["PL-Baseline", "PL-Faza1", "PL-Faza2", "PL-Faza3", "PL-Ciel"] # triggering (docx kap. 12)
 
 gaps:
-  - { id: "GAP-001", name: "Manuálna evidencia rezervácií a klientov", associated_plateaus: null }
-  - { id: "GAP-002", name: "Ručné nastavovanie zariadení bez záznamu zásahov", associated_plateaus: null }
-  - { id: "GAP-003", name: "Ručná koordinácia saunových majstrov a chýbajúce prehľady zásahov", associated_plateaus: null }
-  - { id: "GAP-004", name: "Nevyškolený personál a neoverená prevádzka", associated_plateaus: null }
+  - {
+      id: "GAP-001",
+      name: "Manuálna evidencia rezervácií a klientov",
+      associated_plateaus: null,
+    }
+  - {
+      id: "GAP-002",
+      name: "Ručné nastavovanie zariadení bez záznamu zásahov",
+      associated_plateaus: null,
+    }
+  - {
+      id: "GAP-003",
+      name: "Ručná koordinácia saunových majstrov a chýbajúce prehľady zásahov",
+      associated_plateaus: null,
+    }
+  - {
+      id: "GAP-004",
+      name: "Nevyškolený personál a neoverená prevádzka",
+      associated_plateaus: null,
+    }
 # associated_plateaus: docx uvádza asociáciu gap ↔ plateaus; konkrétne páry potvrdí človek z modelu.
 
 implementation:

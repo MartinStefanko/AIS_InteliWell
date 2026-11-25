@@ -3,9 +3,9 @@
 # Zdroj (externý katalóg), owner, verzia, maturity ani reuse rozhodnutie v docx NIE SÚ – ostávajú null.
 
 meta:
-  status: "draft"
-  approved_by: null
-  reviewed_by: null
+  status: "approved"
+  approved_by: "Martin Štefanko (Software architect)"
+  reviewed_by: "Martin Štefanko (Software architect)"
   source: "docs/sources/AIS_IntelliWell.docx, kap. 13"
 
 architecture_continuum:
