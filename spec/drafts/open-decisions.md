@@ -1,13 +1,21 @@
 # Rozhodnutia – FR1 (draft)
 
 - status: "draft"
-- architecture_baseline: "B-01", specification baseline: "0.3.0" (návrh 0004; predchádzajúci baseline 0.2.0 approved)
+- architecture_baseline: "B-01", specification baseline: "0.3.1" (predchádzajúci baseline 0.3.0 approved)
 - DR-01 až DR-17 sú ľudské rozhodnutia: rozhodol Martin Štefanko (Software architect), 2026-11-25, úloha 0002.
   Plné znenie je v `spec/prompts/log/0002-2026-11-25-PREPARE_SPEC.md`.
 - DR-18 až DR-29 vznikli pri zapracovaní v 0002 a boli rozhodnuté doplňujúcim promptom 0002 (vrátane zmeny DR-05).
 - DR-30 a DR-31 boli rozhodnuté doplňujúcim promptom 2 v 0002.
 - ADR-001 až ADR-006 sú v stave **Accepted** (zapísal človek). ADR-007 (0004) je v stave **Accepted** (zapísal človek).
-- DR-C01 až DR-C08 (contract review 0.1.0) rozhodol človek; zapísané v 0004. DR-C09 až DR-C11 rozhodol človek doplňujúcim promptom 0004. Žiadna DR nie je otvorená.
+- DR-C01 až DR-C08 (contract review 0.1.0) rozhodol človek; zapísané v 0004. DR-C09 až DR-C11 rozhodol človek doplňujúcim promptom 0004. DR-C12 (contract review 0.2.0) rozhodol človek a zapísal ručne. Žiadna DR nie je otvorená.
+
+## Rozhodnuté k contract review 0.2.0 (DR-C12)
+
+Rozhodol Martin Štefanko (Software architect), 2026-11-25. Znenie otázky: `reports/contract-review-0.2.0.md`. Zapísal človek ručne (AI v režime DESIGN_CONTRACT nesmie meniť specification).
+
+| ID | Rozhodnutie (skrátene) | Zapísané v |
+|---|---|---|
+| DR-C12 | platný token bez neprázdneho claimu `sub` = neprihlásená osoba → 401 unauthenticated (možnosť A) | ADR-007 (doplnenie 2026-11-25); BR-011 (statement); specification 0.3.1 |
 
 ## Rozhodnuté doplňujúcim promptom 0004 (DR-C09 – DR-C11, owneri)
 

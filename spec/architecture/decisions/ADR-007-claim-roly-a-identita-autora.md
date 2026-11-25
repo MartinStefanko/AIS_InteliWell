@@ -52,3 +52,7 @@ SC-001-12, DR-C01, DR-C02, API-Reservations 0.1.0 (proposed)
 
 ## Specification baseline
 0.3.0 (draft) / architecture baseline B-01
+
+## Doplnenie 2026-11-25 (DR-C12)
+Ak platný bearer token nemá neprázdny claim `sub`, systém posudzuje požiadavku ako od neprihlásenej osoby
+a vráti 401 unauthenticated (NFR4, BR-011). Rozhodol: Martin Štefanko (Software architect).

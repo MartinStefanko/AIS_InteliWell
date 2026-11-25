@@ -1,15 +1,14 @@
-# PROPOSED contract – návrh AI v režime DESIGN_CONTRACT (úloha 0003, log spec/prompts/log/0003-2026-11-25-DESIGN_CONTRACT.md).
+# PROPOSED contract – návrh AI v režime DESIGN_CONTRACT (úloha 0005, log spec/prompts/log/0005-2026-11-25-DESIGN_CONTRACT.md).
 # Nie je schválený. Schválenie zaznamenáva iba človek (AGENTS.md kap. 9).
-# Specification baseline 0.2.0 / architecture baseline B-01; profil spec/policies/contract-design-profile.yaml.
+# Specification baseline 0.3.0 (approved) / architecture baseline B-01; profil spec/policies/contract-design-profile.yaml.
 # Mapping na Requirement, Application Service, Component, scenáre, rules a Data Objects: contract-mapping.yaml.
-# Otvorené rozhodnutia DR-C01 až DR-C08: reports/contract-review-0.1.0.md. Miesta, ktoré od nich závisia, majú
-# v popise značku „(návrh – DR-Cxx)“.
+# Review a approval checklist: reports/contract-review-0.2.0.md. Predchádzajúca verzia 0.1.0: reports/contract-review-0.1.0.md.
 
 openapi: 3.1.0
 
 info:
   title: IntelliWell – Rezervácie (FR1 Vytvorenie rezervácie)
-  version: 0.1.0
+  version: 0.2.0
   summary: HTTP API Služby správy rezervácií a klientov pre vytvorenie rezervácie.
   description: |
     Rozhranie Application Service AS-SpravaRezervaciiAKlientov, ktorú poskytuje
@@ -20,23 +19,27 @@ info:
     INT-001 (DR-25), prihlasovací endpoint a vydávanie tokenov (DR-23).
 
     Konvencie (contract-design-profile.yaml):
-    - čas: RFC 3339 v UTC (DR-08); otváracie hodiny sa overujú v Europe/Bratislava (DR-18),
-    - chyby: problem details, RFC 9457 (DR-08), médium `application/problem+json`,
-    - korelácia: hlavička `X-Correlation-ID` (DR-31),
+    - čas: RFC 3339 v UTC; API prijíma iba zápis s príponou `Z`, iný zápis (napr. `+01:00`) → 400 (DR-08, DR-C03);
+      otváracie hodiny sa overujú v Europe/Bratislava (DR-18),
+    - chyby: problem details, RFC 9457 (DR-08), médium `application/problem+json`; `type` je URN
+      `urn:intelliwell:problem:<kód>` (DR-C07),
+    - názvy polí anglicky v lowerCamelCase (DR-C07), hodnoty enum anglicky (DR-C11),
+    - korelácia: hlavička `X-Correlation-ID` (DR-31, DR-C05, DR-C09),
     - identifikátory: UUID (klient podľa DR-30),
     - verzia: major verzia v URL `/api/v1` (DR-31),
     - idempotencia: žiadna; vytvorenie rezervácie nie je idempotentné (DR-28).
   x-sdd:
     contract_id: API-Reservations
-    contract_version: 0.1.0
+    contract_version: 0.2.0
+    previous_version: 0.1.0
     status: proposed
-    specification_version: 0.2.0
+    specification_version: 0.3.0
     architecture_baseline: B-01
     application_service: AS-SpravaRezervaciiAKlientov
     provided_by_component: AC-ModulRezervaciiAKlientov
-    requirements: [FR1, NFR1, NFR4, QR-001]
+    requirements: [FR1, NFR1, NFR4, QR-001, QR-002]
     constraints: [CON-003]
-    decisions: [ADR-001, ADR-004, ADR-005, ADR-006]
+    decisions: [ADR-001, ADR-004, ADR-005, ADR-006, ADR-007]
     mapping: spec/contracts/proposed/contract-mapping.yaml
     approved_by: null
 
@@ -67,15 +70,28 @@ paths:
         - termín leží celý v otváracích hodinách 10:00–22:00 Europe/Bratislava (BR-005, DR-18),
         - začiatok termínu je v budúcnosti v čase uloženia (BR-006),
         - klient existuje v evidencii klientov (BR-007),
-        - poznámka, ak je zadaná, má najviac 500 znakov (BR-008).
+        - poznámka, ak je zadaná, má najviac 500 znakov; znak = Unicode code point (BR-008, DR-C08).
 
-        Po uložení je rezervácia v stave `vytvorena` a jej termín je zablokovaný pre ďalších klientov
-        (BR-002, OUT-001). Systém zaznamená, kto a kedy rezerváciu vytvoril (QR-001); osoba sa určí
-        z bearer tokenu (ADR-004).
+        Po uložení je rezervácia v stave `created` (business stav „vytvorená“, lifecycles.yaml `api_value`,
+        DR-C11) a jej termín je zablokovaný pre ďalších klientov (BR-002, OUT-001). Systém zaznamená, kto
+        a kedy rezerváciu vytvoril (QR-001); autor je hodnota claimu `sub` z bearer tokenu (ADR-007).
 
         Ak systém rezerváciu neuloží, vráti problem details s pomenovaným dôvodom a iný termín
         neponúka (BR-010). Pri každom odmietnutí platí: rezervácia nevznikne a žiadny termín sa
         nezablokuje (lifecycles.yaml, rejected_creation).
+
+        Poradie dôvodov pri viacerých porušeniach (BR-012, DR-C04, DR-C10). Systém vráti jeden problem
+        details pre prvý porušený dôvod v tomto poradí:
+        1. 401 `unauthenticated` – osoba nie je prihlásená (BR-011),
+        2. 403 `forbidden` – nedostatočné oprávnenie (BR-011),
+        3. 400 `invalid-request` – neplatná požiadavka (tvar vstupu vrátane času mimo UTC; NFR1, DR-C03),
+        4. 503 `service-unavailable` – služba je dočasne nedostupná (QR-002),
+        5. 422 `client-not-found` – klient neexistuje v evidencii klientov (BR-007),
+        6. 422 `start-not-in-future` – začiatok termínu nie je v budúcnosti (BR-006),
+        7. 422 `outside-opening-hours` – termín mimo otváracích hodín (BR-005),
+        8. 422 `note-too-long` – poznámka je dlhšia ako 500 znakov (BR-008),
+        9. 409 `slot-occupied` – termín obsadený (BR-003 / BR-009).
+        Príklad: SC-001-16.
 
         Súbeh (BR-009, ADR-001): ak dve požiadavky s prekrývajúcim sa termínom prídu súčasne,
         uloží sa iba prvá uložená (201); druhá dostane 409 `slot-occupied`.
@@ -83,20 +99,21 @@ paths:
         Opakované odoslanie (DR-28): operácia nie je idempotentná. Opakovanie tej istej požiadavky po
         úspešnom uložení vráti 409 `slot-occupied`.
 
-        Poradie vyhodnotenia, ak požiadavka porušuje viac pravidiel (návrh – DR-C04): 401 → 403 → 400 →
-        422 (`note-too-long`, `client-not-found`, `start-not-in-future`, `outside-opening-hours`) → 409.
-        Systém vráti jeden problem details pre prvé porušené pravidlo.
+        Nedostupné úložisko rezervácií (QR-002): systém rezerváciu neuloží, vráti 503 `service-unavailable`
+        a uloženie automaticky neopakuje.
 
         Audit (QR-001, DR-26): zaznamenáva sa iba úspešné vytvorenie; záznam obsahuje identifikátor
-        rezervácie, kto ju vytvoril a kedy.
+        rezervácie, kto ju vytvoril (claim `sub`) a kedy. Obsah poznámky sa do aplikačného logu
+        nezapisuje (CON-003).
       x-sdd:
-        requirements: [FR1, NFR1, NFR4, QR-001]
-        business_rules: [BR-001, BR-002, BR-003, BR-004, BR-005, BR-006, BR-007, BR-008, BR-009, BR-010, BR-011]
-        scenarios: [SC-001-01, SC-001-02, SC-001-03, SC-001-04, SC-001-05, SC-001-06, SC-001-07,
-                    SC-001-08, SC-001-09, SC-001-10, SC-001-11, SC-001-12, SC-001-13, SC-001-14]
+        requirements: [FR1, NFR1, NFR4, QR-001, QR-002]
+        business_rules: [BR-001, BR-002, BR-003, BR-004, BR-005, BR-006, BR-007, BR-008, BR-009, BR-010, BR-011, BR-012]
+        scenarios: [SC-001-01, SC-001-02, SC-001-03, SC-001-04, SC-001-05, SC-001-06, SC-001-07, SC-001-08,
+                    SC-001-09, SC-001-10, SC-001-11, SC-001-12, SC-001-13, SC-001-14, SC-001-15, SC-001-16]
         data_objects: [DO-Rezervacie, DO-EvidenciaKlientov]
-        lifecycle_transition: "DO-Rezervacie: (none) → vytvorena"
+        lifecycle_transition: "DO-Rezervacie: (none) → vytvorena (api_value created)"
         idempotent: false
+        error_order: BR-012
       security:
         - bearerAuth: [SpravcaNavstev]
       parameters:
@@ -118,13 +135,13 @@ paths:
                 summary: Termín končiaci presne pri zatvorení, 3. 12. 2026 21:00–22:00
                 value: { clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7, startTime: '2026-12-03T20:00:00Z' }
               SC-001-04:
-                summary: Obsadený termín 1. 12. 2026 14:00
+                summary: Obsadený termín 1. 12. 2026 14:00 (existuje rezervácia 14:00–15:00)
                 value: { clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7, startTime: '2026-12-01T13:00:00Z' }
               SC-001-05:
                 summary: Čiastočné prekrytie, začiatok 1. 12. 2026 14:30
                 value: { clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7, startTime: '2026-12-01T13:30:00Z' }
               SC-001-06:
-                summary: Súbeh – obe požiadavky so začiatkom 4. 12. 2026 16:00
+                summary: Súbeh – Jana aj Mária odošlú túto požiadavku súčasne, začiatok 4. 12. 2026 16:00
                 value: { clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7, startTime: '2026-12-04T15:00:00Z' }
               SC-001-07:
                 summary: Klient, ktorý nie je v evidencii klientov, 1. 12. 2026 16:00
@@ -139,23 +156,34 @@ paths:
                 summary: Začiatok v minulosti, 25. 11. 2026 11:00 (aktuálny čas 12:00)
                 value: { clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7, startTime: '2026-11-25T10:00:00Z' }
               SC-001-11:
-                summary: Poznámka dlhá 501 znakov (obsah vynechaný)
-                value: { clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7, startTime: '2026-12-01T17:00:00Z', note: '<501 znakov>' }
+                summary: Poznámka dlhá 501 znakov (Unicode code points), 1. 12. 2026 18:00
+                value: { clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7, startTime: '2026-12-01T17:00:00Z', note: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' }
               SC-001-12:
                 summary: Osoba bez roly SpravcaNavstev, 1. 12. 2026 19:00
                 value: { clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7, startTime: '2026-12-01T18:00:00Z' }
               SC-001-13:
-                summary: Neprihlásená osoba, 1. 12. 2026 20:00
+                summary: Neprihlásená osoba (bez bearer tokenu), 1. 12. 2026 20:00
                 value: { clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7, startTime: '2026-12-01T19:00:00Z' }
               SC-001-14:
-                summary: Nadväzujúci termín 1. 12. 2026 15:00–16:00
+                summary: Nadväzujúci termín 1. 12. 2026 15:00–16:00 (existuje rezervácia 14:00–15:00)
                 value: { clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7, startTime: '2026-12-01T14:00:00Z' }
+              SC-001-15:
+                summary: Evidencia rezervácií je dočasne nedostupná, začiatok 5. 12. 2026 14:00
+                value: { clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7, startTime: '2026-12-05T13:00:00Z' }
+              SC-001-16:
+                summary: |
+                  Viac porušení naraz – klient nie je v evidencii, začiatok 25. 11. 2026 09:00 (v minulosti a pred otvorením),
+                  poznámka 501 znakov
+                value: { clientId: 0b6f2a5e-3c1d-4f8a-9e2b-5d4c3b2a1f00, startTime: '2026-11-25T08:00:00Z', note: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' }
+              invalid-request-time-offset:
+                summary: Čas s posunom namiesto prípony Z (DR-C03) – bez scenára v US-001
+                value: { clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7, startTime: '2026-12-01T14:00:00+01:00' }
       responses:
         '201':
           description: |
-            Rezervácia je uložená v stave `vytvorena` a jej termín je zablokovaný pre ďalších klientov
+            Rezervácia je uložená v stave `created` („vytvorená“) a jej termín je zablokovaný pre ďalších klientov
             (BR-001, BR-002, BR-004, QR-001). Scenáre SC-001-01, SC-001-02, SC-001-03, SC-001-14
-            a prvá požiadavka v SC-001-06.
+            a prvá uložená požiadavka v SC-001-06.
           headers:
             X-Correlation-ID:
               $ref: '#/components/headers/CorrelationId'
@@ -165,20 +193,62 @@ paths:
                 $ref: '#/components/schemas/Reservation'
               examples:
                 SC-001-01:
+                  summary: Rezervácia 1. 12. 2026 14:00–15:00 s poznámkou, autor Jana
                   value:
                     id: 2f1d4c6e-8a3b-4e5f-9c7d-1a2b3c4d5e6f
                     clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7
                     startTime: '2026-12-01T13:00:00Z'
                     endTime: '2026-12-01T14:00:00Z'
                     note: prvá návšteva
-                    status: vytvorena
+                    status: created
+                    createdBy: jana
+                    createdAt: '2026-11-25T11:00:00Z'
+                SC-001-02:
+                  summary: Rezervácia 2. 12. 2026 11:00–12:00 bez poznámky (pole note chýba)
+                  value:
+                    id: 3a2b1c0d-9e8f-4a7b-8c6d-5e4f3a2b1c0d
+                    clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+                    startTime: '2026-12-02T10:00:00Z'
+                    endTime: '2026-12-02T11:00:00Z'
+                    status: created
+                    createdBy: jana
+                    createdAt: '2026-11-25T11:00:00Z'
+                SC-001-03:
+                  summary: Rezervácia 3. 12. 2026 21:00–22:00 (koniec = zatváracia hodina)
+                  value:
+                    id: 4b3c2d1e-0f9a-4b8c-9d7e-6f5a4b3c2d1e
+                    clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+                    startTime: '2026-12-03T20:00:00Z'
+                    endTime: '2026-12-03T21:00:00Z'
+                    status: created
+                    createdBy: jana
+                    createdAt: '2026-11-25T11:00:00Z'
+                SC-001-06:
+                  summary: Prvá uložená z dvoch súbežných požiadaviek (druhá dostane 409)
+                  value:
+                    id: 5c4d3e2f-1a0b-4c9d-8e7f-7a6b5c4d3e2f
+                    clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+                    startTime: '2026-12-04T15:00:00Z'
+                    endTime: '2026-12-04T16:00:00Z'
+                    status: created
+                    createdBy: jana
+                    createdAt: '2026-11-25T11:00:00Z'
+                SC-001-14:
+                  summary: Rezervácia 1. 12. 2026 15:00–16:00 nadväzuje na 14:00–15:00 (interval [začiatok, koniec))
+                  value:
+                    id: 6d5e4f3a-2b1c-4d0e-9f8a-8b7c6d5e4f3a
+                    clientId: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+                    startTime: '2026-12-01T14:00:00Z'
+                    endTime: '2026-12-01T15:00:00Z'
+                    status: created
                     createdBy: jana
                     createdAt: '2026-11-25T11:00:00Z'
         '400':
           description: |
-            Požiadavka nemá platný tvar: telo nie je JSON, chýba `clientId` alebo `startTime`,
-            `clientId` nie je UUID alebo `startTime` nie je RFC 3339 čas v UTC (návrh – DR-C03).
-            Rezervácia nevznikne. Typ `invalid-request`.
+            Neplatná požiadavka (BR-012 pozícia 3; NFR1): telo nie je JSON, chýba `clientId` alebo `startTime`,
+            `clientId` nie je UUID, `startTime` nie je čas RFC 3339 alebo nemá príponu `Z` (napr. `+01:00`; DR-C03).
+            Rezervácia nevznikne. Typ `invalid-request`. Dĺžka poznámky sa tu nekontroluje – jej prekročenie je
+            business pravidlo BR-008 (422 `note-too-long`).
           headers:
             X-Correlation-ID:
               $ref: '#/components/headers/CorrelationId'
@@ -187,16 +257,17 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetails'
               examples:
-                invalid-request:
+                invalid-request-time-offset:
+                  summary: Čas s posunom +01:00 namiesto prípony Z (DR-C03) – bez scenára v US-001
                   value:
                     type: urn:intelliwell:problem:invalid-request
                     title: neplatná požiadavka
                     status: 400
-                    detail: Pole startTime musí byť čas vo formáte RFC 3339 v UTC.
+                    detail: Pole startTime musí byť čas RFC 3339 v UTC s príponou Z.
                     instance: /api/v1/reservations
         '401':
           description: |
-            Osoba nie je prihlásená: chýba bearer token alebo je neplatný (BR-011, NFR4, ADR-004).
+            Osoba nie je prihlásená: chýba bearer token alebo je neplatný (BR-011, NFR4, ADR-004; BR-012 pozícia 1).
             Rezervácia nevznikne a termín zostane voľný. Scenár SC-001-13. Typ `unauthenticated`.
           headers:
             X-Correlation-ID:
@@ -212,6 +283,7 @@ paths:
                 $ref: '#/components/schemas/ProblemDetails'
               examples:
                 SC-001-13:
+                  summary: Požiadavka bez bearer tokenu
                   value:
                     type: urn:intelliwell:problem:unauthenticated
                     title: osoba nie je prihlásená
@@ -219,9 +291,9 @@ paths:
                     instance: /api/v1/reservations
         '403':
           description: |
-            Prihlásená osoba nemá v claime `role` hodnotu `SpravcaNavstev` (návrh – DR-C01), ktorá
-            zodpovedá ROLE-SpravcaNavstev (BR-011, ADR-004). Rezervácia nevznikne a termín zostane voľný.
-            Scenár SC-001-12. Typ `forbidden`.
+            Prihlásená osoba nemá v claime `role` hodnotu `SpravcaNavstev`, ktorá zodpovedá ROLE-SpravcaNavstev;
+            iná hodnota alebo chýbajúci claim `role` znamená nedostatočné oprávnenie (BR-011, ADR-004, ADR-007;
+            BR-012 pozícia 2). Rezervácia nevznikne a termín zostane voľný. Scenár SC-001-12. Typ `forbidden`.
           headers:
             X-Correlation-ID:
               $ref: '#/components/headers/CorrelationId'
@@ -231,6 +303,7 @@ paths:
                 $ref: '#/components/schemas/ProblemDetails'
               examples:
                 SC-001-12:
+                  summary: Token saunového majstra bez roly SpravcaNavstev
                   value:
                     type: urn:intelliwell:problem:forbidden
                     title: nedostatočné oprávnenie
@@ -239,8 +312,8 @@ paths:
         '409':
           description: |
             Termín obsadený: termín sa prekrýva s uloženou rezerváciou (BR-003), vrátane súbehu (BR-009,
-            ADR-001) a opakovaného odoslania (DR-28). Rezervácia nevznikne, pôvodná rezervácia sa nemení,
-            iný termín sa neponúka (BR-010). Scenáre SC-001-04, SC-001-05, druhá požiadavka v SC-001-06.
+            ADR-001) a opakovaného odoslania (DR-28); BR-012 pozícia 9. Rezervácia nevznikne, pôvodná rezervácia
+            sa nemení, iný termín sa neponúka (BR-010). Scenáre SC-001-04, SC-001-05, druhá požiadavka v SC-001-06.
             Typ `slot-occupied`.
           headers:
             X-Correlation-ID:
@@ -251,6 +324,21 @@ paths:
                 $ref: '#/components/schemas/ProblemDetails'
               examples:
                 SC-001-04:
+                  summary: Termín 1. 12. 2026 14:00–15:00 je už rezervovaný
+                  value:
+                    type: urn:intelliwell:problem:slot-occupied
+                    title: termín obsadený
+                    status: 409
+                    instance: /api/v1/reservations
+                SC-001-05:
+                  summary: Termín 14:30–15:30 sa čiastočne prekrýva s rezerváciou 14:00–15:00
+                  value:
+                    type: urn:intelliwell:problem:slot-occupied
+                    title: termín obsadený
+                    status: 409
+                    instance: /api/v1/reservations
+                SC-001-06:
+                  summary: Druhá z dvoch súbežných požiadaviek na termín 4. 12. 2026 16:00
                   value:
                     type: urn:intelliwell:problem:slot-occupied
                     title: termín obsadený
@@ -259,12 +347,12 @@ paths:
         '422':
           description: |
             Vstup má platný tvar, ale nespĺňa business pravidlo (NFR1, BR-010). Rezervácia nevznikne.
-            Typ určuje pomenovaný dôvod:
-            - `outside-opening-hours` – „termín mimo otváracích hodín“ (BR-005; SC-001-08, SC-001-09),
+            Typ určuje pomenovaný dôvod; pri viacerých porušeniach sa vráti prvý podľa BR-012 (pozície 5–8):
+            - `client-not-found` – „klient neexistuje v evidencii klientov“ (BR-007; SC-001-07, SC-001-16),
             - `start-not-in-future` – „začiatok termínu nie je v budúcnosti“ (BR-006; SC-001-10),
-            - `client-not-found` – „klient neexistuje v evidencii klientov“ (BR-007; SC-001-07),
+            - `outside-opening-hours` – „termín mimo otváracích hodín“ (BR-005; SC-001-08, SC-001-09),
             - `note-too-long` – „poznámka je dlhšia ako 500 znakov“ (BR-008; SC-001-11).
-            Odpoveď nikdy neobsahuje text poznámky.
+            Odpoveď nikdy neobsahuje text poznámky (CON-003).
           headers:
             X-Correlation-ID:
               $ref: '#/components/headers/CorrelationId'
@@ -274,28 +362,67 @@ paths:
                 $ref: '#/components/schemas/ProblemDetails'
               examples:
                 SC-001-07:
+                  summary: Klient s týmto identifikátorom nie je v evidencii klientov
                   value:
                     type: urn:intelliwell:problem:client-not-found
                     title: klient neexistuje v evidencii klientov
                     status: 422
                     instance: /api/v1/reservations
                 SC-001-08:
+                  summary: Termín 21:30–22:30 presahuje zatváraciu hodinu 22:00
+                  value:
+                    type: urn:intelliwell:problem:outside-opening-hours
+                    title: termín mimo otváracích hodín
+                    status: 422
+                    instance: /api/v1/reservations
+                SC-001-09:
+                  summary: Termín 09:30–10:30 začína pred otvorením 10:00
                   value:
                     type: urn:intelliwell:problem:outside-opening-hours
                     title: termín mimo otváracích hodín
                     status: 422
                     instance: /api/v1/reservations
                 SC-001-10:
+                  summary: Začiatok 25. 11. 2026 11:00 je pred aktuálnym časom 12:00
                   value:
                     type: urn:intelliwell:problem:start-not-in-future
                     title: začiatok termínu nie je v budúcnosti
                     status: 422
                     instance: /api/v1/reservations
                 SC-001-11:
+                  summary: Poznámka má 501 znakov
                   value:
                     type: urn:intelliwell:problem:note-too-long
                     title: poznámka je dlhšia ako 500 znakov
                     status: 422
+                    instance: /api/v1/reservations
+                SC-001-16:
+                  summary: |
+                    Porušené BR-007, BR-006, BR-005 aj BR-008 – vráti sa iba prvý dôvod podľa BR-012 (client-not-found)
+                  value:
+                    type: urn:intelliwell:problem:client-not-found
+                    title: klient neexistuje v evidencii klientov
+                    status: 422
+                    instance: /api/v1/reservations
+        '503':
+          description: |
+            Úložisko rezervácií nie je dostupné (QR-002; BR-012 pozícia 4 – po 400, pred prvým 422). Rezervácia
+            sa neuloží, žiadny termín sa nezablokuje a systém uloženie automaticky neopakuje. Po obnovení
+            dostupnosti je termín voľný. Scenár SC-001-15. Typ `service-unavailable`.
+          headers:
+            X-Correlation-ID:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+              examples:
+                SC-001-15:
+                  summary: Evidencia rezervácií je pri ukladaní dočasne nedostupná
+                  value:
+                    type: urn:intelliwell:problem:service-unavailable
+                    title: služba je dočasne nedostupná
+                    status: 503
                     instance: /api/v1/reservations
 
 components:
@@ -306,9 +433,9 @@ components:
       bearerFormat: JWT
       description: |
         JWT bearer token (ADR-004, DR-07). Pre prototyp ho vydáva `dotnet user-jwts` (DR-23);
-        prihlasovací endpoint nie je súčasťou contractu. Rola je v claime `role`.
-        Hodnota pre ROLE-SpravcaNavstev: `SpravcaNavstev` (návrh – DR-C01).
-        Identita osoby pre `createdBy` (QR-001) je claim `sub` (návrh – DR-C02).
+        prihlasovací endpoint nie je súčasťou contractu.
+        Rola je v claime `role`; hodnota pre ROLE-SpravcaNavstev je `SpravcaNavstev` (ADR-007, DR-C01).
+        Identita autora rezervácie pre `createdBy` (QR-001) je claim `sub` (ADR-007, DR-C02).
 
   parameters:
     CorrelationId:
@@ -316,20 +443,33 @@ components:
       in: header
       required: false
       description: |
-        Korelačné ID požiadavky (DR-31). Ak chýba, systém ID vygeneruje. ID sa vždy vráti
-        v hlavičke odpovede. Tvar prijímanej hodnoty a správanie pri neplatnej hodnote nie sú
-        rozhodnuté (DR-C05); vygenerované ID je UUID (návrh – DR-C05).
+        Korelačné ID požiadavky (DR-31). Platná hodnota je reťazec dĺžky 1–128 zo znakov 0x21–0x7E
+        (tlačiteľné ASCII bez medzery); prázdna hodnota je neplatná (DR-C09).
+        Ak hlavička chýba alebo má neplatnú hodnotu, systém vygeneruje UUID a vráti ho v odpovedi;
+        požiadavku pre neplatné ID neodmietne (DR-C05). Schéma preto úmyselne neobmedzuje tvar –
+        neplatná hodnota nie je dôvodom na 400.
       schema:
         type: string
+      x-sdd-valid-format: '^[\x21-\x7E]{1,128}$'
 
   headers:
     CorrelationId:
-      description: Korelačné ID – prevzaté z požiadavky alebo vygenerované systémom (DR-31).
+      description: |
+        Korelačné ID – platná hodnota prevzatá z požiadavky, inak UUID vygenerované systémom
+        (DR-31, DR-C05, DR-C09). Vracia sa v každej odpovedi.
       required: true
       schema:
         type: string
+        pattern: '^[\x21-\x7E]{1,128}$'
+        examples: [7d0f5b3a-1e2c-4a6b-9f8e-0c1d2e3f4a5b]
 
   schemas:
+    UtcDateTime:
+      type: string
+      format: date-time
+      pattern: 'Z$'
+      description: Čas RFC 3339 v UTC s príponou `Z` (DR-08, DR-C03).
+
     CreateReservationRequest:
       type: object
       description: |
@@ -342,19 +482,22 @@ components:
           format: uuid
           description: |
             Systémový identifikátor existujúceho klienta v evidencii klientov (DO-EvidenciaKlientov;
-            DR-30, BR-007). Nie je odvodený z osobných údajov.
+            DR-30, BR-007). Nie je odvodený z osobných údajov. Platné UUID, ktoré v evidencii nie je,
+            vráti 422 `client-not-found`.
         startTime:
-          type: string
-          format: date-time
+          allOf:
+            - $ref: '#/components/schemas/UtcDateTime'
           description: |
-            Začiatok termínu (Termín, glossary), RFC 3339 v UTC so suffixom `Z` (DR-08; tvar návrh – DR-C03).
+            Začiatok termínu (Termín, glossary), RFC 3339 v UTC s príponou `Z` (DR-08, DR-C03); iný zápis → 400.
             Systém ho na overenie BR-005 prepočíta do Europe/Bratislava (DR-18).
         note:
           type: string
-          maxLength: 500
           description: |
-            Poznámka (glossary) – voliteľná, najviac 500 znakov (BR-008; počítanie znakov návrh – DR-C08).
-            Prekročenie dĺžky vráti 422 `note-too-long`, nie 400. Poznámka je osobný údaj (DR-27).
+            Poznámka (glossary) – voliteľná, najviac 500 znakov; znak = Unicode code point (BR-008, DR-C08).
+            Limit nie je v schéme ako `maxLength`, lebo jeho porušenie je business pravidlo s odpoveďou
+            422 `note-too-long` na pozícii 8 poradia BR-012, nie chyba tvaru (400). Poznámka je osobný údaj (DR-27).
+          x-sdd-business-max-length: 500
+          x-sdd-length-unit: unicode-code-point
           x-sdd-personal-data: true
           x-sdd-excluded-from-application-log: true # CON-003
 
@@ -372,58 +515,62 @@ components:
           format: uuid
           description: Identifikátor klienta z evidencie klientov (DR-30).
         startTime:
-          type: string
-          format: date-time
+          allOf:
+            - $ref: '#/components/schemas/UtcDateTime'
           description: Začiatok termínu, RFC 3339 UTC.
         endTime:
-          type: string
-          format: date-time
+          allOf:
+            - $ref: '#/components/schemas/UtcDateTime'
           description: Koniec termínu = startTime + 60 minút (BR-004); interval [startTime, endTime) (DR-19).
         note:
           type: string
-          maxLength: 500
-          description: Poznámka, ak bola zadaná (BR-008). Osobný údaj (DR-27).
+          maxLength: 500 # JSON Schema maxLength počíta Unicode code points (DR-C08); uložená poznámka spĺňa BR-008
+          description: Poznámka, ak bola zadaná (BR-008). Pri rezervácii bez poznámky pole chýba. Osobný údaj (DR-27).
           x-sdd-personal-data: true
           x-sdd-excluded-from-application-log: true # CON-003
         status:
           type: string
-          enum: [vytvorena]
-          description: Stav rezervácie podľa lifecycles.yaml – iba „vytvorená“ (DR-04).
+          enum: [created]
+          description: |
+            Stav rezervácie podľa lifecycles.yaml – iba „vytvorená“ (DR-04), v API hodnota `created`
+            (`api_value`, DR-C11).
         createdBy:
           type: string
+          minLength: 1
           description: |
             Prihlásená osoba personálu, ktorá rezerváciu vytvorila (QR-001, DR-13); hodnota claimu
-            `sub` z bearer tokenu (návrh – DR-C02).
+            `sub` z bearer tokenu (ADR-007, DR-C02).
         createdAt:
-          type: string
-          format: date-time
+          allOf:
+            - $ref: '#/components/schemas/UtcDateTime'
           description: Čas vytvorenia rezervácie, RFC 3339 UTC (QR-001).
 
     ProblemDetails:
       type: object
       description: |
-        Problem details podľa RFC 9457 (DR-08). `type` identifikuje dôvod odmietnutia (BR-010),
-        `title` je jeho pomenovanie. Znenie titulov okrem „termín obsadený“ (DR-02) je návrh AI
-        z BR-010.reasons_proposed. `detail` nesmie obsahovať text poznámky.
+        Problem details podľa RFC 9457 (DR-08). `type` identifikuje dôvod odmietnutia (BR-010, BR-012, QR-002)
+        ako URN `urn:intelliwell:problem:<kód>` (DR-C07); `title` je pomenovanie dôvodu podľa BR-012 `reason`.
+        `detail` nesmie obsahovať text poznámky (CON-003).
       required: [type, title, status]
       properties:
         type:
           type: string
           format: uri
           enum:
-            - urn:intelliwell:problem:invalid-request
             - urn:intelliwell:problem:unauthenticated
             - urn:intelliwell:problem:forbidden
-            - urn:intelliwell:problem:slot-occupied
-            - urn:intelliwell:problem:outside-opening-hours
-            - urn:intelliwell:problem:start-not-in-future
+            - urn:intelliwell:problem:invalid-request
+            - urn:intelliwell:problem:service-unavailable
             - urn:intelliwell:problem:client-not-found
+            - urn:intelliwell:problem:start-not-in-future
+            - urn:intelliwell:problem:outside-opening-hours
             - urn:intelliwell:problem:note-too-long
+            - urn:intelliwell:problem:slot-occupied
         title:
           type: string
         status:
           type: integer
-          enum: [400, 401, 403, 409, 422]
+          enum: [400, 401, 403, 409, 422, 503]
         detail:
           type: string
         instance:

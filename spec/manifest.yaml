@@ -5,7 +5,7 @@
 # Zmeny pre 0.3.0 navrhla AI v úlohe 0004 (DR-C01 až DR-C11); sú necommitnuté a čakajú na kontrolu človekom.
 
 specification:
-  version: "0.3.0" # návrh AI v 0004 (PREPARE_SPEC); predchádzajúci baseline 0.2.0
+  version: "0.3.1" # návrh AI v 0004 (PREPARE_SPEC); predchádzajúci baseline 0.2.0
   status: "approved" # návrh AI v 0004; predchádzajúci baseline 0.2.0 approved
   architecture_baseline: "B-01"
   ai_rules_version: "4.0"
